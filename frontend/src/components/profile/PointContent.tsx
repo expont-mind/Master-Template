@@ -84,9 +84,10 @@ export const PointContent = ({ onBalanceChange }: PointContentProps) => {
         "id, type, amount, description, order_id, created_at, orders(order_number)",
       )
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .returns<PointTransaction[]>();
 
-    const list = (txns ?? []) as PointTransaction[];
+    const list = txns ?? [];
     setTransactions(list);
 
     const total = list.reduce(

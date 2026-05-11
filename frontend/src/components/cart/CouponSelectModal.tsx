@@ -82,12 +82,35 @@ export const CouponSelectModal = ({
       return;
     }
 
+    // The user_coupons→coupons relation isn't declared in our hand-rolled
+    // Database type's Relationships array, so PostgREST embed inference
+    // fails. Narrow the shape with `.returns<>()` at the query boundary.
+    type CouponEmbed = {
+      id: string;
+      code: string;
+      type: "percentage" | "fixed" | "free_shipping";
+      discount_value: number;
+      max_discount_amount: number | null;
+      end_date: string | null;
+      is_active: boolean;
+      start_date: string | null;
+      scope: "all" | "product" | "category" | "brand";
+      max_applicable_qty: number | null;
+      usage_limit_per_user: number | null;
+    };
+    type UserCouponEmbedded = {
+      id: string;
+      coupon_id: string;
+      coupons: CouponEmbed | null;
+    };
+
     const { data: userCoupons } = await supabase
       .from("user_coupons")
       .select(
         "id, coupon_id, coupons(id, code, type, discount_value, max_discount_amount, end_date, is_active, start_date, scope, max_applicable_qty, usage_limit_per_user)",
       )
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .returns<UserCouponEmbedded[]>();
 
     const { data: usages } = await supabase
       .from("coupon_usages")
@@ -101,10 +124,8 @@ export const CouponSelectModal = ({
     }
     const now = new Date();
 
-    type UserCouponRow = NonNullable<typeof userCoupons>[number];
-
     const activeCoupons: CouponData[] = (userCoupons ?? [])
-      .filter((uc): uc is UserCouponRow & { coupons: NonNullable<UserCouponRow["coupons"]> } => uc.coupons !== null)
+      .filter((uc): uc is UserCouponEmbedded & { coupons: CouponEmbed } => uc.coupons !== null)
       .map((uc) => {
         const c = uc.coupons;
         const userUsageCount = usageCountMap.get(c.id) ?? 0;
@@ -156,13 +177,23 @@ export const CouponSelectModal = ({
     }
 
     if (scopedByTable.size > 0) {
+      // Dynamic table name → opt out of typed-client narrowing.
+      const untypedFrom = supabase as unknown as {
+        from: (t: string) => {
+          select: (cols: string) => {
+            in: (col: string, vals: string[]) => PromiseLike<{
+              data: Array<Record<string, string>> | null;
+            }>;
+          };
+        };
+      };
       const tableQueries = await Promise.all(
         [...scopedByTable.entries()].map(async ([table, { idField, couponIds }]) => {
-          const { data } = await db
+          const { data } = await untypedFrom
             .from(table)
             .select(`coupon_id, ${idField}`)
             .in("coupon_id", couponIds);
-          return { idField, rows: (data ?? []) as Array<Record<string, string>> };
+          return { idField, rows: data ?? [] };
         }),
       );
 

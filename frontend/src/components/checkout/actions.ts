@@ -542,13 +542,11 @@ export async function createFreeOrder(
 
     // 3. Decrement stock
     try {
-      // `decrement_order_stock` is a Postgres function not yet in the
-      // generated Database type; cast at the call boundary.
-      await (admin.rpc as (fn: string, args: { p_order_id: string }) => Promise<unknown>)(
-        "decrement_order_stock",
-        { p_order_id: order.id },
-      );
-      await admin.from("orders").update({ stock_decremented: true }).eq("id", order.id);
+      await admin.rpc("decrement_order_stock", { p_order_id: order.id });
+      await admin
+        .from("orders")
+        .update({ stock_decremented: true })
+        .eq("id", order.id);
     } catch (err) {
       console.error("[createFreeOrder] Stock decrement error:", err);
     }

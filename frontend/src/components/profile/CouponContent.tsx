@@ -56,13 +56,36 @@ export const CouponContent = ({ onCouponCountChange }: CouponContentProps) => {
       return;
     }
 
+    // The user_coupons→coupons relation isn't declared in our hand-rolled
+    // Database type's Relationships array, so PostgREST embed inference
+    // fails. Narrow the shape at the query boundary.
+    type CouponEmbed = {
+      id: string;
+      code: string;
+      type: "percentage" | "fixed" | "free_shipping";
+      discount_value: number;
+      max_discount_amount: number | null;
+      end_date: string | null;
+      is_active: boolean;
+      start_date: string | null;
+      scope: "all" | "product" | "category" | "brand";
+      max_applicable_qty: number | null;
+      usage_limit_per_user: number | null;
+    };
+    type UserCouponEmbedded = {
+      id: string;
+      coupon_id: string;
+      coupons: CouponEmbed | null;
+    };
+
     // Fetch user's claimed coupons with coupon details
     const { data: userCoupons } = await supabase
       .from("user_coupons")
       .select(
         "id, coupon_id, coupons(id, code, type, discount_value, max_discount_amount, end_date, is_active, start_date, scope, max_applicable_qty, usage_limit_per_user)",
       )
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .returns<UserCouponEmbedded[]>();
 
     // Fetch user's coupon usages to know which are "used"
     const { data: usages } = await supabase
@@ -76,10 +99,8 @@ export const CouponContent = ({ onCouponCountChange }: CouponContentProps) => {
     }
     const now = new Date();
 
-    type UserCouponRow = NonNullable<typeof userCoupons>[number];
-
     const mapped: CouponData[] = (userCoupons ?? [])
-      .filter((uc): uc is UserCouponRow & { coupons: NonNullable<UserCouponRow["coupons"]> } => uc.coupons !== null)
+      .filter((uc): uc is UserCouponEmbedded & { coupons: CouponEmbed } => uc.coupons !== null)
       .map((uc) => {
         const c = uc.coupons;
         const userUsageCount = usageCountMap.get(c.id) ?? 0;

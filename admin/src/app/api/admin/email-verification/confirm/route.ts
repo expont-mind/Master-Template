@@ -23,12 +23,15 @@ export async function GET(request: NextRequest) {
 
   const supabase = createAdminClient();
 
+  // The typed Update parameter for admin_login_emails resolves to `never`
+  // in some build environments (suspected TS instantiation depth limit on
+  // the 47-table union). Cast body to `never` to opt out.
   const { error } = await supabase
     .from("admin_login_emails")
     .update({
       is_verified: true,
       verified_at: new Date().toISOString(),
-    })
+    } as never)
     .eq("id", result.emailId);
 
   if (error) {

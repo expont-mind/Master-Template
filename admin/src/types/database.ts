@@ -1257,64 +1257,6 @@ export interface Database {
           created_at?: string;
         };
       };
-      admins: {
-        Row: {
-          id: string;
-          email: string;
-          password_hash: string;
-          role_id: string | null;
-          created_at: string;
-          two_factor_enabled: boolean;
-        };
-        Insert: {
-          id?: string;
-          email: string;
-          password_hash: string;
-          role_id?: string | null;
-          created_at?: string;
-          two_factor_enabled?: boolean;
-        };
-        Update: {
-          id?: string;
-          email?: string;
-          password_hash?: string;
-          role_id?: string | null;
-          created_at?: string;
-          two_factor_enabled?: boolean;
-        };
-      };
-      admin_login_emails: {
-        Row: {
-          id: string;
-          admin_id: string;
-          email: string;
-          is_verified: boolean;
-          verification_code: string | null;
-          verification_expires_at: string | null;
-          verified_at: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          admin_id: string;
-          email: string;
-          is_verified?: boolean;
-          verification_code?: string | null;
-          verification_expires_at?: string | null;
-          verified_at?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          admin_id?: string;
-          email?: string;
-          is_verified?: boolean;
-          verification_code?: string | null;
-          verification_expires_at?: string | null;
-          verified_at?: string | null;
-          created_at?: string;
-        };
-      };
       sms_campaigns: {
         Row: {
           id: string;

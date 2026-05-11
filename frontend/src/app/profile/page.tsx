@@ -173,15 +173,42 @@ function ProfilePageContent() {
 
       if (userRes.data) setUserData(userRes.data);
       if (ordersRes.data) {
-        type OrderWithItems = (typeof ordersRes.data)[number];
-        type OrderItem = NonNullable<OrderWithItems["order_items"]>[number];
-        const ordersData = ordersRes.data;
+        // The orders→order_items join isn't declared in the hand-rolled
+        // Database type's Relationships array, so PostgREST embed type
+        // inference fails. The runtime shape is well-defined; narrow it
+        // explicitly here.
+        type EmbeddedOrderItem = {
+          id: string;
+          product_id: string;
+          price: number;
+          quantity: number;
+          variant_name: string | null;
+          products: {
+            name: string;
+            slug: string;
+            price: number;
+            discount_price: number | null;
+          } | null;
+        };
+        type OrderRowEmbed = {
+          id: string;
+          order_number: string;
+          status: string;
+          delivery_status: string | null;
+          total_amount: number;
+          points_used: number | null;
+          payment_status: string;
+          created_at: string;
+          updated_at: string;
+          order_items: EmbeddedOrderItem[] | null;
+        };
+        const ordersData = ordersRes.data as unknown as OrderRowEmbed[];
 
         // Get all unique product IDs from order items
         const productIds = [
           ...new Set(
-            ordersData.flatMap((o: OrderWithItems) =>
-              (o.order_items ?? []).map((item: OrderItem) => item.product_id),
+            ordersData.flatMap((o) =>
+              (o.order_items ?? []).map((item) => item.product_id),
             ),
           ),
         ].filter(Boolean) as string[];
@@ -221,7 +248,15 @@ function ProfilePageContent() {
             supabase
               .from("coupon_usages")
               .select("order_id, discount_amount, coupon_id, coupons(code)")
-              .in("order_id", orderIds),
+              .in("order_id", orderIds)
+              .returns<
+                {
+                  order_id: string | null;
+                  discount_amount: number;
+                  coupon_id: string;
+                  coupons: { code: string } | null;
+                }[]
+              >(),
           ]);
           for (const inv of invoicesRes.data ?? []) {
             if (inv.order_id && inv.payment_wallet) {
@@ -288,8 +323,11 @@ function ProfilePageContent() {
           const updatedOrder = payload.new as {
             id: string;
             user_id: string;
+            status: string;
+            delivery_status: string;
+            payment_status: string;
+            updated_at: string;
             is_deleted?: boolean;
-            [key: string]: unknown;
           };
           if (updatedOrder.user_id !== userId) return;
 

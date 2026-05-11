@@ -29,7 +29,7 @@ export default async function AdminLayout({
       .from("admins")
       .select("id")
       .eq("email", user.email!)
-      .maybeSingle();
+      .maybeSingle<{ id: string }>();
 
     if (!admin) {
       const { data: altEmail } = await adminClient
@@ -37,7 +37,7 @@ export default async function AdminLayout({
         .select("admin_id")
         .eq("email", user.email!)
         .eq("is_verified", true)
-        .single();
+        .single<{ admin_id: string }>();
 
       if (!altEmail) {
         redirect("/login");

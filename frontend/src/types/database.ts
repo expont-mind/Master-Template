@@ -460,6 +460,8 @@ export interface Database {
           points_used: number;
           coupon_id: string | null;
           coupon_discount: number;
+          stock_decremented: boolean;
+          is_deleted: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -489,6 +491,8 @@ export interface Database {
           points_used?: number;
           coupon_id?: string | null;
           coupon_discount?: number;
+          stock_decremented?: boolean;
+          is_deleted?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -518,6 +522,8 @@ export interface Database {
           points_used?: number;
           coupon_id?: string | null;
           coupon_discount?: number;
+          stock_decremented?: boolean;
+          is_deleted?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -748,7 +754,9 @@ export interface Database {
           stock_quantity: number;
           is_default: boolean;
           status: string;
-          option_values: Json | null;
+          // Stored as jsonb in Postgres; in practice always written as
+          // a string[] (option-value ids) by the admin variant builder.
+          option_values: string[] | null;
           created_at: string;
           updated_at: string;
         };

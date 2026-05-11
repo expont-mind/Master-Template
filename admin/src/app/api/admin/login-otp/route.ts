@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       .from("admins")
       .select("id, two_factor_enabled")
       .eq("email", email)
-      .single();
+      .single<{ id: string; two_factor_enabled: boolean }>();
 
     let isAdmin = false;
     let twoFactorEnabled = true;
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
         .select("admin_id")
         .eq("email", email)
         .eq("is_verified", true)
-        .single();
+        .single<{ admin_id: string }>();
 
       if (altEmail) {
         isAdmin = true;
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
           .from("admins")
           .select("two_factor_enabled")
           .eq("id", altEmail.admin_id)
-          .single();
+          .single<{ two_factor_enabled: boolean }>();
         twoFactorEnabled = parentAdmin?.two_factor_enabled ?? true;
       }
     }

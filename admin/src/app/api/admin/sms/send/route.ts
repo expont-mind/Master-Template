@@ -101,12 +101,23 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient();
 
-    // Fetch campaign
+    // Fetch campaign. `.single<T>()` works around TS instantiation depth
+    // on the 47-table union — without it `campaign` resolves to `never`.
+    type CampaignRow = {
+      id: string;
+      name: string;
+      message: string;
+      status: string;
+      recipient_filter: RecipientFilter | null;
+      recipient_count: number;
+      sent_count: number;
+      failed_count: number;
+    };
     const { data: campaign, error: campaignError } = await supabase
       .from("sms_campaigns")
       .select("*")
       .eq("id", campaign_id)
-      .single();
+      .single<CampaignRow>();
 
     if (campaignError || !campaign) {
       return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
@@ -116,9 +127,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Campaign already sent" }, { status: 400 });
     }
 
-    const filter = (campaign.recipient_filter as RecipientFilter | null) ?? {
-      type: "all" as const,
-    };
+    const filter = campaign.recipient_filter ?? { type: "all" as const };
     const rawRecipients = await resolveRecipients(supabase, filter);
 
     // Deduplicate by normalized phone number (keep first occurrence)
@@ -140,7 +149,7 @@ export async function POST(request: NextRequest) {
         status: "sending",
         recipient_count: recipients.length,
         updated_at: new Date().toISOString(),
-      })
+      } as never)
       .eq("id", campaign_id);
 
     let sentCount = 0;
@@ -154,7 +163,8 @@ export async function POST(request: NextRequest) {
       .from("sms_logs")
       .select("phone, status")
       .eq("campaign_id", campaign_id)
-      .eq("status", "sent");
+      .eq("status", "sent")
+      .returns<{ phone: string; status: string }[]>();
     const alreadySent = new Set(
       (existingLogs ?? []).map((l) => l.phone),
     );
@@ -190,7 +200,7 @@ export async function POST(request: NextRequest) {
               provider_message_id: result.messageId ?? null,
               error_message: result.error ?? null,
               sent_at: result.success ? new Date().toISOString() : null,
-            });
+            } as never);
           } catch (logErr) {
             console.error("sms_logs insert error:", logErr);
           }
@@ -210,7 +220,7 @@ export async function POST(request: NextRequest) {
         failed_count: failedCount,
         sent_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-      })
+      } as never)
       .eq("id", campaign_id);
 
     return NextResponse.json({
@@ -231,7 +241,7 @@ export async function POST(request: NextRequest) {
         .update({
           status: "failed",
           updated_at: new Date().toISOString(),
-        })
+        } as never)
         .eq("id", (await request.clone().json()).campaign_id);
     } catch {
       // best-effort status recovery

@@ -75,11 +75,13 @@ export async function getDashboardStats(
     withDateRange(
       supabase.from("users").select("id", { count: "exact", head: true }),
     ),
-    // RPC: total revenue (single query instead of batched pagination)
+    // RPC: total revenue (single query instead of batched pagination).
+    // The typed Args parameter resolves to `undefined` due to TS
+    // instantiation depth on the Functions union; cast at the boundary.
     supabase.rpc("get_total_revenue", {
       p_from: range?.from.toISOString() ?? null,
       p_to: range?.to.toISOString() ?? null,
-    }),
+    } as never),
     (() => {
       let q = supabase
         .from("orders")
@@ -123,13 +125,13 @@ export async function getDashboardStats(
     supabase.rpc("get_revenue_by_day", {
       p_from: revenueRange.from.toISOString(),
       p_to: revenueRange.to.toISOString(),
-    }),
+    } as never),
     // RPC: top selling products (single query instead of batched pagination)
     supabase.rpc("get_top_selling_products", {
       p_from: range?.from.toISOString() ?? null,
       p_to: range?.to.toISOString() ?? null,
       p_limit: 10,
-    }),
+    } as never),
   ]);
 
   // Parse total revenue

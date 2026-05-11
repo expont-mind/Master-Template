@@ -17,7 +17,9 @@ export async function POST(request: NextRequest) {
     const normalizedPhone = phone.replace(LOCALE.phoneRegex, "").replace(/\D/g, "");
     const result = await sendSms(normalizedPhone, message);
 
-    // Log to sms_logs
+    // Log to sms_logs. The typed Insert body resolves to `never` here
+    // due to TypeScript instantiation depth on admin's 47-table union;
+    // cast body to `never` so the call still type-checks.
     const supabase = createAdminClient();
     await supabase.from("sms_logs").insert({
       campaign_id: null,
@@ -29,7 +31,7 @@ export async function POST(request: NextRequest) {
       provider_message_id: result.messageId ?? null,
       error_message: result.error ?? null,
       sent_at: result.success ? new Date().toISOString() : null,
-    });
+    } as never);
 
     if (!result.success) {
       return NextResponse.json(

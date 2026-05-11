@@ -32,12 +32,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // admin_login_emails-д аль хэдийн бүртгэлтэй эсэх
+    // admin_login_emails-д аль хэдийн бүртгэлтэй эсэх.
+    // The 47-table union appears to trip TS instantiation on this
+    // call; narrow the result shape explicitly via `.single<T>()`.
+    type AdminLoginEmailRow = {
+      id: string;
+      admin_id: string;
+      email: string;
+      is_verified: boolean;
+    };
     const { data: existingAlt } = await supabase
       .from("admin_login_emails")
       .select("*")
       .eq("email", email)
-      .single();
+      .single<AdminLoginEmailRow>();
 
     if (existingAlt && existingAlt.admin_id !== admin_id) {
       return NextResponse.json(
@@ -57,10 +65,10 @@ export async function POST(request: NextRequest) {
     if (existingAlt && existingAlt.admin_id === admin_id) {
       const { data: updated, error: updateError } = await supabase
         .from("admin_login_emails")
-        .update({ is_verified: false, verified_at: null })
+        .update({ is_verified: false, verified_at: null } as never)
         .eq("id", existingAlt.id)
         .select("*")
-        .single();
+        .single<{ id: string; email: string }>();
 
       if (updateError || !updated) {
         return NextResponse.json(
@@ -76,9 +84,9 @@ export async function POST(request: NextRequest) {
           admin_id,
           email,
           is_verified: false,
-        })
+        } as never)
         .select("*")
-        .single();
+        .single<{ id: string; email: string }>();
 
       if (insertError || !inserted) {
         return NextResponse.json(

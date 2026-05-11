@@ -15,18 +15,18 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient();
 
     // Admin эсэх шалгах
-    const { data: admin } = await supabase
+    const { data: adminRow } = await supabase
       .from("admins")
       .select("id, two_factor_enabled")
       .eq("email", email)
-      .single();
+      .single<{ id: string; two_factor_enabled: boolean }>();
 
     let isAdmin = false;
     let twoFactorEnabled = true;
 
-    if (admin) {
+    if (adminRow) {
       isAdmin = true;
-      twoFactorEnabled = admin.two_factor_enabled;
+      twoFactorEnabled = adminRow.two_factor_enabled;
     } else {
       // Нэмэлт имэйлээр шалгах
       const { data: altEmail } = await supabase
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         .select("admin_id")
         .eq("email", email)
         .eq("is_verified", true)
-        .single();
+        .single<{ admin_id: string }>();
 
       if (altEmail) {
         isAdmin = true;
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
           .from("admins")
           .select("two_factor_enabled")
           .eq("id", altEmail.admin_id)
-          .single();
+          .single<{ two_factor_enabled: boolean }>();
         twoFactorEnabled = parentAdmin?.two_factor_enabled ?? true;
       }
     }

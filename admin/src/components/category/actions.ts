@@ -75,9 +75,10 @@ export async function deactivateCategorySubtree(
   const idArray = Array.from(ids);
 
   // Single bulk UPDATE — atomic from PostgREST's perspective.
+  // `as never` works around TS instantiation depth on the typed client.
   const { error: updateError } = await supabase
     .from("categories")
-    .update({ is_active: false })
+    .update({ is_active: false } as never)
     .in("id", idArray);
   if (updateError) throw updateError;
 

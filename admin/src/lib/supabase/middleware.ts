@@ -91,7 +91,7 @@ export async function updateSession(request: NextRequest) {
           .select("admin_id")
           .eq("email", user.email!)
           .eq("is_verified", true)
-          .single();
+          .single<{ admin_id: string }>();
 
         if (!altEmail) {
           if (isAdminRoute) {

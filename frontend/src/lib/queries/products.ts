@@ -310,7 +310,10 @@ export interface ProductWithDetails extends Product {
   product_details?: ProductDetail[];
   variants?: ProductVariant[];
   rich_description?: ProductRichDescription;
-  brand?: ProductBrand;
+  brand?: ProductBrand | null;
+  category?: { name: string; slug: string } | null;
+  reviewCount?: number;
+  averageRating?: number;
   categoryPath?: ProductCategory[];
   option_groups?: OptionGroup[];
 }
