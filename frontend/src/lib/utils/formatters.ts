@@ -1,3 +1,5 @@
+import { LOCALE } from "./brand-config";
+
 // Price formatting
 export function formatPrice(price: number, currency: string = " ₮"): string {
   return `${price.toLocaleString("mn-MN")}${currency}`;
@@ -52,9 +54,9 @@ export function formatRelativeTime(date: string | Date): string {
   return formatDate(date);
 }
 
-// Strip 976 country code prefix from Mongolian phone numbers
+// Strip Mongolian country-code prefix from a phone string.
 export function stripPhonePrefix(phone: string): string {
-  return phone.replace(/^\+?976/, "");
+  return phone.replace(LOCALE.phoneRegex, "");
 }
 
 // Phone number formatting
