@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { log } from "@/lib/utils/logger";
 import type { Article } from "@/types/database";
 
 export const articleKeys = {
@@ -22,7 +23,7 @@ export async function getArticles(): Promise<Article[]> {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("Error fetching articles:", error.message);
+    log.error("articles_fetch_failed", { message: error.message });
     return [];
   }
 
@@ -40,7 +41,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
     .single();
 
   if (error) {
-    console.error("Error fetching article:", error.message);
+    log.error("article_fetch_failed", { message: error.message });
     return null;
   }
 

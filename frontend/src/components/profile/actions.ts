@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { log } from "@/lib/utils/logger";
 
 interface UnlinkIdentityPayload {
   provider: string;
@@ -75,7 +76,7 @@ export async function deleteUnpaidOrder(
     });
 
     if (error) {
-      console.error("[deleteUnpaidOrder] RPC error:", error);
+      log.error("delete_unpaid_order_rpc_error", error);
       return { success: false, error: friendlyOrderDeleteError(error.message) };
     }
 
@@ -103,7 +104,7 @@ export async function deleteUnpaidOrder(
 
     return { success: true };
   } catch (err) {
-    console.error("[deleteUnpaidOrder] error:", err);
+    log.error("delete_unpaid_order_unexpected_error", err);
     const raw = err instanceof Error ? err.message : null;
     return { success: false, error: friendlyOrderDeleteError(raw) };
   }
@@ -159,12 +160,12 @@ export async function activatePoints(): Promise<
       });
 
     if (bonusError) {
-      console.error("Welcome bonus insert error:", bonusError);
+      log.error("welcome_bonus_insert_failed", bonusError);
     }
 
     return { success: true };
   } catch (err) {
-    console.error("Activate points error:", err);
+    log.error("activate_points_failed", err);
     return {
       success: false,
       error: err instanceof Error ? err.message : "Failed to activate points",
@@ -212,13 +213,13 @@ export async function unlinkIdentity(
     });
 
     if (error) {
-      console.error("Unlink identity error:", error.message);
+      log.error("unlink_identity_rpc_failed", { message: error.message });
       return { success: false, error: error.message };
     }
 
     return { success: true };
   } catch (err) {
-    console.error("Unlink identity error:", err);
+    log.error("unlink_identity_unexpected_error", err);
     return {
       success: false,
       error: err instanceof Error ? err.message : "Failed to unlink identity",

@@ -1,6 +1,7 @@
 "use server";
 
 import { BRAND } from "@/lib/utils/brand-config";
+import { log } from "@/lib/utils/logger";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createInvoice } from "@/lib/qpay/client";
@@ -87,7 +88,7 @@ export async function createCheckoutInvoice(
       .single();
 
     if (orderError || !order) {
-      console.error("[createCheckoutInvoice] Order creation error:", orderError);
+      log.error("checkout_invoice_order_creation_failed", orderError);
       return { success: false, error: "Захиалга үүсгэхэд алдаа гарлаа" };
     }
 
@@ -106,7 +107,7 @@ export async function createCheckoutInvoice(
       .insert(orderItems);
 
     if (itemsError) {
-      console.error("[createCheckoutInvoice] Order items error:", itemsError);
+      log.error("checkout_invoice_items_insert_failed", itemsError);
       await admin.from("orders").delete().eq("id", order.id);
       return { success: false, error: "Захиалгын бүтээгдэхүүн хадгалахад алдаа гарлаа" };
     }
@@ -136,7 +137,7 @@ export async function createCheckoutInvoice(
         pending_order_data: { items: payload.items, address: payload.address ?? null } as unknown as Json,
       });
     if (insertError) {
-      console.error("[createCheckoutInvoice] Invoice insert error:", insertError);
+      log.error("checkout_invoice_insert_failed", insertError);
       await admin.from("orders").delete().eq("id", order.id);
       return { success: false, error: "Төлбөрийн нэхэмжлэл үүсгэхэд алдаа гарлаа. Дахин оролдоно уу." };
     }
@@ -146,7 +147,7 @@ export async function createCheckoutInvoice(
       data: { invoice, orderNumber, orderId: order.id },
     };
   } catch (err) {
-    console.error("[createCheckoutInvoice] Error:", err);
+    log.error("checkout_invoice_unexpected_error", err);
     return {
       success: false,
       error: "Нэхэмжлэл үүсгэхэд алдаа гарлаа",
@@ -217,7 +218,7 @@ export async function createLendMNCheckoutInvoice(
       .single();
 
     if (orderError || !order) {
-      console.error("[createLendMNCheckoutInvoice] Order creation error:", orderError);
+      log.error("lendmn_invoice_order_creation_failed", orderError);
       return { success: false, error: "Захиалга үүсгэхэд алдаа гарлаа" };
     }
 
@@ -235,7 +236,7 @@ export async function createLendMNCheckoutInvoice(
       .insert(orderItems);
 
     if (itemsError) {
-      console.error("[createLendMNCheckoutInvoice] Order items error:", itemsError);
+      log.error("lendmn_invoice_items_insert_failed", itemsError);
       await admin.from("orders").delete().eq("id", order.id);
       return { success: false, error: "Захиалгын бүтээгдэхүүн хадгалахад алдаа гарлаа" };
     }
@@ -262,7 +263,7 @@ export async function createLendMNCheckoutInvoice(
       },
     };
   } catch (err) {
-    console.error("[createLendMNCheckoutInvoice] Error:", err);
+    log.error("lendmn_invoice_unexpected_error", err);
     return {
       success: false,
       error: "LendMN нэхэмжлэл үүсгэхэд алдаа гарлаа",
@@ -339,7 +340,7 @@ export async function createStorePayCheckoutInvoice(
       .single();
 
     if (orderError || !order) {
-      console.error("[createStorePayCheckoutInvoice] Order creation error:", orderError);
+      log.error("storepay_invoice_order_creation_failed", orderError);
       return { success: false, error: "Захиалга үүсгэхэд алдаа гарлаа" };
     }
 
@@ -357,7 +358,7 @@ export async function createStorePayCheckoutInvoice(
       .insert(orderItems);
 
     if (itemsError) {
-      console.error("[createStorePayCheckoutInvoice] Order items error:", itemsError);
+      log.error("storepay_invoice_items_insert_failed", itemsError);
       await admin.from("orders").delete().eq("id", order.id);
       return { success: false, error: "Захиалгын бүтээгдэхүүн хадгалахад алдаа гарлаа" };
     }
@@ -385,7 +386,7 @@ export async function createStorePayCheckoutInvoice(
       },
     };
   } catch (err) {
-    console.error("[createStorePayCheckoutInvoice] Error:", err);
+    log.error("storepay_invoice_unexpected_error", err);
     const msg = err instanceof Error ? err.message : "";
     let userError: string;
 
@@ -561,7 +562,7 @@ export async function createInvoiceForExistingOrder(
       },
     };
   } catch (err) {
-    console.error("[createInvoiceForExistingOrder] Error:", err);
+    log.error("retry_invoice_unexpected_error", err);
     return {
       success: false,
       error: "Нэхэмжлэл үүсгэхэд алдаа гарлаа",

@@ -7,6 +7,7 @@ import { resolvePaymentWallet } from "@/lib/qpay/utils";
 import { getLendMNInvoiceStatus } from "@/lib/lendmn/client";
 import { getStorePayInvoiceStatus } from "@/lib/storepay/client";
 import { logPaymentEvent } from "@/lib/payment-logger";
+import { log } from "@/lib/utils/logger";
 
 export async function checkPaymentStatus(
   invoiceId: string,
@@ -64,7 +65,7 @@ export async function checkPaymentStatus(
       return { success: true, paid: false };
     } catch (err) {
       const rawMsg = err instanceof Error ? err.message : "unknown";
-      console.error("[checkPayment] LendMN check error:", rawMsg);
+      log.error("payment_check_lendmn_error", { message: rawMsg });
       logPaymentEvent({ invoiceId, provider: "lendmn", event: "poll_check_error", message: rawMsg });
       return { success: false, error: "LendMN төлбөр шалгахад алдаа гарлаа" };
     }
@@ -99,11 +100,11 @@ export async function checkPaymentStatus(
               p_invoice_id: invoiceId,
             });
             if (rpcErr) {
-              console.error("[checkPayment] StorePay RPC error:", rpcErr, { invoiceId });
+              log.error("payment_check_storepay_rpc_error", { error: rpcErr, invoiceId });
               logPaymentEvent({ invoiceId, provider: "storepay", event: "poll_rpc_error", message: rpcErr.message });
             }
           } catch (e) {
-            console.error("[checkPayment] StorePay DB/RPC error:", e, { invoiceId });
+            log.error("payment_check_storepay_db_rpc_error", { error: e, invoiceId });
             logPaymentEvent({ invoiceId, provider: "storepay", event: "poll_db_rpc_error", message: e instanceof Error ? e.message : String(e) });
           }
           return { success: true, paid: true };
@@ -113,7 +114,7 @@ export async function checkPaymentStatus(
       return { success: true, paid: false };
     } catch (err) {
       const rawMsg = err instanceof Error ? err.message : "unknown";
-      console.error("[checkPayment] StorePay check error:", rawMsg);
+      log.error("payment_check_storepay_error", { message: rawMsg });
       logPaymentEvent({ invoiceId, provider: "storepay", event: "poll_check_error", message: rawMsg });
       return { success: false, error: "StorePay төлбөр шалгахад алдаа гарлаа" };
     }
@@ -154,7 +155,7 @@ export async function checkPaymentStatus(
     return { success: true, paid: false };
   } catch (err) {
     const rawMsg = err instanceof Error ? err.message : "unknown";
-    console.error("[checkPayment] QPay check error:", rawMsg);
+    log.error("payment_check_qpay_error", { message: rawMsg });
     logPaymentEvent({ invoiceId, provider: "qpay", event: "poll_check_error", message: rawMsg });
     return {
       success: false,

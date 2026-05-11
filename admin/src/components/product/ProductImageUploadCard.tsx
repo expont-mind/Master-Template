@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { compressImages } from "@/lib/image-compression";
+import { log } from "@/lib/observability/log";
 
 async function uploadFiles(files: File[]): Promise<string[]> {
   const formData = new FormData();
@@ -56,7 +57,7 @@ export function ProductImageUploadCard({
       const urls = await uploadFiles(compressed);
       setImages([...images, ...urls]);
     } catch (err) {
-      console.error("Upload failed:", err);
+      log.error("product_image_upload_failed", err);
     } finally {
       setLoadingState(null);
     }

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { log } from "@/lib/utils/logger";
 import type { ProductListItem } from "@/types/product";
 
 // Helper to fetch and attach product images from product_images table (with batching)
@@ -89,7 +90,7 @@ export async function getBrands(): Promise<Brand[]> {
     .order("name", { ascending: true });
 
   if (error) {
-    console.error("Error fetching brands:", error);
+    log.error("brands_fetch_failed", error);
     return [];
   }
 
@@ -106,7 +107,7 @@ export async function getBrandBySlug(slug: string): Promise<Brand | null> {
     .single();
 
   if (error) {
-    console.error("Error fetching brand:", error);
+    log.error("brand_fetch_failed", error);
     return null;
   }
 
@@ -184,7 +185,7 @@ export async function getProductsByBrand(
   const { data, count, error } = await query;
 
   if (error) {
-    console.error("Error fetching brand products:", error);
+    log.error("brand_products_fetch_failed", error);
     return { data: [], total: 0, hasMore: false, nextOffset: null };
   }
 

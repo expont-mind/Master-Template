@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { log } from "@/lib/utils/logger";
 import type { Product } from "@/types/database";
 import type { CartItem, ProductVariant } from "@/types/product";
 
@@ -69,7 +70,7 @@ async function upsertCartItem(
       .update({ quantity: row.quantity })
       .eq("id", existing.id);
     if (error) {
-      console.error("[upsertCartItem] update error:", error.message);
+      log.error("cart_item_update_failed", { message: error.message });
       return false;
     }
   } else {
@@ -89,11 +90,11 @@ async function upsertCartItem(
         }
         const { error: retryError } = await retryQuery;
         if (retryError) {
-          console.error("[upsertCartItem] retry update error:", retryError.message);
+          log.error("cart_item_retry_update_failed", { message: retryError.message });
           return false;
         }
       } else {
-        console.error("[upsertCartItem] insert error:", error.message);
+        log.error("cart_item_insert_failed", { message: error.message });
         return false;
       }
     }

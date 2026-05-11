@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "@/lib/admin-api";
+import { log } from "@/lib/observability/log";
 import { OrderDetails } from "@/components/order/types";
 import type { DeliveryStatus, PaymentStatus } from "@/types/database";
 import { queryKeys } from "@/lib/query-keys";
@@ -186,7 +187,7 @@ export function useOrderEdit(id: string) {
           await recordOrderPointsAndCoupon(order!);
         }
       } catch (pointsErr) {
-        console.error("Stock/points/coupon error:", pointsErr);
+        log.error("order_stock_points_coupon_error", pointsErr);
         setError(
           `Төлөв хадгалагдсан. Нөөц/оноо/купон бүртгэлд алдаа: ${translateServerError(pointsErr instanceof Error ? pointsErr.message : "")}`,
         );

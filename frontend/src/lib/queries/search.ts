@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_PAGE_SIZE } from "@/lib/utils/constants";
+import { log } from "@/lib/utils/logger";
 
 // Helper to fetch and attach product images from product_images table (with batching)
 async function attachProductImages<T extends { id: string; images: string[] }>(
@@ -253,7 +254,11 @@ export async function getTrendingSearches(
   });
 
   if (error) {
-    console.error("Failed to fetch trending searches:", error.message, error.code, error.details);
+    log.error("trending_searches_fetch_failed", {
+      message: error.message,
+      code: error.code,
+      details: error.details,
+    });
     return [];
   }
 

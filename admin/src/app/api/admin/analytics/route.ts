@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { log } from "@/lib/observability/log";
 
 const VERCEL_API_BASE = "https://vercel.com/api/web-analytics";
 
@@ -33,7 +34,10 @@ async function fetchVercelTimeseries(
   });
 
   if (!response.ok) {
-    console.error("Vercel timeseries API error:", response.status, await response.text());
+    log.error("vercel_timeseries_api_error", {
+      status: response.status,
+      body: await response.text(),
+    });
     return [];
   }
 
@@ -58,7 +62,11 @@ async function fetchVercelStats(
   });
 
   if (!response.ok) {
-    console.error(`Vercel API error for ${type}:`, response.status, await response.text());
+    log.error("vercel_api_error", {
+      type,
+      status: response.status,
+      body: await response.text(),
+    });
     return [];
   }
 
@@ -152,7 +160,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Analytics API error:", error);
+    log.error("analytics_api_error", error);
     return NextResponse.json(
       { error: "Failed to fetch analytics" },
       { status: 500 }

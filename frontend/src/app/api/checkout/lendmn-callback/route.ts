@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getLendMNInvoiceStatus } from "@/lib/lendmn/client";
 import { logPaymentEvent } from "@/lib/payment-logger";
+import { log } from "@/lib/utils/logger";
 import type { Database } from "@/types/database";
 import {
   callerIp,
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (findError || !invoice) {
-      console.error("[lendmn-callback] Invoice not found:", { invoiceNumber, findError });
+      log.error("lendmn_callback_invoice_not_found", { invoiceNumber, findError });
       await logPaymentEvent({
         provider: "lendmn",
         event: "invoice_not_found",
@@ -128,7 +129,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (rpcError) {
-        console.error("[lendmn-callback] RPC retry error:", rpcError, { invoiceNumber });
+        log.error("lendmn_callback_rpc_retry_error", { error: rpcError, invoiceNumber });
         await logPaymentEvent({
           invoiceId: invoice.id,
           orderId: invoice.order_id,
@@ -141,7 +142,7 @@ export async function POST(req: NextRequest) {
 
       const rpcResult = rpcData as { success: boolean; error?: string } | null;
       if (rpcResult && !rpcResult.success) {
-        console.error("[lendmn-callback] RPC retry failure:", rpcResult.error, { invoiceNumber });
+        log.error("lendmn_callback_rpc_retry_failure", { error: rpcResult.error, invoiceNumber });
         await logPaymentEvent({
           invoiceId: invoice.id,
           orderId: invoice.order_id,
@@ -174,7 +175,7 @@ export async function POST(req: NextRequest) {
       .eq("id", invoice.id);
 
     if (updateError) {
-      console.error("[lendmn-callback] Invoice update error:", updateError, { invoiceNumber });
+      log.error("lendmn_callback_invoice_update_failed", { error: updateError, invoiceNumber });
       await logPaymentEvent({
         invoiceId: invoice.id,
         provider: "lendmn",
@@ -190,7 +191,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (rpcError) {
-      console.error("[lendmn-callback] RPC error:", rpcError, { invoiceNumber });
+      log.error("lendmn_callback_rpc_error", { error: rpcError, invoiceNumber });
       await logPaymentEvent({
         invoiceId: invoice.id,
         orderId: invoice.order_id,
@@ -203,7 +204,7 @@ export async function POST(req: NextRequest) {
 
     const rpcResult2 = rpcData2 as { success: boolean; error?: string } | null;
     if (rpcResult2 && !rpcResult2.success) {
-      console.error("[lendmn-callback] RPC failure:", rpcResult2.error, { invoiceNumber });
+      log.error("lendmn_callback_rpc_failure", { error: rpcResult2.error, invoiceNumber });
       await logPaymentEvent({
         invoiceId: invoice.id,
         orderId: invoice.order_id,
@@ -225,7 +226,7 @@ export async function POST(req: NextRequest) {
 
     return ok();
   } catch (err) {
-    console.error("[lendmn-callback] Unhandled error:", err);
+    log.error("lendmn_callback_unhandled_error", err);
     await logPaymentEvent({
       provider: "lendmn",
       event: "callback_unhandled_error",

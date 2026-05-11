@@ -3,6 +3,7 @@ import { checkPayment } from "@/lib/qpay/client";
 import { resolvePaymentWallet } from "@/lib/qpay/utils";
 import { createClient } from "@supabase/supabase-js";
 import { logPaymentEvent } from "@/lib/payment-logger";
+import { log } from "@/lib/utils/logger";
 import type { Database } from "@/types/database";
 import {
   callerIp,
@@ -86,7 +87,7 @@ export async function POST(req: NextRequest) {
         .eq("id", invoiceId);
 
       if (updateError) {
-        console.error("[qpay-callback] Invoice update error:", updateError, { invoiceId });
+        log.error("qpay_callback_invoice_update_failed", { error: updateError, invoiceId });
         await logPaymentEvent({
           invoiceId,
           provider: "qpay",
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (rpcError) {
-        console.error("[qpay-callback] RPC error:", rpcError, { invoiceId });
+        log.error("qpay_callback_rpc_error", { error: rpcError, invoiceId });
         await logPaymentEvent({
           invoiceId,
           provider: "qpay",
@@ -114,7 +115,7 @@ export async function POST(req: NextRequest) {
 
       const rpcResult = rpcData as { success: boolean; error?: string } | null;
       if (rpcResult && !rpcResult.success) {
-        console.error("[qpay-callback] RPC failure:", rpcResult.error, { invoiceId });
+        log.error("qpay_callback_rpc_failure", { error: rpcResult.error, invoiceId });
         await logPaymentEvent({
           invoiceId,
           provider: "qpay",
@@ -135,7 +136,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("[qpay-callback] Unhandled error:", err);
+    log.error("qpay_callback_unhandled_error", err);
     await logPaymentEvent({
       provider: "qpay",
       event: "callback_unhandled_error",

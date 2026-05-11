@@ -1,5 +1,6 @@
 // Server-only: calls StorePay API directly (no Edge Function needed)
 import { createAdminClient } from "@/lib/supabase/admin";
+import { log } from "@/lib/utils/logger";
 import type { Json } from "@/types/database";
 
 const STOREPAY_API_URL = process.env.STOREPAY_API_URL!;
@@ -173,7 +174,7 @@ export async function createStorePayInvoice(
     });
 
   if (insertError) {
-    console.error("[storepay] DB insert error:", insertError.message);
+    log.error("storepay_invoice_db_insert_failed", { message: insertError.message });
     throw new Error(`Failed to save invoice to database: ${insertError.message}`);
   }
 

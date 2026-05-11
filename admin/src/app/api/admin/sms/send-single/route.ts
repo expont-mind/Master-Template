@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { activeSmsProvider, sendSms } from "@/lib/sms";
 import { LOCALE } from "@/lib/utils/brand-config";
+import { log } from "@/lib/observability/log";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Single SMS send error:", error);
+    log.error("sms_send_single_error", error);
     return NextResponse.json(
       {
         error:

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { adminApi } from "@/lib/admin-api";
+import { log } from "@/lib/observability/log";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -48,7 +49,7 @@ export function CategoryForm() {
         });
         setCategories(data);
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        log.error("category_form_fetch_categories_failed", error);
       }
     };
     fetchCategories();

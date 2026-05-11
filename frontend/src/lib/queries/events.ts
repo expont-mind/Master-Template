@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { log } from "@/lib/utils/logger";
 import type { Event } from "@/types/database";
 
 export const eventKeys = {
@@ -24,7 +25,7 @@ export async function getEvents(): Promise<Event[]> {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("Error fetching events:", error.message);
+    log.error("events_fetch_failed", { message: error.message });
     return [];
   }
 
@@ -41,7 +42,7 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
     .single();
 
   if (error) {
-    console.error("Error fetching event:", error.message);
+    log.error("event_fetch_failed", { message: error.message });
     return null;
   }
 

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { log } from "@/lib/utils/logger";
 
 // ISR: regenerate the home page at most once per minute. The Redis caches
 // below shorten DB pressure further; revalidate gives Next.js permission
@@ -28,12 +29,12 @@ async function safeQuery<T>(
   try {
     const { data, error } = await queryFn();
     if (error) {
-      console.error("[Home] Query error:", error);
+      log.error("home_query_error", error);
       return fallback;
     }
     return data ?? fallback;
   } catch (err) {
-    console.error("[Home] Unexpected error:", err);
+    log.error("home_unexpected_error", err);
     return fallback;
   }
 }

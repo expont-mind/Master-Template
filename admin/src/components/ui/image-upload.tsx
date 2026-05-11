@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { compressImage, compressImages } from "@/lib/image-compression";
+import { log } from "@/lib/observability/log";
 
 async function uploadFiles(files: File[]): Promise<string[]> {
   const formData = new FormData();
@@ -63,7 +64,7 @@ export function ImageUpload({
       const [url] = await uploadFiles([compressed]);
       onChange(url);
     } catch (err) {
-      console.error("Upload failed:", err);
+      log.error("image_upload_failed", err);
     } finally {
       setLoadingState(null);
     }
@@ -221,7 +222,7 @@ export function MultiImageUpload({
       const urls = await uploadFiles(compressed);
       onChange([...values, ...urls]);
     } catch (err) {
-      console.error("Upload failed:", err);
+      log.error("image_upload_failed", err);
     } finally {
       setLoadingState(null);
     }

@@ -5,6 +5,7 @@
 import type { User } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { DELIVERY_ZONES_CONFIG } from "@/lib/utils/brand-config";
+import { log } from "@/lib/utils/logger";
 import type { OrderItemPayload } from "./_shared";
 
 type AdminClient = ReturnType<typeof createAdminClient>;
@@ -175,7 +176,7 @@ export async function recordCouponUsage(
 
     if (coupon) {
       if (coupon.usage_limit && (coupon.usage_count ?? 0) >= coupon.usage_limit) {
-        console.warn("[recordCouponUsage] Global usage limit reached");
+        log.warn("coupon_usage_global_limit_reached", { couponId });
         return;
       }
 
@@ -187,7 +188,7 @@ export async function recordCouponUsage(
         .eq("user_id", userId);
 
       if ((count ?? 0) >= perUserLimit) {
-        console.warn("[recordCouponUsage] Per-user usage limit reached");
+        log.warn("coupon_usage_per_user_limit_reached", { couponId, userId });
         return;
       }
     }
@@ -206,7 +207,7 @@ export async function recordCouponUsage(
         .eq("id", couponId);
     }
   } catch (err) {
-    console.error("[recordCouponUsage] Error:", err);
+    log.error("coupon_usage_record_failed", err);
   }
 }
 
@@ -235,7 +236,11 @@ export async function recordPointUsage(
     const balance = (data ?? []).reduce((sum, t) => sum + t.amount, 0);
 
     if (balance < pointsUsed) {
-      console.warn("[recordPointUsage] Insufficient point balance");
+      log.warn("point_usage_insufficient_balance", {
+        userId,
+        balance,
+        pointsUsed,
+      });
       return;
     }
 
@@ -247,7 +252,7 @@ export async function recordPointUsage(
       description: `Захиалга #${orderNumber}`,
     });
   } catch (err) {
-    console.error("[recordPointUsage] Error:", err);
+    log.error("point_usage_record_failed", err);
   }
 }
 
@@ -279,6 +284,6 @@ export async function awardPointsForOrder(
       description: `Захиалга #${orderNumber}`,
     });
   } catch (err) {
-    console.error("[awardPointsForOrder] Error:", err);
+    log.error("award_points_failed", err);
   }
 }

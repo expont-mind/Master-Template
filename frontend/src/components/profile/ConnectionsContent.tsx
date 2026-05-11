@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getAuthCallbackUrl } from "@/lib/supabase/auth-helpers";
 import { unlinkIdentity } from "./actions";
 import { useUIStore } from "@/stores/ui-store";
+import { log } from "@/lib/utils/logger";
 import type { UserIdentity, Provider } from "@supabase/supabase-js";
 
 const connectionConfig = [
@@ -112,7 +113,7 @@ export const ConnectionsContent = () => {
         );
       }
     } catch (err) {
-      console.error("Disconnect error:", err);
+      log.error("disconnect_identity_failed", err);
       addToast({
         type: "error",
         title: "Холболт салгахад алдаа гарлаа",

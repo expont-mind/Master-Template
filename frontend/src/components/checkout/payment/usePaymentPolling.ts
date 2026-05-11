@@ -6,6 +6,7 @@ import {
   createOrderAfterPayment,
 } from "@/components/checkout/actions";
 import { createClient } from "@/lib/supabase/client";
+import { log } from "@/lib/utils/logger";
 import type { QPayInvoiceData } from "@/lib/qpay/types";
 import type {
   LendMNInvoiceData,
@@ -132,7 +133,7 @@ export function usePaymentPolling({
       });
     } catch (err) {
       // Payment IS confirmed — callback will create the order server-side
-      console.error("[handlePaymentConfirmed] Error creating order:", err);
+      log.error("payment_confirmed_order_creation_failed", err);
     }
 
     setPaid(true);

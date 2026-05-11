@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/server";
+import { log } from "@/lib/observability/log";
 import { NextResponse } from "next/server";
 
 interface MigrationTarget {
@@ -37,14 +38,14 @@ async function downloadAndUpload(
       .upload(path, buffer, { contentType, upsert: false });
 
     if (error) {
-      console.error(`Upload failed for ${url}:`, error.message);
+      log.error("migrate_images_upload_failed", { url, message: error.message });
       return null;
     }
 
     const { data } = supabase.storage.from("images").getPublicUrl(path);
     return data.publicUrl;
   } catch (err) {
-    console.error(`Failed to migrate ${url}:`, err);
+    log.error("migrate_images_failed", { url, error: err });
     return null;
   }
 }
@@ -78,7 +79,7 @@ export async function POST() {
         .select(`id, ${columns.join(", ")}`);
 
       if (error) {
-        console.error(`Failed to query ${table}:`, error.message);
+        log.error("migrate_images_query_failed", { table, message: error.message });
         continue;
       }
 
@@ -132,7 +133,7 @@ export async function POST() {
               .eq("id", row.id);
 
             if (updateError) {
-              console.error(`Failed to update ${table}/${row.id}:`, updateError.message);
+              log.error("migrate_images_update_failed", { table, id: row.id, message: updateError.message });
               results[table].failed++;
             } else {
               results[table].migrated++;
@@ -144,7 +145,7 @@ export async function POST() {
 
     return NextResponse.json({ success: true, results });
   } catch (error) {
-    console.error("Migration error:", error);
+    log.error("migrate_images_unhandled_error", error);
     return NextResponse.json(
       { error: "Migration failed" },
       { status: 500 }

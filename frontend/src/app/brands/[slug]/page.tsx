@@ -7,6 +7,7 @@ import { BrandSchema, BreadcrumbSchema } from "@/components/seo/JsonLd";
 import { BASE_URL } from "@/lib/utils/constants";
 import { getCachedOrFetch, cacheKeys } from "@/lib/redis/client";
 import { BRAND } from "@/lib/utils/brand-config";
+import { log } from "@/lib/utils/logger";
 
 export const revalidate = 300;
 
@@ -46,7 +47,7 @@ async function fetchBrandForMetadata(slug: string) {
     .single();
 
   if (error) {
-    console.error("Error fetching brand:", error);
+    log.error("brand_metadata_fetch_failed", error);
     return null;
   }
 

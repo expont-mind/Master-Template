@@ -6,6 +6,7 @@ import { useScrollLock } from "@/lib/hooks/useScrollLock";
 import Image from "next/image";
 import { Cancel, StarFilled, StarNotFilled } from "../svg";
 import { createClient } from "@/lib/supabase/client";
+import { log } from "@/lib/utils/logger";
 import { useQueryClient } from "@tanstack/react-query";
 import { compressImages } from "@/lib/utils/image-compression";
 import { reviewKeys } from "@/lib/queries/reviews";
@@ -129,7 +130,7 @@ export const RatingModal = ({
         handleClose();
       }
     } catch (error) {
-      console.error("Failed to submit review:", error);
+      log.error("review_submit_failed", error);
     } finally {
       setIsSubmitting(false);
     }

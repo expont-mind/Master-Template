@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback, useId } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { log } from "@/lib/observability/log";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -573,7 +574,7 @@ function VariantRow({ variant, updateVariant }: VariantRowProps) {
         updateVariant(variant.id, "imageUrl", urls[0]);
       }
     } catch (err) {
-      console.error("Upload failed:", err);
+      log.error("option_image_upload_failed", err);
     } finally {
       setUploadingImage(false);
     }

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { checkPayment } from "@/lib/qpay/client";
 import { logPaymentEvent } from "@/lib/payment-logger";
+import { log } from "@/lib/utils/logger";
 import {
   generateOrderNumber,
   validateAddress,
@@ -95,7 +96,7 @@ export async function createFreeOrder(
       .single();
 
     if (orderError || !order) {
-      console.error("[createFreeOrder] Order creation error:", orderError);
+      log.error("free_order_creation_failed", orderError);
       return { success: false, error: "Захиалга үүсгэхэд алдаа гарлаа" };
     }
 
@@ -114,7 +115,7 @@ export async function createFreeOrder(
       .insert(orderItems);
 
     if (itemsError) {
-      console.error("[createFreeOrder] Order items error:", itemsError);
+      log.error("free_order_items_insert_failed", itemsError);
       await admin.from("orders").delete().eq("id", order.id);
       return { success: false, error: "Захиалгын бүтээгдэхүүн хадгалахад алдаа гарлаа" };
     }
@@ -127,7 +128,7 @@ export async function createFreeOrder(
         .update({ stock_decremented: true })
         .eq("id", order.id);
     } catch (err) {
-      console.error("[createFreeOrder] Stock decrement error:", err);
+      log.error("free_order_stock_decrement_failed", err);
     }
 
     if (payload.couponId && couponDiscount > 0) {
@@ -146,7 +147,7 @@ export async function createFreeOrder(
       data: { orderId: order.id, orderNumber },
     };
   } catch (err) {
-    console.error("[createFreeOrder] Error:", err);
+    log.error("free_order_unexpected_error", err);
     return {
       success: false,
       error: "Захиалга үүсгэхэд алдаа гарлаа",
@@ -207,14 +208,14 @@ export async function createOrderAfterPayment(
         );
 
         if (rpcErr) {
-          console.error("[createOrderAfterPayment] RPC error:", rpcErr);
+          log.error("order_after_payment_rpc_error", rpcErr);
           await logPaymentEvent({ invoiceId: payload.invoiceId, orderId: existingOrder.id, event: "order_confirm_rpc_error", message: rpcErr.message });
           return { success: false, error: "Захиалга баталгаажуулахад алдаа гарлаа" };
         }
 
         const rpcResult = rpcData as { success: boolean; error?: string } | null;
         if (rpcResult && !rpcResult.success) {
-          console.error("[createOrderAfterPayment] RPC failure:", rpcResult.error);
+          log.error("order_after_payment_rpc_failure", { error: rpcResult.error });
           await logPaymentEvent({ invoiceId: payload.invoiceId, orderId: existingOrder.id, event: "order_confirm_rpc_failure", message: rpcResult.error });
           return { success: false, error: "Захиалга баталгаажуулахад алдаа гарлаа" };
         }

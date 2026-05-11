@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/server";
+import { log } from "@/lib/observability/log";
 import { NextRequest, NextResponse } from "next/server";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ urls });
   } catch (error) {
-    console.error("Upload error:", error);
+    log.error("admin_upload_error", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

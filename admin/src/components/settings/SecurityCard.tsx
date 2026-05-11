@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { adminApi } from "@/lib/admin-api";
+import { log } from "@/lib/observability/log";
 import {
   Card,
   CardContent,
@@ -110,7 +111,7 @@ export default function SecurityCard() {
         setLoginEmails(emails);
       }
     } catch (error) {
-      console.error("Failed to load security data:", error);
+      log.error("security_data_load_failed", error);
       toast.error("Мэдээлэл ачаалахад алдаа гарлаа");
     } finally {
       setIsLoading(false);

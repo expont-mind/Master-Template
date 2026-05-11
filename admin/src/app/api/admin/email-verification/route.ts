@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { sendVerificationEmail } from "@/lib/email";
 import { createVerifyToken } from "@/lib/verify-token";
 import { BRAND } from "@/lib/utils/brand-config";
+import { log } from "@/lib/observability/log";
 import { NextRequest, NextResponse } from "next/server";
 
 // POST: Нэмэлт имэйл нэмэх + баталгаажуулах линк илгээх
@@ -113,7 +114,7 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error("Email verification POST error:", error);
+    log.error("email_verification_post_error", error);
     return NextResponse.json(
       { error: "Серверийн алдаа гарлаа" },
       { status: 500 },

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { log } from "@/lib/observability/log";
 import {
   Dialog,
   DialogContent,
@@ -177,7 +178,11 @@ export function MassPointShareDialog({
           successCount += batch.length;
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
-          console.error(`Batch ${i}-${i + batch.length} failed:`, msg);
+          log.error("mass_point_share_batch_failed", {
+            from: i,
+            to: i + batch.length,
+            message: msg,
+          });
           if (!firstError) firstError = msg;
           failedCount += batch.length;
         }

@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/server";
+import { log } from "@/lib/observability/log";
 import { NextRequest, NextResponse } from "next/server";
 
 // Valid tables that can be accessed via admin API
@@ -349,7 +350,7 @@ export async function GET(
     }
     return response;
   } catch (error) {
-    console.error("Admin API GET error:", error);
+    log.error("admin_api_get_error", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
@@ -383,7 +384,7 @@ export async function POST(
     const { data, error } = isArray ? await query : await query.single();
 
     if (error) {
-      console.error(`Admin API POST ${table} error:`, error);
+      log.error("admin_api_post_table_error", { table, error });
       const detail = [error.message, error.details, error.hint]
         .filter(Boolean)
         .join(" | ");
@@ -392,7 +393,7 @@ export async function POST(
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error("Admin API POST error:", error);
+    log.error("admin_api_post_error", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Internal server error" },
       { status: 500 },
@@ -448,7 +449,7 @@ export async function PATCH(
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Admin API PATCH error:", error);
+    log.error("admin_api_patch_error", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
@@ -546,7 +547,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Admin API DELETE error:", error);
+    log.error("admin_api_delete_error", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

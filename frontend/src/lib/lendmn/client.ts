@@ -1,5 +1,6 @@
 // Server-only: calls LendMN API directly (no Edge Function needed)
 import { createAdminClient } from "@/lib/supabase/admin";
+import { log } from "@/lib/utils/logger";
 import type { Json } from "@/types/database";
 
 const LENDMN_API_URL = process.env.LENDMN_API_URL!;
@@ -130,7 +131,7 @@ export async function createLendMNInvoice(
     });
 
   if (insertError) {
-    console.error("[lendmn] DB insert error:", insertError.message);
+    log.error("lendmn_invoice_db_insert_failed", { message: insertError.message });
     throw new Error(`Failed to save invoice to database: ${insertError.message}`);
   }
 

@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { LOCALE } from "@/lib/utils/brand-config";
+import { log } from "@/lib/observability/log";
 import { NextRequest, NextResponse } from "next/server";
 
 interface RecipientFilter {
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ count: count ?? 0 });
   } catch (error) {
-    console.error("SMS preview error:", error);
+    log.error("sms_preview_error", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

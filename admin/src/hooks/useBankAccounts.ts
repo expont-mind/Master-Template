@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "@/lib/admin-api";
+import { log } from "@/lib/observability/log";
 import { BankAccount, BankAccountFormData } from "@/components/bank-account/types";
 import { queryKeys } from "@/lib/query-keys";
 import { translateServerError } from "@/lib/utils/error-messages";
@@ -147,7 +148,7 @@ export function useBankAccounts() {
     try {
       await deleteMutation.mutateAsync(id);
     } catch (error) {
-      console.error("Error deleting bank account:", error);
+      log.error("bank_account_delete_failed", error);
     }
   };
 
@@ -155,7 +156,7 @@ export function useBankAccounts() {
     try {
       await toggleActiveMutation.mutateAsync({ id, isActive });
     } catch (error) {
-      console.error("Error toggling bank account status:", error);
+      log.error("bank_account_toggle_failed", error);
     }
   };
 
@@ -163,7 +164,7 @@ export function useBankAccounts() {
     try {
       await setDefaultMutation.mutateAsync(id);
     } catch (error) {
-      console.error("Error setting default bank account:", error);
+      log.error("bank_account_set_default_failed", error);
     }
   };
 

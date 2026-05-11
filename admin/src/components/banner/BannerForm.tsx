@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { log } from "@/lib/observability/log";
 import {
   Popover,
   PopoverContent,
@@ -191,7 +192,7 @@ export function BannerForm({ id }: BannerFormProps) {
       const url = await uploadFile(compressed);
       updateFormData({ image_url: url });
     } catch (err) {
-      console.error("Upload failed:", err);
+      log.error("banner_image_upload_failed", err);
     } finally {
       setDesktopLoadingState(null);
       e.target.value = "";
@@ -209,7 +210,7 @@ export function BannerForm({ id }: BannerFormProps) {
       const url = await uploadFile(compressed);
       updateFormData({ mobile_image_url: url });
     } catch (err) {
-      console.error("Upload failed:", err);
+      log.error("banner_image_upload_failed", err);
     } finally {
       setMobileLoadingState(null);
       e.target.value = "";

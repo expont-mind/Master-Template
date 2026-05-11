@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getStorePayInvoiceStatus } from "@/lib/storepay/client";
 import { logPaymentEvent } from "@/lib/payment-logger";
+import { log } from "@/lib/utils/logger";
 import type { Database } from "@/types/database";
 
 function getAdminClient() {
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
 
     return await handleCallback(loanId);
   } catch (err) {
-    console.error("[storepay-callback] Unhandled error:", err);
+    log.error("storepay_callback_unhandled_error", err);
     await logPaymentEvent({
       provider: "storepay",
       event: "callback_unhandled_error",
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     return await handleCallback(String(loanId));
   } catch (err) {
-    console.error("[storepay-callback] Unhandled error:", err);
+    log.error("storepay_callback_unhandled_error", err);
     await logPaymentEvent({
       provider: "storepay",
       event: "callback_unhandled_error",
@@ -83,7 +84,7 @@ async function handleCallback(loanId: string) {
     .single();
 
   if (findError || !invoice) {
-    console.error("[storepay-callback] Invoice not found:", { loanId, findError });
+    log.error("storepay_callback_invoice_not_found", { loanId, findError });
     await logPaymentEvent({
       provider: "storepay",
       event: "invoice_not_found",
@@ -122,7 +123,7 @@ async function handleCallback(loanId: string) {
     });
 
     if (rpcError) {
-      console.error("[storepay-callback] RPC retry error:", rpcError, { loanId });
+      log.error("storepay_callback_rpc_retry_error", { error: rpcError, loanId });
       await logPaymentEvent({
         invoiceId: invoice.id,
         orderId: invoice.order_id,
@@ -135,7 +136,7 @@ async function handleCallback(loanId: string) {
 
     const retryResult = retryRpcData as { success: boolean; error?: string } | null;
     if (retryResult && !retryResult.success) {
-      console.error("[storepay-callback] RPC retry failure:", retryResult.error, { loanId });
+      log.error("storepay_callback_rpc_retry_failure", { error: retryResult.error, loanId });
       await logPaymentEvent({
         invoiceId: invoice.id,
         orderId: invoice.order_id,
@@ -168,7 +169,7 @@ async function handleCallback(loanId: string) {
     .eq("id", invoice.id);
 
   if (updateError) {
-    console.error("[storepay-callback] Invoice update error:", updateError, { loanId });
+    log.error("storepay_callback_invoice_update_failed", { error: updateError, loanId });
     await logPaymentEvent({
       invoiceId: invoice.id,
       provider: "storepay",
@@ -184,7 +185,7 @@ async function handleCallback(loanId: string) {
   });
 
   if (rpcError2) {
-    console.error("[storepay-callback] RPC error:", rpcError2, { loanId });
+    log.error("storepay_callback_rpc_error", { error: rpcError2, loanId });
     await logPaymentEvent({
       invoiceId: invoice.id,
       orderId: invoice.order_id,
@@ -197,7 +198,7 @@ async function handleCallback(loanId: string) {
 
   const rpcResult = rpcData as { success: boolean; error?: string } | null;
   if (rpcResult && !rpcResult.success) {
-    console.error("[storepay-callback] RPC failure:", rpcResult.error, { loanId });
+    log.error("storepay_callback_rpc_failure", { error: rpcResult.error, loanId });
     await logPaymentEvent({
       invoiceId: invoice.id,
       orderId: invoice.order_id,

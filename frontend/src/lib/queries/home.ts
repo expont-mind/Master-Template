@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 import { HOME_QUERY_LIMITS } from "@/lib/utils/constants";
+import { log } from "@/lib/utils/logger";
 import type { Product } from "@/types/database";
 
 export interface PaginatedProductsResult {
@@ -111,7 +112,7 @@ export async function getBestSellingProducts(
 
   // Log the error for debugging
   if (error) {
-    console.error("[BestSellers] RPC error:", error);
+    log.error("best_sellers_rpc_error", error);
   }
 
   // Fallback to newest products if no sales data

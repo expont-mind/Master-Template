@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { redis } from "@/lib/redis/client";
+import { log } from "@/lib/utils/logger";
 
 /**
  * Shared guards for incoming third-party payment-callback routes.
@@ -43,7 +44,7 @@ export async function rateLimit(
       retryAfterSeconds: count > limit ? windowSeconds : 0,
     };
   } catch (err) {
-    console.warn("[rateLimit] Redis unavailable, failing open", err);
+    log.warn("rate_limit_redis_unavailable_fail_open", err);
     return { ok: true, remaining: limit, retryAfterSeconds: 0 };
   }
 }

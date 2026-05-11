@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { SortDropdown, FilterPanel } from "@/components/category";
 import { ChevronDownBig, SearchBig } from "@/components/svg";
 import { logSearch } from "@/lib/queries/search";
+import { log } from "@/lib/utils/logger";
 import type { ProductFilters, ProductListItem } from "@/lib/queries/search";
 import type { Product } from "@/types/database";
 
@@ -199,7 +200,9 @@ function SearchContent() {
       filters.search !== lastLoggedQuery.current
     ) {
       lastLoggedQuery.current = filters.search;
-      logSearch(filters.search, data.pages[0]?.total ?? 0).catch(console.error);
+      logSearch(filters.search, data.pages[0]?.total ?? 0).catch((err) =>
+        log.error("search_log_failed", err),
+      );
     }
   }, [isLoading, data, filters.search]);
 

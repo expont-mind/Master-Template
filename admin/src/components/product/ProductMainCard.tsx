@@ -4,6 +4,7 @@ import { useState, useId, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { log } from "@/lib/observability/log";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
@@ -561,7 +562,7 @@ function RichDescriptionEditor({
       const urls = await uploadFiles(compressed);
       onImagesChange([...images, ...urls]);
     } catch (err) {
-      console.error("Upload failed:", err);
+      log.error("product_main_image_upload_failed", err);
     } finally {
       setLoadingState(null);
       e.target.value = "";
@@ -582,7 +583,7 @@ function RichDescriptionEditor({
       const urls = await uploadFiles(compressed);
       onImagesChange([...images, ...urls]);
     } catch (err) {
-      console.error("Paste upload failed:", err);
+      log.error("product_main_paste_upload_failed", err);
     } finally {
       setLoadingState(null);
     }

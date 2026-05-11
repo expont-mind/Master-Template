@@ -2,6 +2,7 @@
 
 import { redis } from "@/lib/redis";
 import { createAdminClient } from "@/lib/supabase/server";
+import { log } from "@/lib/observability/log";
 
 // Wildcard delete via SCAN-emulating `keys()` + batched `del()`. Upstash
 // `redis.keys(pattern)` is O(N) over keyspace; safe here because the
@@ -14,7 +15,7 @@ async function deleteByPattern(pattern: string): Promise<number> {
     await redis.del(...keys);
     return keys.length;
   } catch (error) {
-    console.warn(`Redis del ${pattern} failed:`, error);
+    log.warn("redis_del_pattern_failed", { pattern, error });
     return 0;
   }
 }

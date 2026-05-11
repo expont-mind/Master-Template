@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { adminApi } from "@/lib/admin-api";
 import { Button } from "@/components/ui/button";
+import { log } from "@/lib/observability/log";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -360,7 +361,7 @@ export function Categories() {
       });
       setCategories(data);
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      log.error("categories_fetch_failed", error);
     }
     setIsLoading(false);
   };
@@ -545,7 +546,7 @@ export function Categories() {
       await deactivateCategorySubtree(deleteTarget.id);
       await fetchCategories();
     } catch (error) {
-      console.error("Error deactivating category:", error);
+      log.error("category_deactivate_failed", error);
     }
     setIsSaving(false);
     setDeleteTarget(null);
@@ -609,7 +610,7 @@ export function Categories() {
         )
       );
     } catch (error) {
-      console.error("Error updating sort order:", error);
+      log.error("category_sort_order_update_failed", error);
       await fetchCategories();
     }
   };

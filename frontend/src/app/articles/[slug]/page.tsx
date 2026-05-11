@@ -7,6 +7,7 @@ import { BreadcrumbSchema } from "@/components/seo/JsonLd";
 import { getCachedOrFetch, cacheKeys } from "@/lib/redis/client";
 import type { Article } from "@/types/database";
 import { BRAND } from "@/lib/utils/brand-config";
+import { log } from "@/lib/utils/logger";
 
 export const revalidate = 300;
 
@@ -77,7 +78,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const article = await getArticle(slug);
 
   if (!article) {
-    console.error("[Article] Not found:", slug);
+    log.error("article_not_found", { slug });
     notFound();
   }
 

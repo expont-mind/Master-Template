@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/server";
 import { sendOtpEmail } from "@/lib/email";
+import { log } from "@/lib/observability/log";
 import { NextRequest, NextResponse } from "next/server";
 
 const SECRET = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ otpToken });
   } catch (error) {
-    console.error("Login OTP POST error:", error);
+    log.error("login_otp_post_error", error);
     return NextResponse.json(
       { error: "Код илгээхэд алдаа гарлаа" },
       { status: 500 },
@@ -165,7 +166,7 @@ export async function PATCH(request: NextRequest) {
       });
 
     if (linkError || !linkData?.properties?.hashed_token) {
-      console.error("Generate link error:", linkError);
+      log.error("login_otp_generate_link_error", linkError);
       return NextResponse.json(
         { error: "Session үүсгэхэд алдаа гарлаа" },
         { status: 500 },
@@ -176,7 +177,7 @@ export async function PATCH(request: NextRequest) {
       token_hash: linkData.properties.hashed_token,
     });
   } catch (error) {
-    console.error("Login OTP PATCH error:", error);
+    log.error("login_otp_patch_error", error);
     return NextResponse.json(
       { error: "Серверийн алдаа" },
       { status: 500 },

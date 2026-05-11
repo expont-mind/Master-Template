@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/server";
+import { log } from "@/lib/observability/log";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
       });
 
     if (linkError || !linkData?.properties?.hashed_token) {
-      console.error("Generate link error:", linkError);
+      log.error("direct_login_generate_link_error", linkError);
       return NextResponse.json(
         { error: "Нэвтрэхэд алдаа гарлаа" },
         { status: 500 },
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
       token_hash: linkData.properties.hashed_token,
     });
   } catch (error) {
-    console.error("Direct login error:", error);
+    log.error("direct_login_error", error);
     return NextResponse.json(
       { error: "Серверийн алдаа" },
       { status: 500 },

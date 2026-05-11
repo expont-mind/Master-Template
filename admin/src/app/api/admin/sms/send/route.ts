@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { activeSmsProvider, sendSms } from "@/lib/sms";
 import { LOCALE } from "@/lib/utils/brand-config";
+import { log } from "@/lib/observability/log";
 import { NextRequest, NextResponse } from "next/server";
 
 interface RecipientFilter {
@@ -202,7 +203,7 @@ export async function POST(request: NextRequest) {
               sent_at: result.success ? new Date().toISOString() : null,
             } as never);
           } catch (logErr) {
-            console.error("sms_logs insert error:", logErr);
+            log.error("sms_logs_insert_error", logErr);
           }
         }
       }),
@@ -231,7 +232,7 @@ export async function POST(request: NextRequest) {
       error: failedCount > 0 ? firstError : undefined,
     });
   } catch (error) {
-    console.error("SMS send error:", error);
+    log.error("sms_send_error", error);
 
     // Ensure the campaign doesn't stay stuck in "sending" forever
     try {

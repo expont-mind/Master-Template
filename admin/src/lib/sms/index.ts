@@ -1,5 +1,6 @@
 import { sendSkytelSms } from "./skytel";
 import { sendCallproSms, type SmsResult } from "./callpro";
+import { log } from "@/lib/observability/log";
 
 export type { SmsResult } from "./callpro";
 
@@ -23,13 +24,18 @@ export async function sendSms(
   // Single line per send so silent failures are visible in Vercel logs.
   // On success: provider + messageId. On failure: provider + error + raw body.
   if (result.success) {
-    console.log(
-      `[sms] ${provider} ok phone=${phone} messageId=${result.messageId ?? "-"}`,
-    );
+    log.info("sms_send_ok", {
+      provider,
+      phone,
+      messageId: result.messageId ?? null,
+    });
   } else {
-    console.error(
-      `[sms] ${provider} fail phone=${phone} error=${result.error} raw=${result.rawResponse ?? "-"}`,
-    );
+    log.error("sms_send_failed", {
+      provider,
+      phone,
+      error: result.error,
+      raw: result.rawResponse ?? null,
+    });
   }
   return result;
 }

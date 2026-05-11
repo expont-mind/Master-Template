@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { saveContact } from "@/components/checkout/actions";
+import { log } from "@/lib/utils/logger";
 
 export interface SavedAddress {
   name: string;
@@ -215,12 +216,12 @@ export function useCheckout() {
       try {
         const result = await saveContact(contact);
         if (!result.success) {
-          console.error("Contact save failed:", result.error);
+          log.error("contact_save_failed", { error: result.error });
           return false;
         }
         return true;
       } catch (err) {
-        console.error("Checkout sync error:", err);
+        log.error("checkout_sync_unexpected_error", err);
         return false;
       } finally {
         setSyncing(false);

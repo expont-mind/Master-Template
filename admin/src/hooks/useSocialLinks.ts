@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "@/lib/admin-api";
+import { log } from "@/lib/observability/log";
 import { SocialLink } from "@/components/social-link/types";
 import { getPlatformData } from "@/components/social-link/platform-options";
 import { queryKeys } from "@/lib/query-keys";
@@ -169,7 +170,7 @@ export function useSocialLinks() {
       });
       cancelEdit();
     } catch (error) {
-      console.error("Error updating social link:", error);
+      log.error("social_link_update_failed", error);
     }
   };
 
@@ -201,7 +202,7 @@ export function useSocialLinks() {
       });
       cancelAdding();
     } catch (error) {
-      console.error("Error creating social link:", error);
+      log.error("social_link_create_failed", error);
     }
   };
 
@@ -212,7 +213,7 @@ export function useSocialLinks() {
     try {
       await deleteMutation.mutateAsync(deleteTarget.id);
     } catch (error) {
-      console.error("Error deleting social link:", error);
+      log.error("social_link_delete_failed", error);
     }
     setDeleteTarget(null);
   };

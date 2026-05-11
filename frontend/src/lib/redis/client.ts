@@ -1,4 +1,5 @@
 import { Redis } from "@upstash/redis";
+import { log } from "@/lib/utils/logger";
 
 // Redis client singleton
 export const redis = new Redis({
@@ -18,7 +19,7 @@ export async function getCachedOrFetch<T>(
       return cached;
     }
   } catch (error) {
-    console.warn("Redis cache miss or error:", error);
+    log.warn("redis_cache_miss_or_error", error);
   }
 
   const data = await fetcher();
@@ -26,7 +27,7 @@ export async function getCachedOrFetch<T>(
   try {
     await redis.set(key, data, { ex: ttlSeconds });
   } catch (error) {
-    console.warn("Redis cache set error:", error);
+    log.warn("redis_cache_set_failed", error);
   }
 
   return data;
@@ -40,7 +41,7 @@ export async function invalidateCache(pattern: string): Promise<void> {
       await redis.del(...keys);
     }
   } catch (error) {
-    console.warn("Redis cache invalidation error:", error);
+    log.warn("redis_cache_invalidation_failed", error);
   }
 }
 

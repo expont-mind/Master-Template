@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { CartItem, ProductVariant } from "@/types/product";
 import type { Product } from "@/types/database";
+import { log } from "@/lib/utils/logger";
 import {
   addToServerCart,
   removeFromServerCart,
@@ -190,10 +191,7 @@ export const useCartStore = create<CartStore>()(
                 await removeFromServerCart(userId, item.product.id, oldVariantId);
                 await addToServerCart(userId, item.product.id, newVariant.id, mergedQty);
               } catch (err) {
-                console.error(
-                  "[cart] updateVariant merge sync failed; rolling back local state",
-                  err,
-                );
+                log.error("cart_update_variant_merge_sync_failed", err);
                 set({ items: previousItems });
               }
             })();
@@ -213,10 +211,7 @@ export const useCartStore = create<CartStore>()(
                 await removeFromServerCart(userId, item.product.id, oldVariantId);
                 await addToServerCart(userId, item.product.id, newVariant.id, item.quantity);
               } catch (err) {
-                console.error(
-                  "[cart] updateVariant in-place sync failed; rolling back local state",
-                  err,
-                );
+                log.error("cart_update_variant_in_place_sync_failed", err);
                 set({ items: previousItems });
               }
             })();

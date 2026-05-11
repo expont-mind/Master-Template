@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "@/lib/admin-api";
+import { log } from "@/lib/observability/log";
 import { Policy, policyTypes } from "@/components/policy/types";
 import { queryKeys } from "@/lib/query-keys";
 
@@ -72,7 +73,7 @@ export function usePolicies() {
     try {
       await savePolicyMutation.mutateAsync({ type, content });
     } catch (error) {
-      console.error("Error saving policy:", error);
+      log.error("policy_save_failed", error);
     }
     setSavingType(null);
   };
@@ -81,7 +82,7 @@ export function usePolicies() {
     try {
       await toggleActiveMutation.mutateAsync(type);
     } catch (error) {
-      console.error("Error toggling policy:", error);
+      log.error("policy_toggle_failed", error);
     }
   };
 

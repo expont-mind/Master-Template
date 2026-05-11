@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "@/lib/admin-api";
+import { log } from "@/lib/observability/log";
 import type { Product, ProductVariant, VariantForm, VariantDetail, Attribute, Brand, Category, OptionGroup, GeneratedVariant } from "@/components/product/types";
 import { translateServerError } from "@/lib/utils/error-messages";
 
@@ -339,7 +340,7 @@ export function useProductEdit(id: string, duplicateId?: string) {
           richImgs = Array.isArray(richData[0].images) ? richData[0].images : [];
         }
       } catch (err) {
-        console.error("Failed to fetch rich descriptions:", err);
+        log.error("rich_descriptions_fetch_failed", err);
       }
 
       return { product: data, productDetailsData, richDesc, richImgs };

@@ -7,6 +7,7 @@ import { BreadcrumbSchema } from "@/components/seo/JsonLd";
 import { getCachedOrFetch, cacheKeys } from "@/lib/redis/client";
 import type { Event } from "@/types/database";
 import { BRAND } from "@/lib/utils/brand-config";
+import { log } from "@/lib/utils/logger";
 
 export const revalidate = 300;
 
@@ -76,7 +77,7 @@ export default async function EventPage({ params }: EventPageProps) {
   const event = await getEvent(slug);
 
   if (!event) {
-    console.error("[Event] Not found:", slug);
+    log.error("event_not_found", { slug });
     notFound();
   }
 

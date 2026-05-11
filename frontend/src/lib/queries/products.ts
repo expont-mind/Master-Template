@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 import { CACHE_TTL } from "@/lib/utils/constants";
+import { log } from "@/lib/utils/logger";
 import type { ProductFilters, ProductListItem } from "@/types/product";
 import type { Product, Category } from "@/types/database";
 
@@ -78,7 +79,7 @@ export async function getProducts(
     );
 
     if (error) {
-      console.error("get_products_by_category_tree error:", error);
+      log.error("products_by_category_tree_rpc_error", error);
       return { data: [], total: 0, hasMore: false, nextOffset: null };
     }
 
