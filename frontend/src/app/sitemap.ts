@@ -28,7 +28,7 @@ async function fetchSitemapData(): Promise<SitemapData> {
         .select("slug, updated_at")
         .eq("is_active", true)
         .order("updated_at", { ascending: false }),
-      (supabase as any)
+      supabase
         .from("brands")
         .select("slug, updated_at")
         .eq("is_active", true),

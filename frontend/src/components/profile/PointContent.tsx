@@ -78,9 +78,7 @@ export const PointContent = ({ onBalanceChange }: PointContentProps) => {
       return;
     }
 
-    const db = supabase as any;
-
-    const { data: txns } = await db
+    const { data: txns } = await supabase
       .from("point_transactions")
       .select(
         "id, type, amount, description, order_id, created_at, orders(order_number)",

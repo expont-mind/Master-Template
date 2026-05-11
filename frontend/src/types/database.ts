@@ -51,6 +51,111 @@ export interface Database {
         };
         Relationships: [];
       };
+      coupons: {
+        Row: {
+          id: string;
+          code: string;
+          name: string;
+          description: string | null;
+          type: "percentage" | "fixed" | "free_shipping";
+          scope: "all" | "product" | "category" | "brand";
+          discount_value: number;
+          min_purchase_amount: number | null;
+          max_discount_amount: number | null;
+          max_applicable_qty: number | null;
+          usage_limit: number | null;
+          usage_count: number;
+          usage_limit_per_user: number | null;
+          is_active: boolean;
+          start_date: string | null;
+          end_date: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["coupons"]["Row"]> & {
+          code: string;
+          name: string;
+          discount_value: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["coupons"]["Row"]>;
+        Relationships: [];
+      };
+      coupon_products: {
+        Row: { coupon_id: string; product_id: string };
+        Insert: { coupon_id: string; product_id: string };
+        Update: Partial<{ coupon_id: string; product_id: string }>;
+        Relationships: [];
+      };
+      coupon_categories: {
+        Row: { coupon_id: string; category_id: string };
+        Insert: { coupon_id: string; category_id: string };
+        Update: Partial<{ coupon_id: string; category_id: string }>;
+        Relationships: [];
+      };
+      coupon_brands: {
+        Row: { coupon_id: string; brand_id: string };
+        Insert: { coupon_id: string; brand_id: string };
+        Update: Partial<{ coupon_id: string; brand_id: string }>;
+        Relationships: [];
+      };
+      coupon_usages: {
+        Row: {
+          id: string;
+          coupon_id: string;
+          user_id: string;
+          order_id: string | null;
+          discount_amount: number;
+          used_at: string;
+        };
+        Insert: {
+          id?: string;
+          coupon_id: string;
+          user_id: string;
+          order_id?: string | null;
+          discount_amount: number;
+          used_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["coupon_usages"]["Row"]>;
+        Relationships: [];
+      };
+      user_coupons: {
+        Row: {
+          id: string;
+          user_id: string;
+          coupon_id: string;
+          claimed_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          coupon_id: string;
+          claimed_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["user_coupons"]["Row"]>;
+        Relationships: [];
+      };
+      point_transactions: {
+        Row: {
+          id: string;
+          user_id: string;
+          order_id: string | null;
+          type: string;
+          amount: number;
+          description: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          order_id?: string | null;
+          type: string;
+          amount: number;
+          description?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["point_transactions"]["Row"]>;
+        Relationships: [];
+      };
       brands: {
         Row: {
           id: string;
@@ -603,7 +708,7 @@ export interface Database {
           rating: number;
           comment: string | null;
           images: string[] | null;
-          status: "active" | "hidden" | "flagged";
+          status: "active" | "hidden" | "flagged" | "approved";
           created_at: string;
           updated_at: string;
         };
@@ -637,11 +742,13 @@ export interface Database {
           product_id: string;
           sku: string | null;
           name: string | null;
+          description: string | null;
           price: number;
           discount_price: number | null;
           stock_quantity: number;
           is_default: boolean;
           status: string;
+          option_values: Json | null;
           created_at: string;
           updated_at: string;
         };
@@ -1155,6 +1262,47 @@ export interface Database {
       create_order_from_invoice: {
         Args: {
           p_invoice_id: string;
+        };
+        Returns: Json;
+      };
+      decrement_order_stock: {
+        Args: {
+          p_order_id: string;
+        };
+        Returns: Json;
+      };
+      get_products_by_category_tree: {
+        Args: {
+          p_slug: string;
+          p_min_price?: number | null;
+          p_max_price?: number | null;
+          p_in_stock?: boolean | null;
+          p_sort?: string;
+          p_limit?: number;
+          p_offset?: number;
+        };
+        Returns: {
+          id: string;
+          name: string;
+          slug: string;
+          price: number;
+          discount_price: number | null;
+          is_featured: boolean;
+          stock_quantity: number;
+          category_id: string;
+          total_count: number;
+        }[];
+      };
+      delete_unpaid_order: {
+        Args: {
+          p_order_id: string;
+        };
+        Returns: Json;
+      };
+      delete_user_identity: {
+        Args: {
+          p_provider: string;
+          p_user_id: string;
         };
         Returns: Json;
       };

@@ -59,8 +59,8 @@ export const FAQContent = () => {
   useEffect(() => {
     const fetchFaqs = async () => {
       const supabase = createClient();
-      const { data } = await (supabase as any).from("faqs").select("*");
-      if (data) setFaqs(data);
+      const { data } = await supabase.from("faqs").select("*");
+      if (data) setFaqs(data as FAQ[]);
       setLoading(false);
     };
     fetchFaqs();

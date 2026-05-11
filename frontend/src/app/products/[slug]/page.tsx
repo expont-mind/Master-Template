@@ -60,13 +60,13 @@ async function fetchProductForMetadata(slug: string) {
         .eq("product_id", product.id)
         .order("sort_order", { ascending: true }),
       product.brand_id
-        ? (supabase as any)
+        ? supabase
             .from("brands")
             .select("id, name, slug, logo_url")
             .eq("id", product.brand_id)
             .single()
         : Promise.resolve({ data: null }),
-      (supabase as any)
+      supabase
         .from("product_categories")
         .select("category_id, categories!inner(name, slug, is_active)")
         .eq("product_id", product.id)
@@ -76,18 +76,18 @@ async function fetchProductForMetadata(slug: string) {
         .from("reviews")
         .select("rating")
         .eq("product_id", product.id)
-        .eq("status", "approved" as any),
+        .eq("status", "approved"),
       supabase
         .from("product_variants")
         .select("id, name, sku, description, price, discount_price, stock_quantity, is_default, option_values")
         .eq("product_id", product.id)
-        .eq("status", "active" as any)
+        .eq("status", "active")
         .order("is_default", { ascending: false }),
       supabase
         .from("categories")
         .select("id, name, slug, parent_id")
         .eq("is_active", true),
-      (supabase as any)
+      supabase
         .from("product_categories")
         .select("category_id")
         .eq("product_id", product.id),
@@ -109,11 +109,11 @@ async function fetchProductForMetadata(slug: string) {
     .map((img: { url: string }) => img.url);
 
   // Map images to variants
-  const variants = (variantsResult.data || []).map((v: any) => ({
+  const variants = (variantsResult.data || []).map((v) => ({
     ...v,
     images: (imagesResult.data || [])
-      .filter((img: { variant_id: string | null }) => img.variant_id === v.id)
-      .map((img: { url: string }) => img.url),
+      .filter((img) => img.variant_id === v.id)
+      .map((img) => img.url),
   }));
 
   const brand = brandResult.data as { id: string; name: string; slug: string; logo_url: string | null } | null;
@@ -124,7 +124,7 @@ async function fetchProductForMetadata(slug: string) {
 
   // Build category path (from root to the deepest category)
   type CategoryItem = { id: string; name: string; slug: string; parent_id: string | null };
-  let categoryPath: CategoryItem[] = [];
+  const categoryPath: CategoryItem[] = [];
   const productCatIds = (productCategoriesResult.data as { category_id: string }[] | null) ?? [];
 
   if (allCategoriesResult.data && productCatIds.length > 0) {
@@ -183,7 +183,7 @@ async function fetchProductForMetadata(slug: string) {
     rich_description: richDescResult.data
       ? {
           content: richDescResult.data.content,
-          images: (richDescResult.data as any).images ?? [],
+          images: richDescResult.data.images ?? [],
         }
       : undefined,
     categoryPath: categoryPath.length > 0 ? categoryPath : undefined,

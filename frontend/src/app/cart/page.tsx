@@ -59,15 +59,11 @@ export default function CartPage() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return;
-      const db = supabase as any;
-      const { data } = await db
+      const { data } = await supabase
         .from("point_transactions")
         .select("amount")
         .eq("user_id", user.id);
-      const total = (data ?? []).reduce(
-        (sum: number, t: { amount: number }) => sum + t.amount,
-        0,
-      );
+      const total = (data ?? []).reduce((sum, t) => sum + t.amount, 0);
       setPointBalance(total);
     };
     fetchPointBalance();
@@ -112,11 +108,11 @@ export default function CartPage() {
     const productIds = items.map((i) => i.product.id);
     if (productIds.length === 0) return;
     const supabase = createClient();
-    (supabase as any)
+    supabase
       .from("product_categories")
       .select("product_id, category_id")
       .in("product_id", productIds)
-      .then(({ data }: { data: any[] | null }) => {
+      .then(({ data }) => {
         if (!data) return;
         const map: Record<string, string[]> = {};
         for (const row of data) {

@@ -542,9 +542,13 @@ export async function createFreeOrder(
 
     // 3. Decrement stock
     try {
-      const db = admin as any;
-      await db.rpc("decrement_order_stock", { p_order_id: order.id });
-      await db.from("orders").update({ stock_decremented: true }).eq("id", order.id);
+      // `decrement_order_stock` is a Postgres function not yet in the
+      // generated Database type; cast at the call boundary.
+      await (admin.rpc as (fn: string, args: { p_order_id: string }) => Promise<unknown>)(
+        "decrement_order_stock",
+        { p_order_id: order.id },
+      );
+      await admin.from("orders").update({ stock_decremented: true }).eq("id", order.id);
     } catch (err) {
       console.error("[createFreeOrder] Stock decrement error:", err);
     }
@@ -1427,11 +1431,8 @@ async function recordCouponUsage(
   discountAmount: number,
 ) {
   try {
-    // Tables not in frontend TS types — use untyped access
-    const db = admin as any;
-
     // Validate usage limits before recording
-    const { data: coupon } = await db
+    const { data: coupon } = await admin
       .from("coupons")
       .select("usage_count, usage_limit, usage_limit_per_user")
       .eq("id", couponId)
@@ -1446,7 +1447,7 @@ async function recordCouponUsage(
 
       // Check per-user usage limit
       const perUserLimit = coupon.usage_limit_per_user ?? 1;
-      const { count } = await db
+      const { count } = await admin
         .from("coupon_usages")
         .select("id", { count: "exact", head: true })
         .eq("coupon_id", couponId)
@@ -1459,7 +1460,7 @@ async function recordCouponUsage(
     }
 
     // Insert into coupon_usages
-    await db.from("coupon_usages").insert({
+    await admin.from("coupon_usages").insert({
       coupon_id: couponId,
       user_id: userId,
       order_id: orderId,
@@ -1468,7 +1469,7 @@ async function recordCouponUsage(
 
     // Increment usage_count on the coupon
     if (coupon) {
-      await db
+      await admin
         .from("coupons")
         .update({ usage_count: (coupon.usage_count ?? 0) + 1 })
         .eq("id", couponId);
@@ -1489,10 +1490,8 @@ async function recordPointUsage(
   pointsUsed: number,
 ) {
   try {
-    const db = admin as any;
-
     // Idempotency: skip if already recorded for this order
-    const { data: existing } = await db
+    const { data: existing } = await admin
       .from("point_transactions")
       .select("id")
       .eq("order_id", orderId)
@@ -1502,22 +1501,19 @@ async function recordPointUsage(
     if (existing) return;
 
     // Verify balance is sufficient
-    const { data } = await db
+    const { data } = await admin
       .from("point_transactions")
       .select("amount")
       .eq("user_id", userId);
 
-    const balance = (data ?? []).reduce(
-      (sum: number, t: { amount: number }) => sum + t.amount,
-      0,
-    );
+    const balance = (data ?? []).reduce((sum, t) => sum + t.amount, 0);
 
     if (balance < pointsUsed) {
       console.warn("[recordPointUsage] Insufficient point balance");
       return;
     }
 
-    await db.from("point_transactions").insert({
+    await admin.from("point_transactions").insert({
       user_id: userId,
       order_id: orderId,
       type: "used",
@@ -1542,10 +1538,8 @@ async function awardPointsForOrder(
     const pointsEarned = Math.floor(orderTotal * 0.02); // 2% of order total
     if (pointsEarned <= 0) return;
 
-    const db = admin as any;
-
     // Idempotency: skip if already awarded for this order
-    const { data: existing } = await db
+    const { data: existing } = await admin
       .from("point_transactions")
       .select("id")
       .eq("order_id", orderId)
@@ -1554,7 +1548,7 @@ async function awardPointsForOrder(
 
     if (existing) return;
 
-    await db.from("point_transactions").insert({
+    await admin.from("point_transactions").insert({
       user_id: userId,
       order_id: orderId,
       type: "earned",

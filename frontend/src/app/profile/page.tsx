@@ -173,13 +173,15 @@ function ProfilePageContent() {
 
       if (userRes.data) setUserData(userRes.data);
       if (ordersRes.data) {
-        const ordersData = ordersRes.data as any[];
+        type OrderWithItems = (typeof ordersRes.data)[number];
+        type OrderItem = NonNullable<OrderWithItems["order_items"]>[number];
+        const ordersData = ordersRes.data;
 
         // Get all unique product IDs from order items
         const productIds = [
           ...new Set(
-            ordersData.flatMap((o) =>
-              (o.order_items ?? []).map((item: any) => item.product_id),
+            ordersData.flatMap((o: OrderWithItems) =>
+              (o.order_items ?? []).map((item: OrderItem) => item.product_id),
             ),
           ),
         ].filter(Boolean) as string[];
@@ -216,7 +218,7 @@ function ProfilePageContent() {
               .select("order_id, payment_wallet")
               .in("order_id", orderIds)
               .not("payment_wallet", "is", null),
-            (supabase as any)
+            supabase
               .from("coupon_usages")
               .select("order_id, discount_amount, coupon_id, coupons(code)")
               .in("order_id", orderIds),
@@ -243,7 +245,7 @@ function ProfilePageContent() {
             payment_wallet: paymentWalletMap.get(order.id) ?? null,
             coupon_discount: couponUsage?.discount_amount ?? 0,
             coupon_code: couponUsage?.code ?? null,
-            items: (order.order_items ?? []).map((item: any) => ({
+            items: (order.order_items ?? []).map((item) => ({
               ...item,
               products: item.products
                 ? {
@@ -259,16 +261,12 @@ function ProfilePageContent() {
       if (addressRes.data) setAddresses(addressRes.data);
 
       // Fetch point balance
-      const db = supabase as any;
-      const { data: pointTxns } = await db
+      const { data: pointTxns } = await supabase
         .from("point_transactions")
         .select("amount")
         .eq("user_id", user.id);
       if (pointTxns) {
-        const balance = (pointTxns as { amount: number }[]).reduce(
-          (sum, t) => sum + t.amount,
-          0,
-        );
+        const balance = pointTxns.reduce((sum, t) => sum + t.amount, 0);
         setPointBalance(balance);
       }
 
@@ -287,8 +285,12 @@ function ProfilePageContent() {
           table: "orders",
         },
         (payload) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const updatedOrder = payload.new as any;
+          const updatedOrder = payload.new as {
+            id: string;
+            user_id: string;
+            is_deleted?: boolean;
+            [key: string]: unknown;
+          };
           if (updatedOrder.user_id !== userId) return;
 
           // Soft-delete: drop the row from `orders`. Without this, the
@@ -372,7 +374,7 @@ function ProfilePageContent() {
       return;
     }
     // Show activation modal without navigating when point not activated
-    if (menu === "point" && !(userData as any)?.point_activated_at) {
+    if (menu === "point" && !userData?.point_activated_at) {
       setShowActivation(true);
       return;
     }

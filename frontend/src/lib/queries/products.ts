@@ -64,11 +64,7 @@ export async function getProducts(
     // URL silently 414'd at the CDN on large categories (see
     // /products?category=make-up-566e). The RPC does the whole
     // filter + sort + pagination server-side.
-    // The generated Supabase RPC union doesn't include our new
-    // function yet — the `as any` narrows only the function-name
-    // argument, the result is still typed below.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: rows, error } = await (supabase.rpc as any)(
+    const { data: rows, error } = await supabase.rpc(
       "get_products_by_category_tree",
       {
         p_slug: filters.category,
@@ -360,7 +356,7 @@ export async function getProductBySlug(slug: string): Promise<ProductWithDetails
       .maybeSingle(),
     product.brand_id
       ? supabase
-          .from("brands" as any)
+          .from("brands")
           .select("id, name, slug, logo_url")
           .eq("id", product.brand_id)
           .single()

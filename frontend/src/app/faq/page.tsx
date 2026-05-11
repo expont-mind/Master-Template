@@ -30,10 +30,7 @@ export const metadata: Metadata = {
 export default async function FAQPage() {
   const supabase = await createClient();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: faqs, error } = await (supabase as any)
-    .from("faqs")
-    .select("*");
+  const { data: faqs, error } = await supabase.from("faqs").select("*");
 
   if (error) {
     console.error("[FAQ] Query error:", error?.message || error);

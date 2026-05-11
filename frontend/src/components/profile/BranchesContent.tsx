@@ -113,8 +113,8 @@ export const BranchesContent = () => {
   useEffect(() => {
     const fetchBranches = async () => {
       const supabase = createClient();
-      const { data } = await (supabase as any).from("branches").select("*");
-      if (data) setBranches(data);
+      const { data } = await supabase.from("branches").select("*");
+      if (data) setBranches(data as Branch[]);
       setLoading(false);
     };
     fetchBranches();

@@ -152,13 +152,13 @@ export const OrderDetailView = ({
 
   useEffect(() => {
     const fetchPoints = async () => {
-      const supabase = createClient() as any;
+      const supabase = createClient();
       const { data } = await supabase
         .from("point_transactions")
         .select("type, amount")
         .eq("order_id", order.id);
       if (data) {
-        for (const tx of data as { type: string; amount: number }[]) {
+        for (const tx of data) {
           if (tx.type === "used") setPointsUsed(Math.abs(tx.amount));
           if (tx.type === "earned") setPointsEarned(tx.amount);
         }

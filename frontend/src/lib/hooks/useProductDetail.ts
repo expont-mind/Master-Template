@@ -6,9 +6,13 @@ import {
   getProductBySlug,
   getRelatedProducts,
   PRODUCT_STALE_TIMES,
+  type ProductWithDetails,
 } from "@/lib/queries/products";
 
-export function useProductDetail(slug: string, serverProduct?: any) {
+export function useProductDetail(
+  slug: string,
+  serverProduct?: ProductWithDetails | null,
+) {
   return useQuery({
     queryKey: productKeys.detail(slug),
     queryFn: () => getProductBySlug(slug),

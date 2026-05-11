@@ -53,11 +53,9 @@ async function validateSelectedCoupon() {
 
   try {
     const supabase = createClient();
-    // We type-cast to `any` to avoid coupling to the generated DB types here;
-    // the Coupons table shape is independently maintained by admin migrations.
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from("coupons")
-      .select("id, is_active, valid_until")
+      .select("id, is_active, end_date")
       .eq("id", selectedCoupon.coupon_id)
       .maybeSingle();
 
@@ -70,7 +68,7 @@ async function validateSelectedCoupon() {
     const stillValid =
       data &&
       data.is_active !== false &&
-      (!data.valid_until || new Date(data.valid_until).getTime() > Date.now());
+      (!data.end_date || new Date(data.end_date).getTime() > Date.now());
 
     if (!stillValid) setSelectedCoupon(null);
   } catch {

@@ -117,11 +117,11 @@ export default function CheckoutPage() {
     }
     let cancelled = false;
     const supabase = createClient();
-    (supabase as any)
+    supabase
       .from("product_categories")
       .select("product_id, category_id")
       .in("product_id", productIds)
-      .then(({ data }: { data: any[] | null }) => {
+      .then(({ data }) => {
         if (cancelled || !data) return;
         const map: Record<string, string[]> = {};
         for (const row of data) {

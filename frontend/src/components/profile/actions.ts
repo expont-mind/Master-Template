@@ -70,8 +70,7 @@ export async function deleteUnpaidOrder(
   }
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any).rpc("delete_unpaid_order", {
+    const { data, error } = await supabase.rpc("delete_unpaid_order", {
       p_order_id: orderId,
     });
 
@@ -83,15 +82,21 @@ export async function deleteUnpaidOrder(
     // The canonical RPC returns jsonb { success, error?, order_id? }.
     // Older production versions may return null or void — treat absence of
     // explicit failure as success.
-    if (data && typeof data === "object" && data.success === false) {
+    if (
+      data &&
+      typeof data === "object" &&
+      !Array.isArray(data) &&
+      (data as { success?: boolean }).success === false
+    ) {
+      const errObj = data as { success: false; error?: string };
       // RPC's own error messages are already Mongolian + actionable
       // (e.g. "Захиалга олдсонгүй", "Энэ захиалгыг устгах эрхгүй"), so
       // pass them through as-is.
       return {
         success: false,
         error:
-          typeof data.error === "string" && data.error.length > 0
-            ? data.error
+          typeof errObj.error === "string" && errObj.error.length > 0
+            ? errObj.error
             : "Захиалга устгахад алдаа гарлаа. Дахин оролдоно уу.",
       };
     }
@@ -118,10 +123,8 @@ export async function activatePoints(): Promise<
 
   try {
     const admin = createAdminClient();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = admin as any;
 
-    const { data: userData } = await db
+    const { data: userData } = await admin
       .from("users")
       .select("point_activated_at, primary_phone")
       .eq("id", user.id)
@@ -136,7 +139,7 @@ export async function activatePoints(): Promise<
     }
 
     // Set point_activated_at
-    const { error: updateError } = await db
+    const { error: updateError } = await admin
       .from("users")
       .update({ point_activated_at: new Date().toISOString() })
       .eq("id", user.id);
@@ -146,7 +149,7 @@ export async function activatePoints(): Promise<
     }
 
     // Insert 5,000 point welcome bonus
-    const { error: bonusError } = await db
+    const { error: bonusError } = await admin
       .from("point_transactions")
       .insert({
         user_id: user.id,
@@ -203,8 +206,7 @@ export async function unlinkIdentity(
 
     // Use RPC to call a database function that deletes from auth.identities
     // Delete by provider and user_id instead of identity id
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (admin as any).rpc("delete_user_identity", {
+    const { error } = await admin.rpc("delete_user_identity", {
       p_provider: payload.provider,
       p_user_id: user.id,
     });

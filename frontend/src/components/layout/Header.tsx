@@ -105,11 +105,11 @@ export function Header() {
       return;
     }
     const supabase = createClient();
-    (supabase as any)
+    supabase
       .from("point_transactions")
       .select("amount")
       .eq("user_id", user.id)
-      .then(({ data }: { data: { amount: number }[] | null }) => {
+      .then(({ data }) => {
         if (data) {
           setPointBalance(data.reduce((sum, t) => sum + t.amount, 0));
         }

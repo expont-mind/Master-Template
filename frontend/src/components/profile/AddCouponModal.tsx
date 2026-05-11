@@ -104,11 +104,8 @@ export const AddCouponModal = ({
         return;
       }
 
-      // Tables not in frontend TS types — use untyped access
-      const db = supabase as any;
-
       // Find coupon by code
-      const { data: coupon, error: couponError } = await db
+      const { data: coupon, error: couponError } = await supabase
         .from("coupons")
         .select(
           "id, code, type, discount_value, is_active, start_date, end_date, usage_limit, usage_count",
@@ -123,7 +120,7 @@ export const AddCouponModal = ({
       }
 
       // Check if already claimed
-      const { data: existing } = await db
+      const { data: existing } = await supabase
         .from("user_coupons")
         .select("id")
         .eq("user_id", user.id)
@@ -144,7 +141,7 @@ export const AddCouponModal = ({
       }
 
       // Claim the coupon
-      const { error: insertError } = await db.from("user_coupons").insert({
+      const { error: insertError } = await supabase.from("user_coupons").insert({
         user_id: user.id,
         coupon_id: coupon.id,
       });

@@ -22,8 +22,8 @@ export function EventCard({ event }: EventCardProps) {
     }
   };
 
-  // Use created_at as fallback if event_date doesn't exist
-  const displayDate = (event as any).event_date || event.created_at;
+  // Use created_at as fallback if event_date isn't set
+  const displayDate = event.event_date || event.created_at;
 
   return (
     <Link

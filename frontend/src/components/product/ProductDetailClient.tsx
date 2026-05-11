@@ -41,7 +41,15 @@ import { useUIStore } from "@/stores/ui-store";
 import Link from "next/link";
 import Image from "next/image";
 
-export function ProductDetailClient({ slug, serverProduct }: { slug: string; serverProduct?: any }) {
+import type { ProductWithDetails } from "@/lib/queries/products";
+
+export function ProductDetailClient({
+  slug,
+  serverProduct,
+}: {
+  slug: string;
+  serverProduct?: ProductWithDetails | null;
+}) {
   const { data: product, isLoading, isFetching } = useProductDetail(slug, serverProduct);
   const { data: reviewSummary } = useReviewSummary(product?.id ?? "");
   const { data: relatedProducts } = useRelatedProducts(
@@ -55,9 +63,7 @@ export function ProductDetailClient({ slug, serverProduct }: { slug: string; ser
   // Prefer in-stock variants; fall back to first variant if all are out of stock
   const defaultVariantId = useMemo(() => {
     if (!product?.variants?.length) return undefined;
-    const optionGroups = (product as any).option_groups as
-      | Array<{ type: string; values: string[]; is_required?: boolean }>
-      | undefined;
+    const optionGroups = product.option_groups;
     const requiredCount =
       optionGroups?.filter((g) => g.is_required !== false).length ?? 0;
 

@@ -66,16 +66,12 @@ export const PointSelectModal = ({
       return;
     }
 
-    const db = supabase as any;
-    const { data } = await db
+    const { data } = await supabase
       .from("point_transactions")
       .select("amount")
       .eq("user_id", user.id);
 
-    const total = (data ?? []).reduce(
-      (sum: number, t: { amount: number }) => sum + t.amount,
-      0,
-    );
+    const total = (data ?? []).reduce((sum, t) => sum + t.amount, 0);
     setBalance(total);
     setLoading(false);
   };

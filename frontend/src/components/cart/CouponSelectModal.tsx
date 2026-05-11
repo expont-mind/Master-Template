@@ -82,17 +82,14 @@ export const CouponSelectModal = ({
       return;
     }
 
-    // Tables not in frontend TS types — use untyped access
-    const db = supabase as any;
-
-    const { data: userCoupons } = await db
+    const { data: userCoupons } = await supabase
       .from("user_coupons")
       .select(
         "id, coupon_id, coupons(id, code, type, discount_value, max_discount_amount, end_date, is_active, start_date, scope, max_applicable_qty, usage_limit_per_user)",
       )
       .eq("user_id", user.id);
 
-    const { data: usages } = await db
+    const { data: usages } = await supabase
       .from("coupon_usages")
       .select("coupon_id")
       .eq("user_id", user.id);
@@ -104,9 +101,11 @@ export const CouponSelectModal = ({
     }
     const now = new Date();
 
+    type UserCouponRow = NonNullable<typeof userCoupons>[number];
+
     const activeCoupons: CouponData[] = (userCoupons ?? [])
-      .filter((uc: any) => uc.coupons)
-      .map((uc: any) => {
+      .filter((uc): uc is UserCouponRow & { coupons: NonNullable<UserCouponRow["coupons"]> } => uc.coupons !== null)
+      .map((uc) => {
         const c = uc.coupons;
         const userUsageCount = usageCountMap.get(c.id) ?? 0;
         const perUserLimit = c.usage_limit_per_user ?? 1;

@@ -56,11 +56,8 @@ export const CouponContent = ({ onCouponCountChange }: CouponContentProps) => {
       return;
     }
 
-    // Tables not in frontend TS types — use untyped access
-    const db = supabase as any;
-
     // Fetch user's claimed coupons with coupon details
-    const { data: userCoupons } = await db
+    const { data: userCoupons } = await supabase
       .from("user_coupons")
       .select(
         "id, coupon_id, coupons(id, code, type, discount_value, max_discount_amount, end_date, is_active, start_date, scope, max_applicable_qty, usage_limit_per_user)",
@@ -68,7 +65,7 @@ export const CouponContent = ({ onCouponCountChange }: CouponContentProps) => {
       .eq("user_id", user.id);
 
     // Fetch user's coupon usages to know which are "used"
-    const { data: usages } = await db
+    const { data: usages } = await supabase
       .from("coupon_usages")
       .select("coupon_id")
       .eq("user_id", user.id);
@@ -79,9 +76,11 @@ export const CouponContent = ({ onCouponCountChange }: CouponContentProps) => {
     }
     const now = new Date();
 
+    type UserCouponRow = NonNullable<typeof userCoupons>[number];
+
     const mapped: CouponData[] = (userCoupons ?? [])
-      .filter((uc: any) => uc.coupons)
-      .map((uc: any) => {
+      .filter((uc): uc is UserCouponRow & { coupons: NonNullable<UserCouponRow["coupons"]> } => uc.coupons !== null)
+      .map((uc) => {
         const c = uc.coupons;
         const userUsageCount = usageCountMap.get(c.id) ?? 0;
         const perUserLimit = c.usage_limit_per_user ?? 1;
@@ -115,24 +114,39 @@ export const CouponContent = ({ onCouponCountChange }: CouponContentProps) => {
         };
       });
 
-    // Fetch scope item names for scoped coupons (batch by scope type)
+    // Fetch scope item names for scoped coupons (batch by scope type).
+    // `config.table`/`refTable` are runtime strings, so this query is
+    // intentionally untyped at the table boundary; result rows are
+    // narrowed to a Record shape.
+    type JunctionRow = { coupon_id: string } & Record<string, { name?: string } | string>;
+    const untypedFrom = supabase as unknown as {
+      from: (t: string) => {
+        select: (cols: string) => {
+          in: (col: string, vals: string[]) => PromiseLike<{ data: JunctionRow[] | null }>;
+        };
+      };
+    };
+
     for (const [scopeType, config] of Object.entries(SCOPE_JUNCTION)) {
       const scopedCoupons = mapped.filter((c) => c.scope === scopeType);
       if (scopedCoupons.length === 0) continue;
 
       const couponIds = scopedCoupons.map((c) => c.coupon_id);
-      const { data: junctions } = await db
+      const { data: junctions } = await untypedFrom
         .from(config.table)
         .select(`coupon_id, ${config.idField}, ${config.refTable}(name)`)
         .in("coupon_id", couponIds);
 
       for (const c of scopedCoupons) {
         const items = (junctions ?? []).filter(
-          (j: any) => j.coupon_id === c.coupon_id,
+          (j) => j.coupon_id === c.coupon_id,
         );
         c.scope_item_names = items
-          .map((j: any) => j[config.refTable]?.name)
-          .filter(Boolean);
+          .map((j) => {
+            const ref = j[config.refTable];
+            return typeof ref === "object" && ref !== null ? ref.name : undefined;
+          })
+          .filter((n): n is string => Boolean(n));
       }
     }
 
