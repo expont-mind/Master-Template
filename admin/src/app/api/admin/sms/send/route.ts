@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { activeSmsProvider, sendSms } from "@/lib/sms";
+import { LOCALE } from "@/lib/utils/brand-config";
 import { NextRequest, NextResponse } from "next/server";
 
 interface RecipientFilter {
@@ -57,7 +58,7 @@ async function resolveRecipients(
   if (filter.type === "manual") {
     return (filter.phones ?? []).map((phone) => ({
       user_id: null,
-      phone: phone.replace(/\D/g, "").replace(/^976/, ""),
+      phone: phone.replace(/\D/g, "").replace(LOCALE.phoneRegex, ""),
     }));
   }
 
@@ -95,7 +96,7 @@ async function resolveRecipients(
 
   return filteredUsers.map((u) => ({
     user_id: u.id,
-    phone: u.primary_phone.replace(/^\+?976/, "").replace(/\D/g, ""),
+    phone: u.primary_phone.replace(LOCALE.phoneRegex, "").replace(/\D/g, ""),
   }));
 }
 

@@ -1,3 +1,5 @@
+import { LOCALE } from "@/lib/utils/brand-config";
+
 export type SmsResult = {
   success: boolean;
   error?: string;
@@ -9,7 +11,7 @@ export type SmsResult = {
 };
 
 export function normalizeMongolianPhone(phone: string): string {
-  return phone.replace(/^\+?976/, "").replace(/\D/g, "");
+  return phone.replace(LOCALE.phoneRegex, "").replace(/\D/g, "");
 }
 
 export async function sendCallproSms(

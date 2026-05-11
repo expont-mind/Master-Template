@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { activeSmsProvider, sendSms } from "@/lib/sms";
+import { LOCALE } from "@/lib/utils/brand-config";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const normalizedPhone = phone.replace(/^\+?976/, "").replace(/\D/g, "");
+    const normalizedPhone = phone.replace(LOCALE.phoneRegex, "").replace(/\D/g, "");
     const result = await sendSms(normalizedPhone, message);
 
     // Log to sms_logs

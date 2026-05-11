@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/server";
+import { LOCALE } from "@/lib/utils/brand-config";
 import { NextRequest, NextResponse } from "next/server";
 
 interface RecipientFilter {
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
       const phones = (recipient_filter.phones ?? []).filter((p) => p.trim().length > 0);
       // Deduplicate by normalized phone number
       const unique = new Set(
-        phones.map((p) => p.replace(/\D/g, "").replace(/^976/, ""))
+        phones.map((p) => p.replace(/\D/g, "").replace(LOCALE.phoneRegex, ""))
       );
       return NextResponse.json({ count: unique.size });
     }

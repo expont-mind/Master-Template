@@ -1,5 +1,6 @@
 "use client";
 
+import { LOCALE } from "@/lib/utils/brand-config";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -146,8 +147,8 @@ export default function WishlistPage() {
 
   const formatPhone = (raw: string) => {
     const digits = raw.replace(/\D/g, "");
-    if (digits.startsWith("976")) return `+${digits}`;
-    return `+976${digits}`;
+    if (digits.startsWith(LOCALE.phoneCountryCode)) return `+${digits}`;
+    return `+${LOCALE.phoneCountryCode}${digits}`;
   };
 
   const handleSendOtp = async () => {
