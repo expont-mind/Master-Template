@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: `%s | ${BRAND.name}`,
   },
   description: BRAND.description,
-  keywords: BRAND.keywords,
+  keywords: [...BRAND.keywords],
   authors: [{ name: BRAND.authorName }],
   creator: BRAND.authorName,
   publisher: BRAND.authorName,
