@@ -1,47 +1,36 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useScrollLock } from "@/lib/hooks/useScrollLock";
-import {
-  Cancel,
-  Copy,
-  Payment,
-  Reload,
-  Success,
-} from "@/components/svg";
+import { Cancel, Payment, Reload, Success } from "@/components/svg";
 import { Spinner } from "@/components/ui/Spinner";
 import { formatPrice } from "@/components/checkout/constants";
-import {
-  checkPaymentStatus,
-  createOrderAfterPayment,
-} from "@/components/checkout/actions";
 import type { QPayInvoiceData } from "@/lib/qpay/types";
-import { AlertCircle, Check } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import { STOREPAY_MIN_AMOUNT } from "@/lib/utils/constants";
+import {
+  BankAppCard,
+  BankField,
+  getBankDescription,
+} from "./payment/BankComponents";
+import { usePaymentPolling } from "./payment/usePaymentPolling";
+import type {
+  LendMNInvoiceData,
+  OrderItemPayload,
+  PaymentMethod,
+  StorePayInvoiceData,
+} from "./payment/types";
 
-export interface OrderItemPayload {
-  productId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  variantId?: string | null;
-  variantName?: string | null;
-}
-
-export type PaymentMethod = "qpay" | "lendmn" | "storepay" | "transfer";
-
-export interface LendMNInvoiceData {
-  invoiceId: string;
-  invoiceNumber: string;
-}
-
-export interface StorePayInvoiceData {
-  invoiceId: string;
-  loanId: number;
-}
+// Re-export so existing consumers can keep importing from PaymentModal.
+// (checkout/page.tsx and profile/OrderDetailView.tsx both import these.)
+export type {
+  LendMNInvoiceData,
+  OrderItemPayload,
+  PaymentMethod,
+  StorePayInvoiceData,
+};
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -115,38 +104,37 @@ export function PaymentModal({
   const [animate, setAnimate] = useState(false);
   const [activeTab, setActiveTab] = useState<"qr" | "bank">("qr");
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [checking, setChecking] = useState(false);
-  const [paid, setPaid] = useState(false);
   const [transferSubmitted, setTransferSubmitted] = useState(false);
-  const [checkFailed, setCheckFailed] = useState(false);
-  const [checkError, setCheckError] = useState<string | null>(null);
-  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const orderCreatedRef = useRef(false);
-  // Tracks whether the modal is still mounted. Polling can resolve after
-  // the user navigates away; without this, state updates fire on an
-  // unmounted component (React 19 warning + wasted work).
-  const mountedRef = useRef(true);
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-      if (pollingRef.current) {
-        clearInterval(pollingRef.current);
-        pollingRef.current = null;
-      }
-    };
-  }, []);
+
+  const {
+    hasInvoice,
+    paid,
+    manualCheck: handleManualCheck,
+    checking,
+    checkFailed,
+    checkError,
+  } = usePaymentPolling({
+    isOpen,
+    paymentMethod,
+    invoiceData,
+    lendmnInvoiceData,
+    storepayInvoiceData,
+    orderId,
+    orderItems,
+    totalAmount,
+    couponId,
+    couponDiscount,
+    pointsUsed,
+    pointDiscount,
+    onPaymentSuccess,
+  });
 
   useScrollLock(visible);
 
   useEffect(() => {
     if (isOpen) {
       setVisible(true);
-      setPaid(false);
       setTransferSubmitted(false);
-      setCheckFailed(false);
-      setCheckError(null);
-      orderCreatedRef.current = false;
       // Desktop: QR tab default, Mobile: Bank app tab default
       const isMobile = window.innerWidth < 768;
       setActiveTab(isMobile ? "bank" : "qr");
@@ -175,143 +163,6 @@ export function PaymentModal({
       document.removeEventListener("keydown", handleEscape);
     };
   }, [visible, onClose, paid]);
-
-  const currentInvoiceId =
-    paymentMethod === "lendmn"
-      ? lendmnInvoiceData?.invoiceId
-      : paymentMethod === "storepay"
-        ? storepayInvoiceData?.invoiceId
-        : invoiceData?.id;
-
-  const handlePaymentConfirmed = useCallback(async () => {
-    if (orderCreatedRef.current) return;
-    orderCreatedRef.current = true;
-
-    if (pollingRef.current) {
-      clearInterval(pollingRef.current);
-      pollingRef.current = null;
-    }
-
-    try {
-      await createOrderAfterPayment({
-        invoiceId: currentInvoiceId!,
-        items: orderItems,
-        total: totalAmount,
-        couponId: couponId ?? null,
-        couponDiscount: couponDiscount ?? 0,
-        pointsUsed: pointsUsed ?? 0,
-        pointDiscount: pointDiscount ?? 0,
-      });
-    } catch (err) {
-      // Payment IS confirmed — callback will create the order server-side
-      console.error("[handlePaymentConfirmed] Error creating order:", err);
-    }
-
-    setPaid(true);
-    onPaymentSuccess();
-  }, [
-    currentInvoiceId,
-    orderItems,
-    totalAmount,
-    couponId,
-    couponDiscount,
-    pointsUsed,
-    pointDiscount,
-    onPaymentSuccess,
-  ]);
-
-  // Auto-poll payment status every 5 seconds once invoice is ready
-  const providerForCheck = paymentMethod === "transfer" ? "qpay" : paymentMethod;
-
-  const pollPayment = useCallback(async () => {
-    // Belt-and-suspenders: orderCreatedRef is set the first time payment is
-    // confirmed via either polling or the realtime channel, so we never
-    // double-fire handlePaymentConfirmed even if both sources race.
-    if (!currentInvoiceId || paid || orderCreatedRef.current) return;
-
-    const result = await checkPaymentStatus(currentInvoiceId, providerForCheck);
-    // Re-check after the await: state may have changed while the request
-    // was in flight, and the modal may have unmounted entirely.
-    if (!mountedRef.current || orderCreatedRef.current) return;
-    if (result.success && result.paid) {
-      await handlePaymentConfirmed();
-    }
-  }, [currentInvoiceId, paid, providerForCheck, handlePaymentConfirmed]);
-
-  const hasInvoice =
-    paymentMethod === "lendmn"
-      ? !!lendmnInvoiceData?.invoiceId
-      : paymentMethod === "storepay"
-        ? !!storepayInvoiceData?.invoiceId
-        : !!invoiceData?.id;
-
-  useEffect(() => {
-    // Don't start (or restart) polling once payment is confirmed.
-    if (!hasInvoice || paid || paymentMethod === "transfer") {
-      // Make sure any leftover interval from a previous render is gone too.
-      if (pollingRef.current) {
-        clearInterval(pollingRef.current);
-        pollingRef.current = null;
-      }
-      return;
-    }
-    pollingRef.current = setInterval(pollPayment, 5000);
-    return () => {
-      if (pollingRef.current) {
-        clearInterval(pollingRef.current);
-        pollingRef.current = null;
-      }
-    };
-  }, [hasInvoice, paid, paymentMethod, pollPayment]);
-
-  // Real-time subscription for order payment_status changes (admin updates)
-  useEffect(() => {
-    if (!orderId || paid) return;
-
-    const supabase = createClient();
-    const channel = supabase
-      .channel(`order-payment-${orderId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "orders",
-          filter: `id=eq.${orderId}`,
-        },
-        (payload) => {
-          const newPaymentStatus = payload.new?.payment_status;
-          if (newPaymentStatus === "paid") {
-            handlePaymentConfirmed();
-          }
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [orderId, paid, handlePaymentConfirmed]);
-
-  const handleManualCheck = async () => {
-    if (!currentInvoiceId || checking) return;
-    setChecking(true);
-    setCheckFailed(false);
-    setCheckError(null);
-    try {
-      const result = await checkPaymentStatus(currentInvoiceId, providerForCheck);
-      if (result.success && result.paid) {
-        await handlePaymentConfirmed();
-      } else if (!result.success) {
-        setCheckFailed(true);
-        setCheckError(result.error);
-      } else {
-        setCheckFailed(true);
-      }
-    } finally {
-      setChecking(false);
-    }
-  };
 
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
@@ -1390,97 +1241,3 @@ export function PaymentModal({
   );
 }
 
-function BankField({
-  label,
-  value,
-  copyable,
-  onCopy,
-  copied,
-  semibold,
-}: {
-  label: string;
-  value: string;
-  copyable?: boolean;
-  onCopy?: () => void;
-  copied?: boolean;
-  semibold?: boolean;
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <p className="text-[#020617] font-normal text-sm font-manrope leading-6">
-        {label}
-      </p>
-      <div className="flex items-center gap-2 h-12 pl-3 pr-0.5 bg-[#F1F5F9] rounded-sm">
-        <p
-          className={`text-[#020617] ${semibold ? "font-semibold" : "font-normal"} text-sm font-manrope w-full`}
-        >
-          {value}
-        </p>
-        {copyable && (
-          <button
-            onClick={onCopy}
-            className="p-2 cursor-pointer hover:opacity-80 transition-opacity"
-            aria-label={`Copy ${label}`}
-          >
-            {copied ? <Check color="#64748B" /> : <Copy />}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function getBankDescription(name: string): string {
-  const lowerName = name.toLowerCase();
-  if (lowerName.includes("social")) return "Social Pay ашиглах";
-  if (lowerName.includes("mbank") || lowerName.includes("m bank"))
-    return "Мобайл апп ашиглах";
-  if (lowerName.includes("monpay")) return "Monpay апп ашиглах";
-  return `${name} ашиглах`;
-}
-
-function BankAppCard({
-  bank,
-  description,
-}: {
-  bank: { name: string; logo?: string; link: string };
-  description: string;
-}) {
-  const handleClick = () => {
-    // Deeplinks need direct navigation, not target="_blank"
-    window.location.href = bank.link;
-  };
-
-  return (
-    <button
-      onClick={handleClick}
-      className="flex items-center gap-2.5 p-2 bg-white border border-[#E2E8F0] rounded-2xl hover:border-[#CBD5E1] transition-colors cursor-pointer text-left"
-    >
-      {bank.logo ? (
-        <img
-          src={bank.logo}
-          alt={bank.name}
-          width={48}
-          height={48}
-          className="w-12 h-12 rounded-lg border border-[#E2E8F0] object-contain shrink-0"
-        />
-      ) : (
-        <div className="w-12 h-12 rounded-lg bg-[#F1F5F9] flex items-center justify-center shrink-0">
-          <span className="text-[#64748B] text-sm font-bold">
-            {bank.name.charAt(0)}
-          </span>
-        </div>
-      )}
-      <div className="flex flex-col min-w-0">
-        <p className="text-[#020617] font-normal text-sm font-manrope">
-          {bank.name}
-        </p>
-        {description && (
-          <p className="text-[#64748B] font-normal text-xs font-manrope hidden md:block">
-            {description}
-          </p>
-        )}
-      </div>
-    </button>
-  );
-}
