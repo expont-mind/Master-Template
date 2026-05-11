@@ -28,6 +28,8 @@ import { ClearCartModal } from "@/components/cart/ClearCartModal";
 import { CouponSelectModal } from "@/components/cart/CouponSelectModal";
 import { PointSelectModal } from "@/components/cart/PointSelectModal";
 import { VariantEditSheet } from "@/components/cart/VariantEditSheet";
+import { CartSkeleton } from "@/components/cart/CartSkeleton";
+import { CartEmptyState } from "@/components/cart/CartEmptyState";
 import type { CouponData } from "@/components/profile/CouponCard";
 import type { DeliveryZone } from "@/types/database";
 import { ChevronDown } from "lucide-react";
@@ -143,66 +145,11 @@ export default function CartPage() {
   };
 
   if (!isHydrated) {
-    return (
-      <div className="w-full bg-white flex justify-center min-h-screen">
-        <div className="flex flex-col max-w-[1064px] w-full pb-[52px] px-4 xl:px-0">
-          <p className="px-0.5 pb-2 pt-8 md:pt-[52px] text-[#020617] font-bold text-xl md:text-[26px] leading-9 font-manrope">
-            Сагс
-          </p>
-          <div className="space-y-4 pt-8">
-            <div className="h-6 w-32 skeleton" />
-            <div className="h-24 skeleton" />
-            <div className="h-24 skeleton" />
-          </div>
-        </div>
-      </div>
-    );
+    return <CartSkeleton />;
   }
 
   if (items.length === 0) {
-    return (
-      <div className="w-full bg-white flex justify-center">
-        <div className="flex flex-col items-center max-w-[1064px] w-full pb-[52px] px-4 xl:px-0">
-          <p className="px-0.5 pb-2 pt-8 md:pt-[52px] text-[#020617] font-bold text-xl md:text-[26px] leading-9 font-manrope w-full hidden md:block">
-            Сагс
-          </p>
-
-          <div className="pt-[152px] md:pt-7 flex flex-col gap-8 md:gap-[88px] w-full">
-            <div className="flex-col gap-4 hidden md:flex">
-              <div className="flex items-center gap-1">
-                <p className="text-[#020617] font-black text-base font-manrope">
-                  {items.length}
-                </p>
-                <PrimaryMediumBase>
-                  Бүтээгдэхүүн
-                </PrimaryMediumBase>
-              </div>
-              <div className="py-2">
-                <div className="w-full h-px bg-[#E2E8F0]" />
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center justify-center gap-6">
-              <div className="flex flex-col items-center gap-4">
-                <div className="py-2">
-                  <ShoppingCart />
-                </div>
-                <MutedText>
-                  Одоогоор бүтээгдэхүүн сагслаагүй байна
-                </MutedText>
-              </div>
-
-              <Link
-                href="/products"
-                className="px-3 max-w-[154px] w-full h-10 py-1 flex items-center justify-center rounded-sm border border-[#E2E8F0] text-[#020617] font-normal text-sm font-manrope transition-colors duration-200 hover:bg-surface"
-              >
-                Дэлгүүр хэсэх
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <CartEmptyState />;
   }
 
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
