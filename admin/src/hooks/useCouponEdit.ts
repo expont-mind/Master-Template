@@ -1,5 +1,6 @@
 "use client";
 
+import { DELIVERY_ZONES_CONFIG } from "@/lib/utils/brand-config";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
@@ -101,7 +102,7 @@ export function useCouponEdit(id?: string) {
       }),
   });
   const deliveryFee =
-    deliveryZones.find((z) => z.name === "Улаанбаатар")?.delivery_fee ?? 0;
+    deliveryZones.find((z) => z.name === DELIVERY_ZONES_CONFIG.capital)?.delivery_fee ?? 0;
 
   // Debounce scope search
   useEffect(() => {

@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DELIVERY_ZONES_CONFIG } from "@/lib/utils/brand-config";
 
 interface OrderDeliveryAddressCardProps {
   deliveryZone?: string;
@@ -15,7 +16,7 @@ interface OrderDeliveryAddressCardProps {
 }
 
 export function OrderDeliveryAddressCard({
-  deliveryZone = "Улаанбаатар",
+  deliveryZone = DELIVERY_ZONES_CONFIG.capital,
   address,
   recipientName,
   phoneNumbers = [],

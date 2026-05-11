@@ -1,5 +1,6 @@
 "use client";
 
+import { DELIVERY_ZONES_CONFIG } from "@/lib/utils/brand-config";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { Slash, Success } from "@/components/svg";
@@ -431,10 +432,10 @@ export default function CheckoutPage() {
   );
   const afterProductDiscount = subtotal - totalDiscount;
   const activeZone =
-    city === "Улаанбаатар"
-      ? deliveryZones.find((z) => z.name === "Улаанбаатар")
+    city === DELIVERY_ZONES_CONFIG.capital
+      ? deliveryZones.find((z) => z.name === DELIVERY_ZONES_CONFIG.capital)
       : city
-        ? deliveryZones.find((z) => z.name === "Орон нутаг")
+        ? deliveryZones.find((z) => z.name === DELIVERY_ZONES_CONFIG.rural)
         : null;
   const deliveryFee =
     activeZone &&
@@ -604,8 +605,8 @@ export default function CheckoutPage() {
             selectedCoupon={selectedCoupon}
             couponDiscount={couponDiscount}
             pointDiscount={pointDiscount}
-            ubZone={deliveryZones.find((z) => z.name === "Улаанбаатар")}
-            regionalZone={deliveryZones.find((z) => z.name === "Орон нутаг")}
+            ubZone={deliveryZones.find((z) => z.name === DELIVERY_ZONES_CONFIG.capital)}
+            regionalZone={deliveryZones.find((z) => z.name === DELIVERY_ZONES_CONFIG.rural)}
           />
         </div>
       </div>

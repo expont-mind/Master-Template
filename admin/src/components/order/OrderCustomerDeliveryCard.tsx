@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
+import { DELIVERY_ZONES_CONFIG } from "@/lib/utils/brand-config";
 import type { UserAddress } from "./types";
 
 interface OrderAddress {
@@ -53,7 +54,7 @@ export function OrderCustomerDeliveryCard({
             <>
               <div className="py-2.5 border-b border-border">
                 <p className="text-base font-semibold text-foreground">
-                  Хүргэлтийн бүс: {address.city || "Улаанбаатар"}
+                  Хүргэлтийн бүс: {address.city || DELIVERY_ZONES_CONFIG.capital}
                 </p>
               </div>
               <div className="py-2.5">

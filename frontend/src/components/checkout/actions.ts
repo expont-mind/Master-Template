@@ -1,6 +1,6 @@
 "use server";
 
-import { BRAND } from "@/lib/utils/brand-config";
+import { BRAND, DELIVERY_ZONES_CONFIG } from "@/lib/utils/brand-config";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createInvoice, checkPayment } from "@/lib/qpay/client";
@@ -272,9 +272,9 @@ async function calculateDeliveryFee(
   if (!zones || zones.length === 0) return 0;
 
   const activeZone =
-    city === "Улаанбаатар"
-      ? zones.find((z) => z.name === "Улаанбаатар")
-      : zones.find((z) => z.name === "Орон нутаг");
+    city === DELIVERY_ZONES_CONFIG.capital
+      ? zones.find((z) => z.name === DELIVERY_ZONES_CONFIG.capital)
+      : zones.find((z) => z.name === DELIVERY_ZONES_CONFIG.rural);
 
   if (!activeZone) return 0;
 

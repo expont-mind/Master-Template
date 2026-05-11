@@ -1,6 +1,6 @@
 "use client";
 
-import { BRAND } from "@/lib/utils/brand-config";
+import { BRAND, DELIVERY_ZONES_CONFIG } from "@/lib/utils/brand-config";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -217,7 +217,7 @@ export default function CartPage() {
     if (discountPrice == null || discountPrice >= price) return sum;
     return sum + (price - discountPrice) * item.quantity;
   }, 0);
-  const ubZone = deliveryZones.find((z) => z.name === "Улаанбаатар") ?? null;
+  const ubZone = deliveryZones.find((z) => z.name === DELIVERY_ZONES_CONFIG.capital) ?? null;
   const cartSubtotal = subtotal - totalDiscount;
   const deliveryFee =
     ubZone &&
