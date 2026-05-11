@@ -39,12 +39,8 @@ const getBrandForMetadata = cache(async (slug: string) =>
 async function fetchBrandForMetadata(slug: string) {
   const supabase = await createClient();
 
-  // Explicit column list — `select("*")` previously pulled every
-  // column and would have surfaced the same "column does not exist"
-  // fault if a phantom column got referenced later.
-  // @ts-ignore - 'brands' table is not in generated types yet
   const { data: brand, error } = await supabase
-    .from("brands" as any)
+    .from("brands")
     .select("id, name, slug, logo_url")
     .eq("slug", slug)
     .single();
@@ -56,17 +52,15 @@ async function fetchBrandForMetadata(slug: string) {
 
   if (!brand) return null;
 
-  const typedBrand = brand as unknown as Brand;
-
   // Get product count for this brand
   const { count } = await supabase
     .from("products")
     .select("id", { count: "exact", head: true })
-    .eq("brand_id", typedBrand.id)
+    .eq("brand_id", brand.id)
     .eq("is_active", true);
 
   return {
-    ...typedBrand,
+    ...(brand as Brand),
     productCount: count ?? 0,
   };
 }

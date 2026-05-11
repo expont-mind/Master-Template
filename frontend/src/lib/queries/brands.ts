@@ -83,9 +83,8 @@ const BRAND_COLUMNS = "id, name, slug, logo_url";
 export async function getBrands(): Promise<Brand[]> {
   const supabase = createClient();
 
-  // @ts-ignore - 'brands' table is not in generated types yet
   const { data, error } = await supabase
-    .from("brands" as any)
+    .from("brands")
     .select(BRAND_COLUMNS)
     .order("name", { ascending: true });
 
@@ -94,15 +93,14 @@ export async function getBrands(): Promise<Brand[]> {
     return [];
   }
 
-  return data as unknown as Brand[];
+  return (data ?? []) as Brand[];
 }
 
 export async function getBrandBySlug(slug: string): Promise<Brand | null> {
   const supabase = createClient();
 
-  // @ts-ignore - 'brands' table is not in generated types yet
   const { data, error } = await supabase
-    .from("brands" as any)
+    .from("brands")
     .select(BRAND_COLUMNS)
     .eq("slug", slug)
     .single();
@@ -112,7 +110,7 @@ export async function getBrandBySlug(slug: string): Promise<Brand | null> {
     return null;
   }
 
-  return data as unknown as Brand;
+  return data as Brand;
 }
 
 export async function getProductsByBrand(
@@ -129,9 +127,8 @@ export async function getProductsByBrand(
   const supabase = createClient();
 
   // Get the brand id from slug
-  // @ts-ignore
   const { data: brand } = await supabase
-    .from("brands" as any)
+    .from("brands")
     .select("id")
     .eq("slug", brandSlug)
     .single();
@@ -147,7 +144,7 @@ export async function getProductsByBrand(
       { count: "exact" },
     )
     .eq("is_active", true)
-    .eq("brand_id", (brand as any).id);
+    .eq("brand_id", brand.id);
 
   if (filters.minPrice) {
     query = query.or(
