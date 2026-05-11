@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto_Flex } from "next/font/google";
 import "./globals.css";
+import { BRAND, LOCALE } from "@/lib/utils/brand-config";
 import { Header } from "@/components/layout/Header";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { LoginModal } from "@/components/auth/LoginModal";
@@ -26,58 +27,46 @@ const manrope = Roboto_Flex({
   display: "swap",
 });
 
+const siteTitle = `${BRAND.name} - Монголын онлайн дэлгүүр`;
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://monpang.com"),
+  metadataBase: new URL(BRAND.url),
   title: {
-    default: "Monpang - Монголын онлайн дэлгүүр",
-    template: "%s | Monpang",
+    default: siteTitle,
+    template: `%s | ${BRAND.name}`,
   },
-  description:
-    "Монголын хамгийн том онлайн худалдааны платформ. Чанартай бараа, хурдан хүргэлт, найдвартай үйлчилгээ.",
-  keywords: [
-    "онлайн дэлгүүр",
-    "e-commerce",
-    "монгол",
-    "худалдаа",
-    "бараа",
-    "monpang",
-    "монпанг",
-    "гоо сайхан",
-    "хувцас",
-    "электроник",
-  ],
-  authors: [{ name: "Monpang" }],
-  creator: "Monpang",
-  publisher: "Monpang",
+  description: BRAND.description,
+  keywords: BRAND.keywords,
+  authors: [{ name: BRAND.authorName }],
+  creator: BRAND.authorName,
+  publisher: BRAND.authorName,
   alternates: {
     canonical: "/",
     languages: {
-      "mn-MN": "https://monpang.com",
+      [LOCALE.code]: BRAND.url,
     },
   },
   openGraph: {
     type: "website",
-    locale: "mn_MN",
-    url: "https://monpang.com",
-    siteName: "Monpang",
-    title: "Monpang - Монголын онлайн дэлгүүр",
-    description:
-      "Монголын хамгийн том онлайн худалдааны платформ. Чанартай бараа, хурдан хүргэлт, найдвартай үйлчилгээ.",
+    locale: LOCALE.ogLocale,
+    url: BRAND.url,
+    siteName: BRAND.name,
+    title: siteTitle,
+    description: BRAND.description,
     images: [
       {
-        url: "/og-image.png",
+        url: BRAND.ogImage,
         width: 1200,
         height: 630,
-        alt: "Monpang - Монголын онлайн дэлгүүр",
+        alt: siteTitle,
       },
     ],
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Monpang - Монголын онлайн дэлгүүр",
-    description:
-      "Монголын хамгийн том онлайн худалдааны платформ. Чанартай бараа, хурдан хүргэлт, найдвартай үйлчилгээ.",
-    images: ["/og-image.png"],
+    card: BRAND.twitterCard,
+    title: siteTitle,
+    description: BRAND.description,
+    images: [BRAND.ogImage],
   },
   robots: {
     index: true,
