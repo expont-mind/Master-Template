@@ -75,8 +75,7 @@ export async function deactivateCategorySubtree(
   const idArray = Array.from(ids);
 
   // Single bulk UPDATE — atomic from PostgREST's perspective.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: updateError } = await (supabase as any)
+  const { error: updateError } = await supabase
     .from("categories")
     .update({ is_active: false })
     .in("id", idArray);

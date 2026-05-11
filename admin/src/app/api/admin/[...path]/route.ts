@@ -431,10 +431,13 @@ export async function PATCH(
       body.is_active = body.status === "active";
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any)
+    // Dynamic table proxy: `table` is validated above by isValidTable
+    // but Supabase's typed client can't narrow the union from a runtime
+    // string. Cast body to `never` to opt out of column-shape checking;
+    // the route is documented as the API surface that bypasses RLS.
+    const { data, error } = await supabase
       .from(table)
-      .update(body)
+      .update(body as never)
       .eq("id", id)
       .select()
       .single();

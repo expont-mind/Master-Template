@@ -354,7 +354,9 @@ function OptionGroupCard({
 
   const allTypes = [
     ...OPTION_TYPES,
-    ...customTypes.filter((t) => !OPTION_TYPES.includes(t as any)),
+    ...customTypes.filter(
+      (t) => !(OPTION_TYPES as readonly string[]).includes(t),
+    ),
   ];
   const isCustomType = group.type && !allTypes.includes(group.type);
 

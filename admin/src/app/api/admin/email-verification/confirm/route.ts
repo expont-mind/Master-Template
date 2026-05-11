@@ -23,8 +23,7 @@ export async function GET(request: NextRequest) {
 
   const supabase = createAdminClient();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from("admin_login_emails")
     .update({
       is_verified: true,

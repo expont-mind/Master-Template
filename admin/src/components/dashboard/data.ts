@@ -76,8 +76,7 @@ export async function getDashboardStats(
       supabase.from("users").select("id", { count: "exact", head: true }),
     ),
     // RPC: total revenue (single query instead of batched pagination)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (supabase as any).rpc("get_total_revenue", {
+    supabase.rpc("get_total_revenue", {
       p_from: range?.from.toISOString() ?? null,
       p_to: range?.to.toISOString() ?? null,
     }),
@@ -121,14 +120,12 @@ export async function getDashboardStats(
       .eq("key", "sms_balance")
       .maybeSingle(),
     // RPC: revenue by day (single query instead of batched pagination)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (supabase as any).rpc("get_revenue_by_day", {
+    supabase.rpc("get_revenue_by_day", {
       p_from: revenueRange.from.toISOString(),
       p_to: revenueRange.to.toISOString(),
     }),
     // RPC: top selling products (single query instead of batched pagination)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (supabase as any).rpc("get_top_selling_products", {
+    supabase.rpc("get_top_selling_products", {
       p_from: range?.from.toISOString() ?? null,
       p_to: range?.to.toISOString() ?? null,
       p_limit: 10,

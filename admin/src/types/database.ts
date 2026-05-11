@@ -1427,6 +1427,33 @@ export interface Database {
           sort_order: number;
         }[];
       };
+      get_total_revenue: {
+        Args: {
+          p_from: string | null;
+          p_to: string | null;
+        };
+        Returns: number;
+      };
+      get_revenue_by_day: {
+        Args: {
+          p_from: string;
+          p_to: string;
+        };
+        Returns: { day: string; revenue: number }[];
+      };
+      get_top_selling_products: {
+        Args: {
+          p_from: string | null;
+          p_to: string | null;
+          p_limit: number;
+        };
+        Returns: {
+          id: string;
+          name: string;
+          total_quantity: number;
+          total_revenue: number;
+        }[];
+      };
     };
     Enums: {
       user_status: UserStatus;

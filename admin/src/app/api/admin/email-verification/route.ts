@@ -4,22 +4,6 @@ import { createVerifyToken } from "@/lib/verify-token";
 import { BRAND } from "@/lib/utils/brand-config";
 import { NextRequest, NextResponse } from "next/server";
 
-interface AdminLoginEmail {
-  id: string;
-  admin_id: string;
-  email: string;
-  is_verified: boolean;
-  verification_code: string | null;
-  verification_expires_at: string | null;
-  verified_at: string | null;
-  created_at: string;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function adminLoginEmails(supabase: ReturnType<typeof createAdminClient>): any {
-  return supabase.from("admin_login_emails" as never);
-}
-
 // POST: Нэмэлт имэйл нэмэх + баталгаажуулах линк илгээх
 export async function POST(request: NextRequest) {
   try {
@@ -49,12 +33,11 @@ export async function POST(request: NextRequest) {
     }
 
     // admin_login_emails-д аль хэдийн бүртгэлтэй эсэх
-    const { data } = await adminLoginEmails(supabase)
+    const { data: existingAlt } = await supabase
+      .from("admin_login_emails")
       .select("*")
       .eq("email", email)
       .single();
-
-    const existingAlt = data as AdminLoginEmail | null;
 
     if (existingAlt && existingAlt.admin_id !== admin_id) {
       return NextResponse.json(
@@ -69,28 +52,26 @@ export async function POST(request: NextRequest) {
       email_confirm: true,
     });
 
-    let emailRecord: AdminLoginEmail;
+    let emailRecord: { id: string; email: string };
 
     if (existingAlt && existingAlt.admin_id === admin_id) {
-      const { data: updated, error: updateError } = await adminLoginEmails(
-        supabase,
-      )
+      const { data: updated, error: updateError } = await supabase
+        .from("admin_login_emails")
         .update({ is_verified: false, verified_at: null })
         .eq("id", existingAlt.id)
         .select("*")
         .single();
 
-      if (updateError) {
+      if (updateError || !updated) {
         return NextResponse.json(
-          { error: updateError.message },
+          { error: updateError?.message ?? "Update failed" },
           { status: 500 },
         );
       }
-      emailRecord = updated as AdminLoginEmail;
+      emailRecord = updated;
     } else {
-      const { data: inserted, error: insertError } = await adminLoginEmails(
-        supabase,
-      )
+      const { data: inserted, error: insertError } = await supabase
+        .from("admin_login_emails")
         .insert({
           admin_id,
           email,
@@ -99,13 +80,13 @@ export async function POST(request: NextRequest) {
         .select("*")
         .single();
 
-      if (insertError) {
+      if (insertError || !inserted) {
         return NextResponse.json(
-          { error: insertError.message },
+          { error: insertError?.message ?? "Insert failed" },
           { status: 500 },
         );
       }
-      emailRecord = inserted as AdminLoginEmail;
+      emailRecord = inserted;
     }
 
     // Баталгаажуулах линк үүсгэж имэйл илгээх

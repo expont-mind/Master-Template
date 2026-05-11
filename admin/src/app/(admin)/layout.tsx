@@ -32,8 +32,7 @@ export default async function AdminLayout({
       .maybeSingle();
 
     if (!admin) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: altEmail } = await (adminClient as any)
+      const { data: altEmail } = await adminClient
         .from("admin_login_emails")
         .select("admin_id")
         .eq("email", user.email!)

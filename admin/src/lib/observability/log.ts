@@ -11,6 +11,8 @@
 
 type LogContext = Record<string, unknown>;
 
+/* eslint-disable no-console -- single allowed sink; all call sites
+   go through `write()` below so console isn't called elsewhere. */
 function write(
   level: "info" | "warn" | "error",
   tag: string,
@@ -25,16 +27,14 @@ function write(
   };
 
   if (level === "error") {
-    // eslint-disable-next-line no-console
     console.error(payload, context instanceof Error ? context : undefined);
   } else if (level === "warn") {
-    // eslint-disable-next-line no-console
     console.warn(payload);
   } else {
-    // eslint-disable-next-line no-console
     console.info(payload);
   }
 }
+/* eslint-enable no-console */
 
 export const log = {
   info: (tag: string, context?: LogContext) => write("info", tag, context),
