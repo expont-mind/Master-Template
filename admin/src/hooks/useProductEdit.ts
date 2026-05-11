@@ -5,154 +5,36 @@ import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "@/lib/admin-api";
 import { log } from "@/lib/observability/log";
-import type { Product, ProductVariant, VariantForm, VariantDetail, Attribute, Brand, Category, OptionGroup, GeneratedVariant } from "@/components/product/types";
+import type {
+  Product,
+  ProductVariant,
+  VariantForm,
+  VariantDetail,
+  Attribute,
+  Brand,
+  Category,
+  OptionGroup,
+  GeneratedVariant,
+} from "@/components/product/types";
 import { translateServerError } from "@/lib/utils/error-messages";
-
-export interface ProductDetail {
-  id: string;
-  type: string;
-  content: string;
-}
-
 import type { ProductStatus } from "@/types/database";
 import { queryKeys } from "@/lib/query-keys";
+import {
+  buildAllVariantCombinations,
+  createEmptyVariant,
+  generateSku,
+} from "./product-edit/_helpers";
+import {
+  clearDraft,
+  loadDraft,
+  saveDraft,
+  type DraftData,
+  type ProductDetail,
+} from "./product-edit/_draft";
 
-// Build all variant combinations: base (required) + extended (required + optional subsets)
-function buildAllVariantCombinations(
-  optionGroups: Array<{ type: string; values: string[]; is_required?: boolean }>,
-): string[][] {
-  const requiredGroups = optionGroups.filter(
-    (g) => g.values.length > 0 && g.is_required !== false,
-  );
-  const optionalGroups = optionGroups.filter(
-    (g) => g.values.length > 0 && g.is_required === false,
-  );
-  if (requiredGroups.length === 0) return [];
-
-  const baseCombinations: string[][] = requiredGroups.reduce<string[][]>(
-    (acc, group) => {
-      if (acc.length === 0) return group.values.map((v) => [v]);
-      return acc.flatMap((combo) => group.values.map((v) => [...combo, v]));
-    },
-    [],
-  );
-
-  const allCombinations: string[][] = [...baseCombinations];
-
-  if (optionalGroups.length > 0) {
-    for (let i = 1; i < 1 << optionalGroups.length; i++) {
-      const subset: typeof optionalGroups = [];
-      for (let j = 0; j < optionalGroups.length; j++) {
-        if (i & (1 << j)) subset.push(optionalGroups[j]);
-      }
-      const optCombinations = subset.reduce<string[][]>(
-        (acc, group) => {
-          if (acc.length === 0) return group.values.map((v) => [v]);
-          return acc.flatMap((combo) => group.values.map((v) => [...combo, v]));
-        },
-        [],
-      );
-      for (const base of baseCombinations) {
-        for (const opt of optCombinations) {
-          allCombinations.push([...base, ...opt]);
-        }
-      }
-    }
-  }
-
-  return allCombinations;
-}
-
-const generateSku = (): string => {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  const timestamp = Date.now().toString(36).toUpperCase().slice(-4);
-  let random = "";
-  for (let i = 0; i < 4; i++) {
-    random += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return `SKU-${timestamp}${random}`;
-};
-
-const createEmptyVariant = (): VariantForm => ({
-  id: crypto.randomUUID(),
-  sku: generateSku(),
-  name: "",
-  price: "",
-  discountPrice: "",
-  stockQuantity: "",
-  attributes: {},
-  images: [],
-  details: [],
-});
-
-const DRAFT_KEY = "product_draft";
-
-interface DraftData {
-  name: string;
-  slug: string;
-  description: string;
-  status: string;
-  brandId: string | null;
-  originalUrl: string;
-  images: string[];
-  categoryIds: string[];
-  variants: VariantForm[];
-  productDetails: ProductDetail[];
-  richDescription: string;
-  richImages: string[];
-  optionGroups: OptionGroup[];
-  generatedVariants: GeneratedVariant[];
-  savedAt: number;
-}
-
-// Size cap: a typical product form serialises to ~5–20 KB. Anything
-// bigger likely means a pasted base64 image or runaway state; drop it
-// rather than blow past a shared-computer user's quota.
-const DRAFT_MAX_BYTES = 50 * 1024;
-// Drafts older than this are dropped on hydrate. Tightened from 24 h —
-// shared admin workstations shouldn't hand stale drafts between shifts.
-const DRAFT_MAX_AGE_MS = 60 * 60 * 1000;
-
-const saveDraft = (data: Omit<DraftData, "savedAt">) => {
-  try {
-    const payload = JSON.stringify({ ...data, savedAt: Date.now() });
-    if (payload.length > DRAFT_MAX_BYTES) {
-      // Refuse to persist oversized drafts — usually means an image was
-      // pasted as base64 instead of uploaded.
-      return;
-    }
-    localStorage.setItem(DRAFT_KEY, payload);
-  } catch {
-    // localStorage full or unavailable
-  }
-};
-
-const loadDraft = (): DraftData | null => {
-  try {
-    const saved = localStorage.getItem(DRAFT_KEY);
-    if (!saved) return null;
-    if (saved.length > DRAFT_MAX_BYTES) {
-      localStorage.removeItem(DRAFT_KEY);
-      return null;
-    }
-    const data = JSON.parse(saved) as DraftData;
-    if (Date.now() - data.savedAt > DRAFT_MAX_AGE_MS) {
-      localStorage.removeItem(DRAFT_KEY);
-      return null;
-    }
-    return data;
-  } catch {
-    return null;
-  }
-};
-
-const clearDraft = () => {
-  try {
-    localStorage.removeItem(DRAFT_KEY);
-  } catch {
-    // ignore
-  }
-};
+// Re-export so existing consumers (ProductForm, ProductMainCard) can
+// keep importing ProductDetail from `@/hooks/useProductEdit`.
+export type { ProductDetail };
 
 interface AttributeFromDB {
   id: string;

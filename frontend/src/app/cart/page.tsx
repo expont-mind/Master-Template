@@ -18,6 +18,10 @@ import {
 import { useCartStore } from "@/stores/cart-store";
 import { useUIStore } from "@/stores/ui-store";
 import { formatPrice } from "@/lib/utils/formatters";
+import {
+  getEffectiveSellPrice,
+  getListPrice,
+} from "@/lib/utils/cart-pricing";
 import { ROUTES } from "@/lib/utils/constants";
 import { createClient } from "@/lib/supabase/client";
 import { ClearCartModal } from "@/components/cart/ClearCartModal";
@@ -201,17 +205,14 @@ export default function CartPage() {
   }
 
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = items.reduce((sum, item) => {
-    const price = item.variant ? item.variant.price : item.product.price;
-    return sum + price * item.quantity;
-  }, 0);
+  const subtotal = items.reduce(
+    (sum, item) => sum + getListPrice(item) * item.quantity,
+    0,
+  );
   const totalDiscount = items.reduce((sum, item) => {
-    const price = item.variant ? item.variant.price : item.product.price;
-    const discountPrice = item.variant
-      ? item.variant.discount_price
-      : item.product.discount_price;
-    if (discountPrice == null || discountPrice >= price) return sum;
-    return sum + (price - discountPrice) * item.quantity;
+    const list = getListPrice(item);
+    const sell = getEffectiveSellPrice(item);
+    return sum + (list - sell) * item.quantity;
   }, 0);
   const ubZone = deliveryZones.find((z) => z.name === DELIVERY_ZONES_CONFIG.capital) ?? null;
   const cartSubtotal = subtotal - totalDiscount;

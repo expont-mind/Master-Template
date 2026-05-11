@@ -8,10 +8,11 @@ import Link from "next/link";
 import {
   formatPrice,
   stripPhonePrefix,
-  parseAsUTC,
 } from "@/lib/utils/formatters";
 import type { ProfileOrder } from "@/app/profile/page";
 import type { Database } from "@/types/database";
+import { deliveryStatusConfig } from "./order/_status-config";
+import { formatDateTime, formatDateShort } from "./order/_date-helpers";
 import {
   Calendar,
   Tag,
@@ -32,67 +33,12 @@ import type { QPayInvoiceData } from "@/lib/qpay/types";
 type AddressRow = Database["public"]["Tables"]["addresses"]["Row"];
 type UserRow = Database["public"]["Tables"]["users"]["Row"];
 
-const deliveryStatusConfig: Record<
-  string,
-  { label: string; bg: string; text: string }
-> = {
-  pending: {
-    label: "Баталгаажсан",
-    bg: "bg-amber-50",
-    text: "text-amber-600",
-  },
-  confirmed: {
-    label: "Баталгаажсан",
-    bg: "bg-[#FFFBEB]",
-    text: "text-[#D97706]",
-  },
-  shipped: {
-    label: "Хүргэлтэнд гарсан",
-    bg: "bg-[#EFF6FF]",
-    text: "text-[#2563EB]",
-  },
-  delivered: {
-    label: "Хүргэгдсэн",
-    bg: "bg-[#F0FDFA]",
-    text: "text-[#0D9488]",
-  },
-  cancelled: {
-    label: "Цуцлагдсан",
-    bg: "bg-[#FFF1F2]",
-    text: "text-[#E11D48]",
-  },
-};
-
 interface OrderDetailViewProps {
   order: ProfileOrder;
   addresses: AddressRow[];
   user: UserRow | null;
   onBack: () => void;
   onRequestDelete?: () => void;
-}
-
-function formatDateTime(dateStr: string): string {
-  const d = parseAsUTC(dateStr);
-  const formatter = new Intl.DateTimeFormat("en-CA", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-    timeZone: "Asia/Ulaanbaatar",
-  });
-  const parts = formatter.formatToParts(d);
-  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
-  return `${get("year")}/${get("month")}/${get("day")}  ${get("hour")}:${get("minute")}:${get("second")}`;
-}
-
-function formatDateShort(dateStr: string): string {
-  const d = parseAsUTC(dateStr);
-  return d
-    .toLocaleDateString("en-CA", { timeZone: "Asia/Ulaanbaatar" })
-    .replace(/-/g, ".");
 }
 
 export const OrderDetailView = ({
