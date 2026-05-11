@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import { useState } from "react";
 import Link from "next/link";
 
@@ -85,7 +86,7 @@ export default function DataDeletionPage() {
               Өгөгдөл устгах хүсэлт
             </h1>
             <p className="text-[#64748B] font-normal text-sm md:text-base font-manrope max-w-2xl">
-              Хэрэв та Monpang дээрх бүртгэл болон бүх хувийн мэдээллээ
+              Хэрэв та {BRAND.name} дээрх бүртгэл болон бүх хувийн мэдээллээ
               устгуулахыг хүсвэл доорх маягтыг бөглөнө үү. Бид таны хүсэлтийг
               30 хоногийн дотор шийдвэрлэнэ.
             </p>

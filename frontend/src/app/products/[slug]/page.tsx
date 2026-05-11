@@ -11,6 +11,7 @@ import { productKeys } from "@/lib/queries/products";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
 import { ProductSchema, BreadcrumbSchema } from "@/components/seo/JsonLd";
 import { BASE_URL } from "@/lib/utils/constants";
+import { BRAND } from "@/lib/utils/brand-config";
 import { getCachedOrFetch, cacheKeys } from "@/lib/redis/client";
 import type { Product } from "@/types/database";
 
@@ -212,7 +213,7 @@ export async function generateMetadata({
 
   const description =
     product.description ||
-    `${product.name} - ${priceText}. Monpang онлайн дэлгүүрээс худалдаж аваарай.`;
+    `${product.name} - ${priceText}. ${BRAND.name} онлайн дэлгүүрээс худалдаж аваарай.`;
 
   return {
     title: product.name,

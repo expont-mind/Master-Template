@@ -1,5 +1,6 @@
 "use server";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createInvoice, checkPayment } from "@/lib/qpay/client";
@@ -403,7 +404,7 @@ export async function createCheckoutInvoice(
 
     const invoice = await createInvoice({
       amount: finalTotal,
-      description: `Monpang захиалга: ${orderNumber}`,
+      description: `${BRAND.name} захиалга: ${orderNumber}`,
       customerName: `${payload.contact.lastName} ${payload.contact.firstName}`,
       callbackUrl,
     });
@@ -688,7 +689,7 @@ export async function createLendMNCheckoutInvoice(
     const lendmnCallbackUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/checkout/lendmn-callback`;
     const result = await createLendMNInvoice({
       amount: finalTotal,
-      description: `Monpang захиалга: ${orderNumber}`,
+      description: `${BRAND.name} захиалга: ${orderNumber}`,
       phoneNumber: payload.phoneNumber,
       orderNumber,
       userId: user.id,
@@ -834,7 +835,7 @@ export async function createStorePayCheckoutInvoice(
 
     const result = await createStorePayInvoice({
       amount: finalTotal,
-      description: `Monpang захиалга: ${orderNumber}`,
+      description: `${BRAND.name} захиалга: ${orderNumber}`,
       mobileNumber: payload.phoneNumber,
       orderNumber,
       userId: user.id,
@@ -997,7 +998,7 @@ export async function createInvoiceForExistingOrder(
 
     const invoice = await createInvoice({
       amount: fullPrice,
-      description: `Monpang захиалга: ${order.order_number}`,
+      description: `${BRAND.name} захиалга: ${order.order_number}`,
       customerName,
       callbackUrl,
     });

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { BRAND } from "@/lib/utils/brand-config";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { IconSvgElement } from "@hugeicons/react";
@@ -194,13 +195,13 @@ export function Sidebar({ mobileOpen, onMobileOpenChange }: SidebarProps) {
         <Link href="/dashboard" className="flex items-center gap-2.5 p-1.5">
           <Image
             src="/monpang-logo.svg"
-            alt="Monpang"
+            alt={BRAND.name}
             width={24}
             height={20}
             className="shrink-0"
           />
           <span className="text-base font-semibold tracking-tight">
-            Monpang
+            {BRAND.name}
           </span>
         </Link>
       </div>

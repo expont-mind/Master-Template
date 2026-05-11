@@ -1,26 +1,27 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { BreadcrumbSchema } from "@/components/seo/JsonLd";
+import { BRAND } from "@/lib/utils/brand-config";
+
+const description = `${BRAND.name}-н үйлчилгээний нөхцөл. Вэбсайт болон үйлчилгээг ашиглах дүрэм, журам.`;
+const title = `Үйлчилгээний нөхцөл | ${BRAND.name}`;
 
 export const metadata: Metadata = {
   title: "Үйлчилгээний нөхцөл",
-  description:
-    "Monpang-н үйлчилгээний нөхцөл. Вэбсайт болон үйлчилгээг ашиглах дүрэм, журам.",
+  description,
   alternates: {
     canonical: "/terms-of-service",
   },
   openGraph: {
-    title: "Үйлчилгээний нөхцөл | Monpang",
-    description:
-      "Monpang-н үйлчилгээний нөхцөл. Вэбсайт болон үйлчилгээг ашиглах дүрэм, журам.",
-    url: "https://monpang.com/terms-of-service",
+    title,
+    description,
+    url: `${BRAND.url}/terms-of-service`,
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Үйлчилгээний нөхцөл | Monpang",
-    description:
-      "Monpang-н үйлчилгээний нөхцөл. Вэбсайт болон үйлчилгээг ашиглах дүрэм, журам.",
+    title,
+    description,
   },
 };
 
@@ -68,7 +69,7 @@ export default function TermsOfServicePage() {
             <div className="flex flex-col gap-8 md:gap-10">
               <Section title="1. Ерөнхий зүйл">
                 <p>
-                  Эдгээр үйлчилгээний нөхцөл нь Monpang (цаашид &quot;бид&quot;,
+                  Эдгээр үйлчилгээний нөхцөл нь {BRAND.name} (цаашид &quot;бид&quot;,
                   &quot;манай&quot; гэх) вэбсайт болон үйлчилгээг ашиглахтай
                   холбоотой таны эрх, үүргийг тодорхойлно. Манай вэбсайтад
                   нэвтэрч, үйлчилгээг ашигласнаар та эдгээр нөхцөлийг хүлээн
@@ -163,7 +164,7 @@ export default function TermsOfServicePage() {
               <Section title="6. Оюуны өмч">
                 <p>
                   Вэбсайт дээрх бүх контент (лого, зураг, текст, дизайн) нь
-                  Monpang-н өмч юм. Зөвшөөрөлгүйгээр хуулбарлах, тараах, өөрчлөх
+                  {BRAND.name}-н өмч юм. Зөвшөөрөлгүйгээр хуулбарлах, тараах, өөрчлөх
                   хориотой. Бүтээгдэхүүний зураг нь жинхэнэ бүтээгдэхүүнээс бага
                   зэрэг ялгаатай харагдаж болно.
                 </p>
@@ -228,7 +229,7 @@ export default function TermsOfServicePage() {
                     холбогдоно уу:
                   </p>
                   <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg p-4 md:p-6 flex flex-col gap-2">
-                    <p className="text-[#020617] font-medium">Monpang</p>
+                    <p className="text-[#020617] font-medium">{BRAND.name}</p>
                     <p>Имэйл: info@monpang.com</p>
                     <p>Утас: +976 7700-0000</p>
                     <p>Хаяг: Улаанбаатар хот</p>

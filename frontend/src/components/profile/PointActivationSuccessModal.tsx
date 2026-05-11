@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useScrollLock } from "@/lib/hooks/useScrollLock";
@@ -80,12 +81,12 @@ export const PointActivationSuccessModal = ({
         {/* Text Content */}
         <div className="flex flex-col gap-2">
           <p className="text-[#020617] font-semibold text-xl font-manrope text-center leading-7">
-            Monpang Point данс
+            {BRAND.name} Point данс
             <br />
             амжилттай идэвхжлээ
           </p>
           <p className="text-[#64748B] font-normal text-base font-manrope text-center leading-6">
-            Monpang-д тавтай морил! Шинэ хэрэглэгч
+            {BRAND.name}-д тавтай морил! Шинэ хэрэглэгч
             <br />
             болсон таньд 5,000 MPoint бэлэглэлээ
           </p>

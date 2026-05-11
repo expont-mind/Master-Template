@@ -1,28 +1,29 @@
 import { Metadata } from "next";
 import { NewArrivalsClient } from "@/components/new-arrivals/NewArrivalsClient";
 import { BreadcrumbSchema } from "@/components/seo/JsonLd";
+import { BRAND } from "@/lib/utils/brand-config";
 
 export const revalidate = 60;
 
+const description = `${BRAND.name} дээр шинээр нэмэгдсэн бүтээгдэхүүнүүд. Хамгийн сүүлийн үеийн бараанууд.`;
+const title = `Шинээр нэмэгдсэн | ${BRAND.name}`;
+
 export const metadata: Metadata = {
   title: "Шинээр нэмэгдсэн",
-  description:
-    "Monpang дээр шинээр нэмэгдсэн бүтээгдэхүүнүүд. Хамгийн сүүлийн үеийн бараанууд.",
+  description,
   alternates: {
     canonical: "/new-arrivals",
   },
   openGraph: {
-    title: "Шинээр нэмэгдсэн | Monpang",
-    description:
-      "Monpang дээр шинээр нэмэгдсэн бүтээгдэхүүнүүд. Хамгийн сүүлийн үеийн бараанууд.",
-    url: "https://monpang.com/new-arrivals",
+    title,
+    description,
+    url: `${BRAND.url}/new-arrivals`,
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Шинээр нэмэгдсэн | Monpang",
-    description:
-      "Monpang дээр шинээр нэмэгдсэн бүтээгдэхүүнүүд. Хамгийн сүүлийн үеийн бараанууд.",
+    title,
+    description,
   },
 };
 

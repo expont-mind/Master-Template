@@ -1,11 +1,11 @@
 import { MetadataRoute } from "next";
+import { BRAND } from "@/lib/utils/brand-config";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Monpang - Монголын онлайн дэлгүүр",
-    short_name: "Monpang",
-    description:
-      "Монголын хамгийн том онлайн худалдааны платформ. Чанартай бараа, хурдан хүргэлт, найдвартай үйлчилгээ.",
+    name: `${BRAND.name} - Монголын онлайн дэлгүүр`,
+    short_name: BRAND.shortName,
+    description: BRAND.description,
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

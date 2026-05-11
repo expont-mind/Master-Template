@@ -6,6 +6,7 @@ import { BrandDetailClient } from "@/components/brand/BrandDetailClient";
 import { BrandSchema, BreadcrumbSchema } from "@/components/seo/JsonLd";
 import { BASE_URL } from "@/lib/utils/constants";
 import { getCachedOrFetch, cacheKeys } from "@/lib/redis/client";
+import { BRAND } from "@/lib/utils/brand-config";
 
 export const revalidate = 300;
 
@@ -83,7 +84,7 @@ export async function generateMetadata({
     };
   }
 
-  const description = `${brand.name} брэндийн бүтээгдэхүүнүүд (${brand.productCount} бүтээгдэхүүн). Monpang онлайн дэлгүүрээс худалдаж аваарай.`;
+  const description = `${brand.name} брэндийн бүтээгдэхүүнүүд (${brand.productCount} бүтээгдэхүүн). ${BRAND.name} онлайн дэлгүүрээс худалдаж аваарай.`;
 
   return {
     title: `${brand.name} бүтээгдэхүүнүүд`,

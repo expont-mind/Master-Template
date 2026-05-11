@@ -1,12 +1,12 @@
+import { BRAND } from "@/lib/utils/brand-config";
+
 /**
  * Returns the auth callback URL using the current browser origin.
- * This ensures OAuth redirects return to whichever domain the user is on
- * (monpang.mn or monpang.com).
+ * Falls back to BRAND.url server-side so OAuth redirects always land
+ * on the configured site, whichever domain alias the user is on.
  */
 export function getAuthCallbackUrl(next: string = "/"): string {
   const origin =
-    typeof window !== "undefined"
-      ? window.location.origin
-      : (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.monpang.mn");
+    typeof window !== "undefined" ? window.location.origin : BRAND.url;
   return `${origin}/auth/callback?next=${encodeURIComponent(next)}`;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import Image from "next/image";
 import { Truck, MPointBadge } from "@/components/svg";
 import { type CartItem, formatPrice } from "@/components/checkout/constants";
@@ -133,7 +134,7 @@ export function PaymentSummary({
               </div>
               <div className="flex items-center justify-between">
                 <p className="text-[#64748B] font-normal text-sm md:text-base font-manrope">
-                  Monpang point
+                  {BRAND.name} point
                 </p>
                 <div className="flex items-center text-[#F43F5E] font-normal text-sm md:text-base font-manrope">
                   <span>-{pointDiscount.toLocaleString()}</span>{" "}

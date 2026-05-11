@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -346,7 +347,7 @@ export default function CartPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <p className="text-[#64748B] font-normal text-base font-manrope">
-                  Monpang point
+                  {BRAND.name} point
                 </p>
                 {selectedPoints ? (
                   <button
@@ -849,7 +850,7 @@ export default function CartPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <p className="text-[#64748B] font-normal text-base font-manrope">
-                        Monpang point
+                        {BRAND.name} point
                       </p>
                       {selectedPoints ? (
                         <button

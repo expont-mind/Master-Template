@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useScrollLock } from "@/lib/hooks/useScrollLock";
@@ -96,7 +97,7 @@ export const PointGiftModal = ({
           </div>
           <p className="text-[#64748B] font-normal text-base font-manrope text-center leading-6">
             {description ||
-              `Monpang-с танд ${amount.toLocaleString()} Monpang point бэлэглэлээ.`}
+              `${BRAND.name}-с танд ${amount.toLocaleString()} ${BRAND.name} point бэлэглэлээ.`}
           </p>
         </div>
 

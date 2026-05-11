@@ -3,6 +3,7 @@ import { Roboto_Flex } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { Providers } from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
+import { BRAND } from "@/lib/utils/brand-config";
 import "./globals.css";
 
 const robotoFlex = Roboto_Flex({
@@ -12,8 +13,8 @@ const robotoFlex = Roboto_Flex({
 });
 
 export const metadata: Metadata = {
-  title: "Monpang Admin",
-  description: "Monpang Admin Panel",
+  title: BRAND.adminTitle,
+  description: BRAND.adminPanelTitle,
   icons: {
     icon: "/monpang-logo.svg",
   },

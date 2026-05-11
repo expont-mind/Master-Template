@@ -2,26 +2,28 @@ import { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { FAQClient } from "@/components/faq/FAQClient";
 import { BreadcrumbSchema } from "@/components/seo/JsonLd";
+import { BRAND } from "@/lib/utils/brand-config";
+
+const description =
+  "Бүртгэл, захиалга, хүргэлт, төлбөрийн түгээмэл асуултын хариултуудыг эндээс үзнэ үү.";
+const title = `Түгээмэл асуултууд | ${BRAND.name}`;
 
 export const metadata: Metadata = {
   title: "Түгээмэл асуултууд",
-  description:
-    "Бүртгэл, захиалга, хүргэлт, төлбөрийн түгээмэл асуултын хариултуудыг эндээс үзнэ үү.",
+  description,
   alternates: {
     canonical: "/faq",
   },
   openGraph: {
-    title: "Түгээмэл асуултууд | Monpang",
-    description:
-      "Бүртгэл, захиалга, хүргэлт, төлбөрийн түгээмэл асуултын хариултуудыг эндээс үзнэ үү.",
-    url: "https://monpang.com/faq",
+    title,
+    description,
+    url: `${BRAND.url}/faq`,
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Түгээмэл асуултууд | Monpang",
-    description:
-      "Бүртгэл, захиалга, хүргэлт, төлбөрийн түгээмэл асуултын хариултуудыг эндээс үзнэ үү.",
+    title,
+    description,
   },
 };
 

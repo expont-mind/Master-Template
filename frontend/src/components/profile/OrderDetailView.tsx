@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import { useState, useEffect, useRef } from "react";
 import { Trash2 as Trash2Small } from "lucide-react";
 import Image from "next/image";
@@ -749,7 +750,7 @@ export const OrderDetailView = ({
 
               <div className="flex items-center justify-between">
                 <p className="text-[#64748B] font-normal text-sm sm:text-base font-manrope leading-5">
-                  Monpang point
+                  {BRAND.name} point
                 </p>
                 <p className="text-[#F43F5E] font-medium text-sm sm:text-base font-manrope leading-5 flex items-center gap-0.5">
                   -{((isPaymentUnpaid || retryTotalAmount) ? 0 : pointsUsed).toLocaleString()}
@@ -791,7 +792,7 @@ export const OrderDetailView = ({
             {/* Points earned */}
             <div className="flex items-center justify-between">
               <p className="text-[#020617] font-normal text-sm sm:text-base font-manrope leading-5">
-                Monpang point
+                {BRAND.name} point
               </p>
               <p className="text-teal-600 font-medium text-sm sm:text-base font-manrope leading-5 flex items-center gap-0.5">
                 +{pointsEarned.toLocaleString()}

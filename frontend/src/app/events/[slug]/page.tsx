@@ -6,6 +6,7 @@ import { EventDetailClient } from "@/components/events/EventDetailClient";
 import { BreadcrumbSchema } from "@/components/seo/JsonLd";
 import { getCachedOrFetch, cacheKeys } from "@/lib/redis/client";
 import type { Event } from "@/types/database";
+import { BRAND } from "@/lib/utils/brand-config";
 
 export const revalidate = 300;
 
@@ -44,23 +45,27 @@ export async function generateMetadata({
     };
   }
 
+  const fallbackDesc = `${event.title} - ${BRAND.name} эвэнт`;
+  const description = event.description || fallbackDesc;
+  const ogTitle = `${event.title} | ${BRAND.name}`;
+
   return {
     title: event.title,
-    description: event.description || `${event.title} - Monpang эвэнт`,
+    description,
     alternates: {
       canonical: `/events/${slug}`,
     },
     openGraph: {
-      title: `${event.title} | Monpang`,
-      description: event.description || `${event.title} - Monpang эвэнт`,
-      url: `https://monpang.com/events/${slug}`,
+      title: ogTitle,
+      description,
+      url: `${BRAND.url}/events/${slug}`,
       type: "website",
       images: event.image_url ? [{ url: event.image_url }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
-      title: `${event.title} | Monpang`,
-      description: event.description || `${event.title} - Monpang эвэнт`,
+      title: ogTitle,
+      description,
       images: event.image_url ? [event.image_url] : undefined,
     },
   };

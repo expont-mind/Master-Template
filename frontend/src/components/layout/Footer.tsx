@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -173,7 +174,7 @@ export const Footer = () => {
             </div>
             <div className="flex flex-col gap-4">
               <p className="text-[#020617] font-bold text-sm sm:text-base font-manrope">
-                Monpang app тун удахгүй
+                {BRAND.name} app тун удахгүй
               </p>
               <div className="flex gap-2 md:gap-3">
                 <AppStore />
@@ -188,7 +189,7 @@ export const Footer = () => {
           </div>
           <div className="flex flex-col sm:flex-row sm:justify-between gap-8 sm:gap-0">
             <p className="text-[#64748B] font-medium text-xs sm:text-sm font-manrope order-2 sm:order-1">
-              © 2026 Monpang.com. All rights reserved.
+              © 2026 {BRAND.name}.com. All rights reserved.
             </p>
             <div className="flex flex-col md:flex-row flex-wrap gap-4 sm:gap-6 order-1 sm:order-2">
               <Link

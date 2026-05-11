@@ -1,28 +1,29 @@
 import { Metadata } from "next";
 import { ProductsClient } from "@/components/product/ProductsClient";
 import { BreadcrumbSchema } from "@/components/seo/JsonLd";
+import { BRAND } from "@/lib/utils/brand-config";
 
 export const revalidate = 300;
 
+const description = `${BRAND.name} онлайн дэлгүүрийн бүх бүтээгдэхүүнүүд. Чанартай бараа, хямд үнэ, хурдан хүргэлт.`;
+const title = `Бүтээгдэхүүн | ${BRAND.name}`;
+
 export const metadata: Metadata = {
   title: "Бүтээгдэхүүн",
-  description:
-    "Monpang онлайн дэлгүүрийн бүх бүтээгдэхүүнүүд. Чанартай бараа, хямд үнэ, хурдан хүргэлт.",
+  description,
   alternates: {
     canonical: "/products",
   },
   openGraph: {
-    title: "Бүтээгдэхүүн | Monpang",
-    description:
-      "Monpang онлайн дэлгүүрийн бүх бүтээгдэхүүнүүд. Чанартай бараа, хямд үнэ, хурдан хүргэлт.",
-    url: "https://monpang.com/products",
+    title,
+    description,
+    url: `${BRAND.url}/products`,
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Бүтээгдэхүүн | Monpang",
-    description:
-      "Monpang онлайн дэлгүүрийн бүх бүтээгдэхүүнүүд. Чанартай бараа, хямд үнэ, хурдан хүргэлт.",
+    title,
+    description,
   },
 };
 

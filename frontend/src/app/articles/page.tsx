@@ -1,28 +1,29 @@
 import { Metadata } from "next";
 import { ArticlesClient } from "@/components/articles/ArticlesClient";
 import { BreadcrumbSchema } from "@/components/seo/JsonLd";
+import { BRAND } from "@/lib/utils/brand-config";
 
 export const revalidate = 300;
 
+const description = `${BRAND.name}-ийн нийтлэлүүд, зөвлөмж болон мэдээлэл. Бараа солих, захиалга хийх заавар, танилцуулга.`;
+const title = `Нийтлэл | ${BRAND.name}`;
+
 export const metadata: Metadata = {
   title: "Нийтлэл",
-  description:
-    "Monpang-ийн нийтлэлүүд, зөвлөмж болон мэдээлэл. Бараа солих, захиалга хийх заавар, танилцуулга.",
+  description,
   alternates: {
     canonical: "/articles",
   },
   openGraph: {
-    title: "Нийтлэл | Monpang",
-    description:
-      "Monpang-ийн нийтлэлүүд, зөвлөмж болон мэдээлэл. Бараа солих, захиалга хийх заавар, танилцуулга.",
-    url: "https://monpang.com/articles",
+    title,
+    description,
+    url: `${BRAND.url}/articles`,
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Нийтлэл | Monpang",
-    description:
-      "Monpang-ийн нийтлэлүүд, зөвлөмж болон мэдээлэл. Бараа солих, захиалга хийх заавар, танилцуулга.",
+    title,
+    description,
   },
 };
 

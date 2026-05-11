@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import type { Database } from "@/types/database";
 import {
   Delivery,
@@ -146,7 +147,7 @@ export const ProfileSidebar = ({
                     </div>
                   </div>
                   <p className="text-[#94A3B8] text-left font-normal text-xs font-manrope pl-px">
-                    Monpang point
+                    {BRAND.name} point
                   </p>
                   <p className="text-teal-500 text-left font-normal text-[10px] font-manrope px-px leading-3.5">
                     1point = 1төг
@@ -324,7 +325,7 @@ export const ProfileSidebar = ({
                     </div>
                   </div>
                   <p className="text-[#94A3B8] text-left font-normal text-xs font-manrope pl-px">
-                    Monpang point
+                    {BRAND.name} point
                   </p>
                   <p className="text-teal-500 text-left font-normal text-[10px] font-manrope px-px leading-3.5">
                     1point = 1төг

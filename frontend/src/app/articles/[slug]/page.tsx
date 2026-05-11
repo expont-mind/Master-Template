@@ -6,6 +6,7 @@ import { ArticleDetailClient } from "@/components/articles/ArticleDetailClient";
 import { BreadcrumbSchema } from "@/components/seo/JsonLd";
 import { getCachedOrFetch, cacheKeys } from "@/lib/redis/client";
 import type { Article } from "@/types/database";
+import { BRAND } from "@/lib/utils/brand-config";
 
 export const revalidate = 300;
 
@@ -45,23 +46,27 @@ export async function generateMetadata({
     };
   }
 
+  const fallbackDesc = `${article.title} - ${BRAND.name} нийтлэл`;
+  const description = article.content?.substring(0, 160) || fallbackDesc;
+  const ogTitle = `${article.title} | ${BRAND.name}`;
+
   return {
     title: article.title,
-    description: article.content?.substring(0, 160) || `${article.title} - Monpang нийтлэл`,
+    description,
     alternates: {
       canonical: `/articles/${slug}`,
     },
     openGraph: {
-      title: `${article.title} | Monpang`,
-      description: article.content?.substring(0, 160) || `${article.title} - Monpang нийтлэл`,
-      url: `https://monpang.com/articles/${slug}`,
+      title: ogTitle,
+      description,
+      url: `${BRAND.url}/articles/${slug}`,
       type: "article",
       images: article.image_url ? [{ url: article.image_url }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
-      title: `${article.title} | Monpang`,
-      description: article.content?.substring(0, 160) || `${article.title} - Monpang нийтлэл`,
+      title: ogTitle,
+      description,
       images: article.image_url ? [article.image_url] : undefined,
     },
   };

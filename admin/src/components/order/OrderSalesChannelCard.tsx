@@ -4,13 +4,14 @@ import {
   Card,
   CardContent,
 } from "@/components/ui/card";
+import { BRAND } from "@/lib/utils/brand-config";
 
 interface OrderSalesChannelCardProps {
   channel?: string;
 }
 
 export function OrderSalesChannelCard({
-  channel = "Monpang",
+  channel = BRAND.name,
 }: OrderSalesChannelCardProps) {
   return (
     <Card>

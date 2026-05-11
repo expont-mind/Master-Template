@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -163,7 +164,7 @@ export const PointContent = ({ onBalanceChange }: PointContentProps) => {
               href="/profile?tab=point"
               className="text-slate-500 text-sm font-normal font-manrope hover:text-slate-700 transition-colors"
             >
-              Monpang point
+              {BRAND.name} point
             </Link>
             <Slash />
             <p className="text-slate-950 text-sm font-normal font-manrope">
@@ -248,7 +249,7 @@ export const PointContent = ({ onBalanceChange }: PointContentProps) => {
         <Slash />
 
         <p className="text-slate-950 text-sm font-normal font-manrope">
-          Monpang point
+          {BRAND.name} point
         </p>
       </div>
 
@@ -263,13 +264,13 @@ export const PointContent = ({ onBalanceChange }: PointContentProps) => {
             </Link>
             <Slash />
             <p className="text-slate-950 text-sm font-normal font-manrope">
-              Monpang point
+              {BRAND.name} point
             </p>
           </div>
 
           <div className="flex items-center justify-between">
             <p className="text-[#020617] font-bold text-2xl md:text-[26px] font-manrope">
-              Monpang point
+              {BRAND.name} point
             </p>
             <button
               className="p-1 cursor-pointer"

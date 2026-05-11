@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import Link from "next/link";
 import { X, ChevronRight, User, Heart, Package, LogOut } from "lucide-react";
 import { useUIStore } from "@/stores/ui-store";
@@ -45,7 +46,7 @@ export function MobileNav() {
             className="flex items-center text-xl font-bold text-zinc-900 dark:text-white"
           >
             <span className="text-2xl mr-1">🛒</span>
-            Monpang
+            {BRAND.name}
           </Link>
           <button
             onClick={closeMobileNav}

@@ -1,8 +1,9 @@
 // App constants
 
-// Site URL
-export const BASE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://monpang.com";
+import { BRAND } from "./brand-config";
+
+// Site URL — re-exported from brand-config so both sources stay aligned.
+export const BASE_URL = BRAND.url;
 
 // Pagination
 export const DEFAULT_PAGE_SIZE = 24;

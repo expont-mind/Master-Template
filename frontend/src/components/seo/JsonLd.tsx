@@ -1,5 +1,6 @@
 import type { Product } from "@/types/database";
 import { BASE_URL } from "@/lib/utils/constants";
+import { BRAND, DELIVERY_ZONES_CONFIG } from "@/lib/utils/brand-config";
 
 interface BreadcrumbItem {
   name: string;
@@ -11,15 +12,14 @@ export function OrganizationSchema() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Monpang",
+    name: BRAND.name,
     url: BASE_URL,
     logo: `${BASE_URL}/logo.svg`,
-    description:
-      "Монголын хамгийн том онлайн худалдааны платформ. Чанартай бараа, хурдан хүргэлт, найдвартай үйлчилгээ.",
+    description: BRAND.description,
     address: {
       "@type": "PostalAddress",
       addressCountry: "MN",
-      addressLocality: "Улаанбаатар",
+      addressLocality: DELIVERY_ZONES_CONFIG.capital,
     },
     sameAs: [
       // Add social media URLs when available
@@ -41,7 +41,7 @@ export function WebSiteSchema() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Monpang",
+    name: BRAND.name,
     url: BASE_URL,
     potentialAction: {
       "@type": "SearchAction",
@@ -105,7 +105,7 @@ export function ProductSchema({
         : "https://schema.org/OutOfStock",
       seller: {
         "@type": "Organization",
-        name: "Monpang",
+        name: BRAND.name,
       },
     },
   };
@@ -220,7 +220,7 @@ export function BrandSchema({
     "@type": "Brand",
     name,
     url: `${BASE_URL}/brands/${slug}`,
-    description: description || `${name} бүтээгдэхүүнүүд Monpang дээр`,
+    description: description || `${name} бүтээгдэхүүнүүд ${BRAND.name} дээр`,
     logo,
   };
 

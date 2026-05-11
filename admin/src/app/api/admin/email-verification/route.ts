@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { sendVerificationEmail } from "@/lib/email";
 import { createVerifyToken } from "@/lib/verify-token";
+import { BRAND } from "@/lib/utils/brand-config";
 import { NextRequest, NextResponse } from "next/server";
 
 interface AdminLoginEmail {
@@ -109,8 +110,7 @@ export async function POST(request: NextRequest) {
 
     // Баталгаажуулах линк үүсгэж имэйл илгээх
     const token = createVerifyToken(emailRecord.id, email);
-    const adminUrl =
-      process.env.NEXT_PUBLIC_ADMIN_URL || "https://monpang-admin.vercel.app";
+    const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL ?? BRAND.url;
     const verifyUrl = `${adminUrl}/api/admin/email-verification/confirm?token=${token}`;
 
     await sendVerificationEmail(email, verifyUrl);

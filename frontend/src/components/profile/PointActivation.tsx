@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/utils/brand-config";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useScrollLock } from "@/lib/hooks/useScrollLock";
@@ -188,7 +189,7 @@ export const PointActivation = ({
 
             <div className="flex flex-col items-start w-full gap-4">
               <h2 className="text-[#020617] font-bold text-3xl font-manrope leading-9">
-                Monpang Point -оо
+                {BRAND.name} Point -оо
                 <br />
                 идэвхжүүлээрэй
               </h2>
@@ -196,7 +197,7 @@ export const PointActivation = ({
                 Худалдан авалт бүрээс
                 <br />
                 <span className="text-[#020617] font-bold">
-                  2% Monpang point
+                  2% {BRAND.name} point
                 </span>{" "}
                 цуглуулаарай
               </p>
@@ -207,7 +208,7 @@ export const PointActivation = ({
           <div className="absolute -bottom-5 -right-[192px] w-[727px] h-[544px] pointer-events-none">
             <Image
               src="/iPhone.png"
-              alt="Monpang Point"
+              alt={`${BRAND.name} Point`}
               fill
               className="object-contain"
             />
@@ -256,7 +257,7 @@ export const PointActivation = ({
           {/* Content */}
           <div className="flex flex-col items-start w-full gap-4">
             <h2 className="text-[#020617] font-bold text-3xl font-manrope leading-9">
-              Monpang Point -оо
+              {BRAND.name} Point -оо
               <br />
               идэвхжүүлээрэй
             </h2>
@@ -264,7 +265,7 @@ export const PointActivation = ({
               Худалдан авалт бүрээс
               <br />
               <span className="text-[#020617] font-bold">
-                2% Monpang point
+                2% {BRAND.name} point
               </span>{" "}
               цуглуулаарай
             </p>
@@ -274,7 +275,7 @@ export const PointActivation = ({
           <div className="absolute -bottom-5 -right-[192px] w-[727px] h-[544px] pointer-events-none">
             <Image
               src="/iPhone.png"
-              alt="Monpang Point"
+              alt={`${BRAND.name} Point`}
               fill
               className="object-contain"
             />

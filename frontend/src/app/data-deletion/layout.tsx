@@ -1,17 +1,19 @@
 import { Metadata } from "next";
+import { BRAND } from "@/lib/utils/brand-config";
+
+const description = `${BRAND.name} дээрх бүртгэл болон хувийн мэдээллээ устгуулах хүсэлт гаргах.`;
+const title = `Өгөгдөл устгах хүсэлт | ${BRAND.name}`;
 
 export const metadata: Metadata = {
   title: "Өгөгдөл устгах хүсэлт",
-  description:
-    "Monpang дээрх бүртгэл болон хувийн мэдээллээ устгуулах хүсэлт гаргах.",
+  description,
   alternates: {
     canonical: "/data-deletion",
   },
   openGraph: {
-    title: "Өгөгдөл устгах хүсэлт | Monpang",
-    description:
-      "Monpang дээрх бүртгэл болон хувийн мэдээллээ устгуулах хүсэлт гаргах.",
-    url: "https://monpang.com/data-deletion",
+    title,
+    description,
+    url: `${BRAND.url}/data-deletion`,
     type: "website",
   },
   robots: {

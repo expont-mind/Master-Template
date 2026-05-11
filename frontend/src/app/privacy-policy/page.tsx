@@ -1,26 +1,27 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { BreadcrumbSchema } from "@/components/seo/JsonLd";
+import { BRAND } from "@/lib/utils/brand-config";
+
+const description = `${BRAND.name}-н нууцлалын бодлого. Таны хувийн мэдээллийг хэрхэн цуглуулж, хадгалж, ашигладаг талаар.`;
+const title = `Нууцлалын бодлого | ${BRAND.name}`;
 
 export const metadata: Metadata = {
   title: "Нууцлалын бодлого",
-  description:
-    "Monpang-н нууцлалын бодлого. Таны хувийн мэдээллийг хэрхэн цуглуулж, хадгалж, ашигладаг талаар.",
+  description,
   alternates: {
     canonical: "/privacy-policy",
   },
   openGraph: {
-    title: "Нууцлалын бодлого | Monpang",
-    description:
-      "Monpang-н нууцлалын бодлого. Таны хувийн мэдээллийг хэрхэн цуглуулж, хадгалж, ашигладаг талаар.",
-    url: "https://monpang.com/privacy-policy",
+    title,
+    description,
+    url: `${BRAND.url}/privacy-policy`,
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Нууцлалын бодлого | Monpang",
-    description:
-      "Monpang-н нууцлалын бодлого. Таны хувийн мэдээллийг хэрхэн цуглуулж, хадгалж, ашигладаг талаар.",
+    title,
+    description,
   },
 };
 
@@ -68,7 +69,7 @@ export default function PrivacyPolicyPage() {
             <div className="flex flex-col gap-8 md:gap-10">
               <Section title="1. Танилцуулга">
                 <p>
-                  Monpang (цаашид &quot;бид&quot;, &quot;манай&quot; гэх) нь таны хувийн
+                  {BRAND.name} (цаашид &quot;бид&quot;, &quot;манай&quot; гэх) нь таны хувийн
                   мэдээллийн нууцлалыг хамгаалахад онцгой анхаардаг. Энэхүү
                   нууцлалын бодлого нь манай вэбсайт болон үйлчилгээг ашиглах
                   үед таны мэдээллийг хэрхэн цуглуулж, ашиглаж, хамгаалдаг
@@ -224,7 +225,7 @@ export default function PrivacyPolicyPage() {
                     холбогдоно уу:
                   </p>
                   <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg p-4 md:p-6 flex flex-col gap-2">
-                    <p className="text-[#020617] font-medium">Monpang</p>
+                    <p className="text-[#020617] font-medium">{BRAND.name}</p>
                     <p>Имэйл: info@monpang.com</p>
                     <p>Утас: +976 7700-0000</p>
                     <p>Хаяг: Улаанбаатар хот</p>
