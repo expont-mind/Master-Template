@@ -19,8 +19,7 @@ export async function POST(request: NextRequest) {
 
     // Log to sms_logs
     const supabase = createAdminClient();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any).from("sms_logs").insert({
+    await supabase.from("sms_logs").insert({
       campaign_id: null,
       user_id: user_id || null,
       phone: normalizedPhone,

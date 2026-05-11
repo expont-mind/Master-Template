@@ -11,8 +11,11 @@ interface RecipientFilter {
   phones?: string[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function fetchAllPaginated<T>(queryBuilder: () => any): Promise<T[]> {
+async function fetchAllPaginated<T>(
+  queryBuilder: () => PromiseLike<{ data: T[] | null; error: { message: string } | null }> & {
+    range: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: { message: string } | null }>;
+  },
+): Promise<T[]> {
   const PAGE_SIZE = 1000;
   const all: T[] = [];
   let offset = 0;

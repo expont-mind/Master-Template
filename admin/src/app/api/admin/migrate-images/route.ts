@@ -58,8 +58,22 @@ export async function POST() {
       const { table, columns } = target;
       results[table] = { total: 0, migrated: 0, failed: 0 };
 
-      // Build OR filter for cloudinary URLs across all columns
-      const { data: rows, error } = await supabase
+      // This route migrates URL columns across many tables. The table
+      // name is a runtime string, so the Supabase typed client can't
+      // narrow per-call — we work with a Row of unknown columns and
+      // cast at the dynamic-update boundary.
+      type ImageRow = { id: string } & Record<string, unknown>;
+
+      const { data: rows, error } = await (
+        supabase as unknown as {
+          from: (t: string) => {
+            select: (cols: string) => PromiseLike<{
+              data: ImageRow[] | null;
+              error: { message: string } | null;
+            }>;
+          };
+        }
+      )
         .from(table)
         .select(`id, ${columns.join(", ")}`);
 
@@ -70,29 +84,24 @@ export async function POST() {
 
       if (!rows || rows.length === 0) continue;
 
-      // Filter rows that have cloudinary URLs
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const cloudinaryRows = rows.filter((row: any) =>
+      const cloudinaryRows = rows.filter((row) =>
         columns.some((col) => {
           const val = row[col];
           return typeof val === "string" && val.includes("cloudinary.com");
-        })
+        }),
       );
 
       results[table].total = cloudinaryRows.length;
 
-      // Process in batches
       for (let i = 0; i < cloudinaryRows.length; i += BATCH_SIZE) {
         const batch = cloudinaryRows.slice(i, i + BATCH_SIZE);
 
         for (const row of batch) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const updates: Record<string, any> = {};
+          const updates: Record<string, string> = {};
           let hasUpdate = false;
 
           for (const col of columns) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const oldUrl = (row as any)[col];
+            const oldUrl = row[col];
             if (typeof oldUrl !== "string" || !oldUrl.includes("cloudinary.com")) {
               continue;
             }
@@ -107,14 +116,23 @@ export async function POST() {
           }
 
           if (hasUpdate) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const { error: updateError } = await (supabase as any)
+            const { error: updateError } = await (
+              supabase as unknown as {
+                from: (t: string) => {
+                  update: (vals: Record<string, string>) => {
+                    eq: (col: string, val: string) => PromiseLike<{
+                      error: { message: string } | null;
+                    }>;
+                  };
+                };
+              }
+            )
               .from(table)
               .update(updates)
-              .eq("id", (row as Record<string, unknown>).id);
+              .eq("id", row.id);
 
             if (updateError) {
-              console.error(`Failed to update ${table}/${(row as Record<string, unknown>).id}:`, updateError.message);
+              console.error(`Failed to update ${table}/${row.id}:`, updateError.message);
               results[table].failed++;
             } else {
               results[table].migrated++;

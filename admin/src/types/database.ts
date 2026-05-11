@@ -1257,6 +1257,149 @@ export interface Database {
           created_at?: string;
         };
       };
+      admins: {
+        Row: {
+          id: string;
+          email: string;
+          password_hash: string;
+          role_id: string | null;
+          created_at: string;
+          two_factor_enabled: boolean;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          password_hash: string;
+          role_id?: string | null;
+          created_at?: string;
+          two_factor_enabled?: boolean;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          password_hash?: string;
+          role_id?: string | null;
+          created_at?: string;
+          two_factor_enabled?: boolean;
+        };
+      };
+      admin_login_emails: {
+        Row: {
+          id: string;
+          admin_id: string;
+          email: string;
+          is_verified: boolean;
+          verification_code: string | null;
+          verification_expires_at: string | null;
+          verified_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          admin_id: string;
+          email: string;
+          is_verified?: boolean;
+          verification_code?: string | null;
+          verification_expires_at?: string | null;
+          verified_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          admin_id?: string;
+          email?: string;
+          is_verified?: boolean;
+          verification_code?: string | null;
+          verification_expires_at?: string | null;
+          verified_at?: string | null;
+          created_at?: string;
+        };
+      };
+      sms_campaigns: {
+        Row: {
+          id: string;
+          name: string;
+          message: string;
+          status: "draft" | "scheduled" | "sending" | "sent" | "failed";
+          recipient_filter: Json | null;
+          recipient_count: number;
+          sent_count: number;
+          failed_count: number;
+          scheduled_at: string | null;
+          sent_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          message: string;
+          status?: "draft" | "scheduled" | "sending" | "sent" | "failed";
+          recipient_filter?: Json | null;
+          recipient_count?: number;
+          sent_count?: number;
+          failed_count?: number;
+          scheduled_at?: string | null;
+          sent_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          message?: string;
+          status?: "draft" | "scheduled" | "sending" | "sent" | "failed";
+          recipient_filter?: Json | null;
+          recipient_count?: number;
+          sent_count?: number;
+          failed_count?: number;
+          scheduled_at?: string | null;
+          sent_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      sms_logs: {
+        Row: {
+          id: string;
+          campaign_id: string | null;
+          user_id: string | null;
+          phone: string;
+          message: string;
+          status: string;
+          provider: string | null;
+          provider_message_id: string | null;
+          error_message: string | null;
+          sent_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          campaign_id?: string | null;
+          user_id?: string | null;
+          phone: string;
+          message: string;
+          status?: string;
+          provider?: string | null;
+          provider_message_id?: string | null;
+          error_message?: string | null;
+          sent_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          campaign_id?: string | null;
+          user_id?: string | null;
+          phone?: string;
+          message?: string;
+          status?: string;
+          provider?: string | null;
+          provider_message_id?: string | null;
+          error_message?: string | null;
+          sent_at?: string | null;
+          created_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;

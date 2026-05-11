@@ -1,11 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-interface AdminRow {
-  id: string;
-  two_factor_enabled: boolean;
-}
-
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
@@ -20,14 +15,11 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient();
 
     // Admin эсэх шалгах
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data } = await (supabase as any)
+    const { data: admin } = await supabase
       .from("admins")
       .select("id, two_factor_enabled")
       .eq("email", email)
       .single();
-
-    const admin = data as AdminRow | null;
 
     let isAdmin = false;
     let twoFactorEnabled = true;
@@ -37,8 +29,7 @@ export async function POST(request: NextRequest) {
       twoFactorEnabled = admin.two_factor_enabled;
     } else {
       // Нэмэлт имэйлээр шалгах
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: altEmail } = await (supabase as any)
+      const { data: altEmail } = await supabase
         .from("admin_login_emails")
         .select("admin_id")
         .eq("email", email)
@@ -47,15 +38,11 @@ export async function POST(request: NextRequest) {
 
       if (altEmail) {
         isAdmin = true;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: parentData } = await (supabase as any)
+        const { data: parentAdmin } = await supabase
           .from("admins")
           .select("two_factor_enabled")
           .eq("id", altEmail.admin_id)
           .single();
-        const parentAdmin = parentData as {
-          two_factor_enabled: boolean;
-        } | null;
         twoFactorEnabled = parentAdmin?.two_factor_enabled ?? true;
       }
     }

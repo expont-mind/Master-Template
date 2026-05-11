@@ -17,22 +17,10 @@ interface Recipient {
   phone: string;
 }
 
-interface CampaignRow {
-  id: string;
-  name: string;
-  message: string;
-  status: string;
-  recipient_filter: RecipientFilter | null;
-  recipient_count: number;
-  sent_count: number;
-  failed_count: number;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnySupabase = ReturnType<typeof createAdminClient> & { from: (table: string) => any };
+type AdminSupabase = ReturnType<typeof createAdminClient>;
 
 async function fetchAllPaginated<T>(
-  queryBuilder: () => ReturnType<ReturnType<AnySupabase["from"]>["select"]>,
+  queryBuilder: () => PromiseLike<{ data: T[] | null; error: { message: string } | null }>,
 ): Promise<T[]> {
   const PAGE_SIZE = 1000;
   const all: T[] = [];
@@ -40,7 +28,10 @@ async function fetchAllPaginated<T>(
   let hasMore = true;
 
   while (hasMore) {
-    const { data, error } = await queryBuilder().range(offset, offset + PAGE_SIZE - 1);
+    const builder = queryBuilder() as PromiseLike<{ data: T[] | null; error: { message: string } | null }> & {
+      range: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: { message: string } | null }>;
+    };
+    const { data, error } = await builder.range(offset, offset + PAGE_SIZE - 1);
     if (error) throw new Error(error.message);
     const rows = (data ?? []) as T[];
     all.push(...rows);
@@ -52,7 +43,7 @@ async function fetchAllPaginated<T>(
 }
 
 async function resolveRecipients(
-  supabase: AnySupabase,
+  supabase: AdminSupabase,
   filter: RecipientFilter
 ): Promise<Recipient[]> {
   if (filter.type === "manual") {
@@ -108,14 +99,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "campaign_id is required" }, { status: 400 });
     }
 
-    const supabase = createAdminClient() as AnySupabase;
+    const supabase = createAdminClient();
 
     // Fetch campaign
     const { data: campaign, error: campaignError } = await supabase
       .from("sms_campaigns")
       .select("*")
       .eq("id", campaign_id)
-      .single() as { data: CampaignRow | null; error: { message: string } | null };
+      .single();
 
     if (campaignError || !campaign) {
       return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
@@ -125,7 +116,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Campaign already sent" }, { status: 400 });
     }
 
-    const filter = campaign.recipient_filter ?? { type: "all" as const };
+    const filter = (campaign.recipient_filter as RecipientFilter | null) ?? {
+      type: "all" as const,
+    };
     const rawRecipients = await resolveRecipients(supabase, filter);
 
     // Deduplicate by normalized phone number (keep first occurrence)
@@ -141,8 +134,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Update campaign to sending
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any)
+    await supabase
       .from("sms_campaigns")
       .update({
         status: "sending",
@@ -162,9 +154,7 @@ export async function POST(request: NextRequest) {
       .from("sms_logs")
       .select("phone, status")
       .eq("campaign_id", campaign_id)
-      .eq("status", "sent") as {
-        data: { phone: string; status: string }[] | null;
-      };
+      .eq("status", "sent");
     const alreadySent = new Set(
       (existingLogs ?? []).map((l) => l.phone),
     );
@@ -190,8 +180,7 @@ export async function POST(request: NextRequest) {
 
           const logStatus = result.success ? "sent" : "failed";
           try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (supabase as any).from("sms_logs").insert({
+            await supabase.from("sms_logs").insert({
               campaign_id,
               user_id: recipient.user_id,
               phone: recipient.phone,
@@ -213,8 +202,7 @@ export async function POST(request: NextRequest) {
     // evaluated correctly when some items were already sent.
     const actualTotal = queue.length || recipients.length;
     const finalStatus = failedCount >= actualTotal ? "failed" : "sent";
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any)
+    await supabase
       .from("sms_campaigns")
       .update({
         status: finalStatus,
@@ -237,9 +225,8 @@ export async function POST(request: NextRequest) {
 
     // Ensure the campaign doesn't stay stuck in "sending" forever
     try {
-      const supabase = createAdminClient() as AnySupabase;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      const supabase = createAdminClient();
+      await supabase
         .from("sms_campaigns")
         .update({
           status: "failed",
