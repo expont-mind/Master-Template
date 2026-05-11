@@ -14,6 +14,7 @@ import {
   SubcategoryTabs,
   ProductGrid,
 } from "@/components/category";
+import { PrimaryMediumSm } from "@/components/ui/typography";
 
 function findInTree(
   cats: CategoryWithChildren[],
@@ -130,9 +131,9 @@ function ProductsPageContent() {
                 <p className="text-[#020617] font-semibold text-base font-manrope">
                   {total}
                 </p>
-                <p className="text-[#020617] font-medium text-sm font-manrope">
+                <PrimaryMediumSm>
                   бүтээгдэхүүн
-                </p>
+                </PrimaryMediumSm>
               </div>
 
               <div className="flex gap-1.5 sm:gap-2">

@@ -7,6 +7,7 @@ import { ChipFilter } from "@/components/home/ChipFilter";
 import { ChevronDownBig } from "@/components/svg";
 import { homeKeys, getBestSellingProducts } from "@/lib/queries/home";
 import type { Product } from "@/types/database";
+import { MutedText } from "@/components/ui/typography";
 
 const chips = ["Сарын", "Улирлын", "Жилийн"];
 const periodMap = ["30d", "90d", "365d"];
@@ -96,9 +97,9 @@ function ProductGrid({
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <p className="text-[#64748B] font-normal text-base font-manrope">
+        <MutedText>
           Бүтээгдэхүүн олдсонгүй
-        </p>
+        </MutedText>
       </div>
     );
   }

@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useScrollLock } from "@/lib/hooks/useScrollLock";
 import { createClient } from "@/lib/supabase/client";
 import { Cancel, Coupon } from "../svg";
+import { PrimaryHeading } from "@/components/ui/typography";
 
 interface AddCouponModalProps {
   isOpen: boolean;
@@ -192,9 +193,9 @@ export const AddCouponModal = ({
               </div>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <p className="text-[#020617] font-semibold text-xl font-manrope">
+              <PrimaryHeading>
                 Амжилттай нэмэгдлээ
-              </p>
+              </PrimaryHeading>
               <p className="text-[#64748B] font-normal text-base font-manrope text-center">
                 {successInfo.code} кодтой {successInfo.label}
                 <br />
@@ -212,9 +213,9 @@ export const AddCouponModal = ({
           /* Input State */
           <>
             <div className="flex items-center justify-between">
-              <p className="text-[#020617] font-semibold text-xl font-manrope">
+              <PrimaryHeading>
                 Купон нэмэх
-              </p>
+              </PrimaryHeading>
               <button
                 onClick={onClose}
                 className="p-1 cursor-pointer"

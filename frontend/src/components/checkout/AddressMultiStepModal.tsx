@@ -11,6 +11,7 @@ import {
   KHOROO_OPTIONS,
   type ModalField,
 } from "./constants";
+import { PrimaryHeading } from "@/components/ui/typography";
 
 interface AddressMultiStepModalProps {
   isOpen: boolean;
@@ -159,9 +160,9 @@ export const AddressMultiStepModal = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <p className="text-[#020617] font-semibold text-xl font-manrope">
+          <PrimaryHeading>
             Сонгох
-          </p>
+          </PrimaryHeading>
           <button
             onClick={onClose}
             className="p-1 cursor-pointer"

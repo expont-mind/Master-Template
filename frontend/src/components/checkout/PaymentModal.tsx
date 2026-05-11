@@ -22,6 +22,13 @@ import type {
   PaymentMethod,
   StorePayInvoiceData,
 } from "./payment/types";
+import {
+  MutedMediumSm,
+  MutedTextXs,
+  PrimaryHeading,
+  PrimaryMediumSm,
+  PrimarySm,
+} from "@/components/ui/typography";
 
 // Re-export so existing consumers can keep importing from PaymentModal.
 // (checkout/page.tsx and profile/OrderDetailView.tsx both import these.)
@@ -196,9 +203,9 @@ export function PaymentModal({
             <Success />
           </div>
           <div className="flex flex-col items-center gap-2">
-            <p className="text-[#020617] font-semibold text-xl font-manrope">
+            <PrimaryHeading>
               {transferSubmitted ? "Захиалга бүртгэгдлээ" : "Захиалга баталгаажлаа"}
-            </p>
+            </PrimaryHeading>
             <p className="text-[#64748B] font-normal text-base font-manrope text-center">
               {transferSubmitted
                 ? "Төлбөр төлснөөс хойш 2-4 цагийн дотор захиалга баталгаажна"
@@ -246,9 +253,9 @@ export function PaymentModal({
       >
         {/* Mobile Header */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-[#E2E8F0]">
-          <p className="text-[#020617] font-semibold text-xl font-manrope">
+          <PrimaryHeading>
             Төлбөр төлөх
-          </p>
+          </PrimaryHeading>
           <button
             onClick={onClose}
             className="p-1 cursor-pointer"
@@ -284,9 +291,9 @@ export function PaymentModal({
               <div className="w-12 h-12 rounded-full bg-[#F1F5F9] flex items-center justify-center">
                 <Spinner size="sm" />
               </div>
-              <p className="text-[#64748B] font-medium text-sm font-manrope">
+              <MutedMediumSm>
                 Нэхэмжлэл үүсгэж байна...
-              </p>
+              </MutedMediumSm>
             </div>
           )}
 
@@ -361,10 +368,10 @@ export function PaymentModal({
                   <div className="shrink-0 mt-0.5">
                     <Payment />
                   </div>
-                  <p className="text-[#020617] font-medium text-sm font-manrope">
+                  <PrimaryMediumSm>
                     LendMN апп дээр нэхэмжлэлийг баталгаажуулна уу. Тусламж:
                     7771-0990, 88900900
-                  </p>
+                  </PrimaryMediumSm>
                 </div>
               </div>
             )}
@@ -405,9 +412,9 @@ export function PaymentModal({
                   <div className="shrink-0 mt-0.5">
                     <Payment />
                   </div>
-                  <p className="text-[#020617] font-medium text-sm font-manrope">
+                  <PrimaryMediumSm>
                     StorePay апп дээр нэхэмжлэлийг баталгаажуулна уу.
-                  </p>
+                  </PrimaryMediumSm>
                 </div>
               </div>
             )}
@@ -450,9 +457,9 @@ export function PaymentModal({
                     {paymentMethod === "qpay" && (
                       <>
                         <div className="flex flex-col items-center gap-2">
-                          <p className="text-[#020617] font-normal text-sm font-manrope">
+                          <PrimarySm>
                             QR код уншуулах
-                          </p>
+                          </PrimarySm>
                           <div className="w-[200px] h-[200px] bg-[#F1F5F9] flex items-center justify-center overflow-hidden rounded-lg">
                             {invoiceData.qr_image ? (
                               <img
@@ -637,12 +644,12 @@ export function PaymentModal({
                             className="w-12 h-12 rounded-lg border border-[#E2E8F0] object-contain shrink-0"
                           />
                           <div className="flex flex-col min-w-0">
-                            <p className="text-[#020617] font-normal text-sm font-manrope">
+                            <PrimarySm>
                               LendMN
-                            </p>
-                            <p className="text-[#64748B] font-normal text-xs font-manrope">
+                            </PrimarySm>
+                            <MutedTextXs>
                               Хуваах төлөх
-                            </p>
+                            </MutedTextXs>
                           </div>
                         </button>
 
@@ -663,9 +670,9 @@ export function PaymentModal({
                             className="w-12 h-12 rounded-lg border border-[#E2E8F0] object-contain shrink-0"
                           />
                           <div className="flex flex-col min-w-0">
-                            <p className="text-[#020617] font-normal text-sm font-manrope">
+                            <PrimarySm>
                               StorePay
-                            </p>
+                            </PrimarySm>
                             <p
                               className={`font-normal text-xs font-manrope ${totalAmount < STOREPAY_MIN_AMOUNT ? "text-red-500" : "text-[#64748B]"}`}
                             >
@@ -733,9 +740,9 @@ export function PaymentModal({
         {/* Header */}
         {!showSuccess && (
           <div className="flex items-center justify-between">
-            <p className="text-[#020617] font-semibold text-xl font-manrope">
+            <PrimaryHeading>
               Төлбөр төлөх
-            </p>
+            </PrimaryHeading>
             <button
               onClick={onClose}
               className="p-1 cursor-pointer"
@@ -771,9 +778,9 @@ export function PaymentModal({
               <div className="w-12 h-12 rounded-full bg-[#F1F5F9] flex items-center justify-center">
                 <Spinner size="sm" />
               </div>
-              <p className="text-[#64748B] font-medium text-sm font-manrope">
+              <MutedMediumSm>
                 Нэхэмжлэл үүсгэж байна...
-              </p>
+              </MutedMediumSm>
             </div>
           )}
 
@@ -810,9 +817,9 @@ export function PaymentModal({
                 <Success />
               </div>
               <div className="flex flex-col items-center gap-2">
-                <p className="text-[#020617] font-semibold text-xl font-manrope">
+                <PrimaryHeading>
                   {transferSubmitted ? "Захиалга бүртгэгдлээ" : "Захиалга баталгаажлаа"}
-                </p>
+                </PrimaryHeading>
                 <p className="text-[#64748B] font-normal text-base font-manrope text-center">
                   {transferSubmitted
                     ? "Төлбөр төлснөөс хойш 2-4 цагийн дотор захиалга баталгаажна"
@@ -885,10 +892,10 @@ export function PaymentModal({
                   <div className="shrink-0 mt-0.5">
                     <Payment />
                   </div>
-                  <p className="text-[#020617] font-medium text-sm font-manrope">
+                  <PrimaryMediumSm>
                     LendMN апп дээр нэхэмжлэлийг баталгаажуулна уу. Тусламж:
                     7771-0990, 88900900
-                  </p>
+                  </PrimaryMediumSm>
                 </div>
 
                 <button
@@ -951,9 +958,9 @@ export function PaymentModal({
                   <div className="shrink-0 mt-0.5">
                     <Payment />
                   </div>
-                  <p className="text-[#020617] font-medium text-sm font-manrope">
+                  <PrimaryMediumSm>
                     StorePay апп дээр нэхэмжлэлийг баталгаажуулна уу.
-                  </p>
+                  </PrimaryMediumSm>
                 </div>
 
                 <button
@@ -1017,9 +1024,9 @@ export function PaymentModal({
                     {/* QR view (default) */}
                     {paymentMethod === "qpay" && (
                       <div className="flex flex-col items-center gap-4 py-4">
-                        <p className="text-[#020617] font-normal text-sm font-manrope">
+                        <PrimarySm>
                           QR код уншуулах
-                        </p>
+                        </PrimarySm>
                         <div className="w-[230px] h-[230px] bg-[#F1F5F9] flex items-center justify-center overflow-hidden">
                           {invoiceData.qr_image ? (
                             <img
@@ -1131,11 +1138,11 @@ export function PaymentModal({
                           <div className="shrink-0 mt-0.5">
                             <Payment />
                           </div>
-                          <p className="text-[#020617] font-medium text-sm font-manrope">
+                          <PrimaryMediumSm>
                             Гүйлгээний утга дээрх захиалгын дугаарыг заавал
                             бичнэ үү! Төлбөр төлснөөс хойш 2-4 цагийн дотор
                             захиалга баталгаажна. Тусламж: 7771-0990, 88900900
-                          </p>
+                          </PrimaryMediumSm>
                         </div>
 
                         <button
@@ -1181,12 +1188,12 @@ export function PaymentModal({
                             className="w-12 h-12 rounded-lg border border-[#E2E8F0] object-contain shrink-0"
                           />
                           <div className="flex flex-col min-w-0">
-                            <p className="text-[#020617] font-normal text-sm font-manrope">
+                            <PrimarySm>
                               LendMN
-                            </p>
-                            <p className="text-[#64748B] font-normal text-xs font-manrope">
+                            </PrimarySm>
+                            <MutedTextXs>
                               Хуваах төлөх
-                            </p>
+                            </MutedTextXs>
                           </div>
                         </button>
 
@@ -1208,9 +1215,9 @@ export function PaymentModal({
                             className="w-12 h-12 rounded-lg border border-[#E2E8F0] object-contain shrink-0"
                           />
                           <div className="flex flex-col min-w-0">
-                            <p className="text-[#020617] font-normal text-sm font-manrope">
+                            <PrimarySm>
                               StorePay
-                            </p>
+                            </PrimarySm>
                             <p
                               className={`font-normal text-xs font-manrope ${totalAmount < STOREPAY_MIN_AMOUNT ? "text-red-500" : "text-[#64748B]"}`}
                             >

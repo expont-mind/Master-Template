@@ -5,6 +5,7 @@ import { Minus, Plus, ChevronRight16 } from "../svg";
 import type { ProductVariant, OptionGroup } from "@/lib/queries/products";
 import { formatPrice } from "@/lib/utils/formatters";
 import Image from "next/image";
+import { PrimaryMediumSm } from "@/components/ui/typography";
 
 const ITEM_WIDTH = 140; // approx button width + gap
 
@@ -553,9 +554,9 @@ export const ProductVariants = ({
 
       {/* Quantity selector */}
       <div className="flex items-center gap-5 pt-1">
-        <p className="text-[#020617] font-medium text-sm font-manrope">
+        <PrimaryMediumSm>
           Тоо ширхэг
-        </p>
+        </PrimaryMediumSm>
         <div className="flex items-center gap-0.5">
           <button
             onClick={() => handleQuantityChange(-1)}

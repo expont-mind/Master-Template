@@ -6,6 +6,7 @@ import { Plus, MoreVerticalBig, LocationBig, Slash } from "../svg";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { DeleteModal } from "./DeleteModal";
+import { MutedText } from "@/components/ui/typography";
 
 type AddressRow = Database["public"]["Tables"]["addresses"]["Row"];
 
@@ -108,9 +109,9 @@ export const AddressContent = ({
               <div className="p-[9px]">
                 <LocationBig />
               </div>
-              <p className="text-[#64748B] font-normal text-base font-manrope">
+              <MutedText>
                 Хүргэх хаягаа оруулаагүй байна
-              </p>
+              </MutedText>
             </div>
           ) : (
             addresses.map((address) => {

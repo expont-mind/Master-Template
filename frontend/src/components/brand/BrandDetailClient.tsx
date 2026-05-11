@@ -11,6 +11,7 @@ import { Slash, ChevronDownBig, SearchBig } from "@/components/svg";
 import { ROUTES } from "@/lib/utils/constants";
 import type { ProductListItem } from "@/types/product";
 import type { Product } from "@/types/database";
+import { MutedText, PrimaryMediumSm, PrimarySm } from "@/components/ui/typography";
 
 const PRODUCTS_PER_BATCH = 96; // 8 pages of 12 products
 
@@ -116,9 +117,9 @@ function BrandProductGrid({
         <div className="p-[9px]">
           <SearchBig />
         </div>
-        <p className="text-[#64748B] font-normal text-base font-manrope">
+        <MutedText>
           Бүтээгдэхүүн олдсонгүй
-        </p>
+        </MutedText>
       </div>
     );
   }
@@ -219,9 +220,9 @@ export function BrandDetailClient({
               Бренд
             </Link>
             <Slash />
-            <p className="text-[#020617] font-normal text-sm font-manrope">
+            <PrimarySm>
               {brand.name}
-            </p>
+            </PrimarySm>
           </div>
 
           {/* Brand Name */}
@@ -258,9 +259,9 @@ export function BrandDetailClient({
                 <p className="text-[#020617] font-semibold text-base font-manrope">
                   {total}
                 </p>
-                <p className="text-[#020617] font-medium text-sm font-manrope">
+                <PrimaryMediumSm>
                   бүтээгдэхүүн
-                </p>
+                </PrimaryMediumSm>
               </div>
 
               <div className="flex gap-2">

@@ -5,6 +5,7 @@ import { EventCard } from "./EventCard";
 import { SectionTitle } from "@/components/home/SectionTitle";
 import { eventKeys, getEvents } from "@/lib/queries/events";
 import { ChevronRight } from "../svg";
+import { MutedText } from "@/components/ui/typography";
 
 function EventCardSkeleton() {
   return (
@@ -49,9 +50,9 @@ export function EventsClient() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <p className="text-[#64748B] font-normal text-base font-manrope">
+              <MutedText>
                 Эвэнт олдсонгүй
-              </p>
+              </MutedText>
             </div>
           )}
         </div>

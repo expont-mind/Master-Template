@@ -10,6 +10,7 @@ import {
   Settings,
   UserCircle,
 } from "../svg";
+import { PrimaryMediumSm, PrimarySemiboldSm } from "@/components/ui/typography";
 
 type UserRow = Database["public"]["Tables"]["users"]["Row"];
 type AddressRow = Database["public"]["Tables"]["addresses"]["Row"];
@@ -134,16 +135,16 @@ export const ProfileSidebar = ({
               >
                 <div className="flex-1 flex flex-col items-start">
                   <div className="flex items-center gap-0.5">
-                    <p className="text-[#020617] font-semibold text-sm font-manrope">
+                    <PrimarySemiboldSm>
                       {pointBalance.toLocaleString()}
-                    </p>
+                    </PrimarySemiboldSm>
                     <div className="flex items-center h-fit">
                       <span className="pb-[1.4px]">
                         <MPointSmall />
                       </span>
-                      <p className="text-[#020617] font-semibold text-sm font-manrope">
+                      <PrimarySemiboldSm>
                         /<span className="pl-[1.5px] pb-px">₮</span>
-                      </p>
+                      </PrimarySemiboldSm>
                     </div>
                   </div>
                   <p className="text-[#94A3B8] text-left font-normal text-xs font-manrope pl-px">
@@ -170,9 +171,9 @@ export const ProfileSidebar = ({
               >
                 <div className="flex-1 flex flex-col items-start">
                   <div className="flex items-center gap-0.5">
-                    <p className="text-[#020617] font-semibold text-sm font-manrope">
+                    <PrimarySemiboldSm>
                       {couponCount}ш
-                    </p>
+                    </PrimarySemiboldSm>
                   </div>
                   <p className="text-[#94A3B8] text-left font-normal text-xs font-manrope pl-px">
                     Миний купон
@@ -198,9 +199,9 @@ export const ProfileSidebar = ({
             </div>
             <div className="flex-1 flex items-center gap-4 justify-between py-3.5 border-b border-[#E2E8F0]">
               <div className="flex flex-col items-start gap-0.5 min-w-0">
-                <p className="text-[#020617] font-medium text-sm font-manrope">
+                <PrimaryMediumSm>
                   Хадгалсан
-                </p>
+                </PrimaryMediumSm>
                 <p className="text-[#64748B] font-normal text-sm font-manrope line-clamp-1 w-full text-left">
                   {wishlistCount > 0
                     ? `${wishlistCount} бараа хадгалсан`
@@ -223,9 +224,9 @@ export const ProfileSidebar = ({
             </div>
             <div className="flex-1 flex items-center gap-4 justify-between py-3.5 border-b border-[#E2E8F0]">
               <div className="flex flex-col items-start gap-0.5 min-w-0">
-                <p className="text-[#020617] font-medium text-sm font-manrope">
+                <PrimaryMediumSm>
                   Тохиргоо
-                </p>
+                </PrimaryMediumSm>
                 <p className="text-[#64748B] font-normal text-sm font-manrope line-clamp-1 w-full text-left">
                   Бусад холболт, баталгаат утас
                 </p>
@@ -246,9 +247,9 @@ export const ProfileSidebar = ({
             </div>
             <div className="flex-1 flex items-center gap-4 justify-between py-3.5">
               <div className="flex flex-col items-start gap-0.5 min-w-0">
-                <p className="text-[#020617] font-medium text-sm font-manrope">
+                <PrimaryMediumSm>
                   Тусламж
-                </p>
+                </PrimaryMediumSm>
                 <p className="text-[#64748B] font-normal text-sm font-manrope line-clamp-1 w-full text-left">
                   Салбар, түгээмэл асуулт, үйлчилгээний нөхцөл
                 </p>
@@ -312,16 +313,16 @@ export const ProfileSidebar = ({
               >
                 <div className="flex-1 flex flex-col items-start">
                   <div className="flex items-center gap-0.5">
-                    <p className="text-[#020617] font-semibold text-sm font-manrope">
+                    <PrimarySemiboldSm>
                       {pointBalance.toLocaleString()}
-                    </p>
+                    </PrimarySemiboldSm>
                     <div className="flex items-center h-fit">
                       <span className="pb-[1.4px]">
                         <MPointSmall />
                       </span>
-                      <p className="text-[#020617] font-semibold text-sm font-manrope">
+                      <PrimarySemiboldSm>
                         /<span className="pl-[1.5px] pb-px">₮</span>
-                      </p>
+                      </PrimarySemiboldSm>
                     </div>
                   </div>
                   <p className="text-[#94A3B8] text-left font-normal text-xs font-manrope pl-px">
@@ -348,9 +349,9 @@ export const ProfileSidebar = ({
               >
                 <div className="flex-1 flex flex-col items-start">
                   <div className="flex items-center gap-0.5">
-                    <p className="text-[#020617] font-semibold text-sm font-manrope">
+                    <PrimarySemiboldSm>
                       {couponCount}ш
-                    </p>
+                    </PrimarySemiboldSm>
                   </div>
                   <p className="text-[#94A3B8] text-left font-normal text-xs font-manrope pl-px">
                     Миний купон
@@ -376,9 +377,9 @@ export const ProfileSidebar = ({
               <Delivery />
             </div>
             <div className="flex-1 min-w-0 flex flex-col items-start gap-0.5 py-3.5">
-              <p className="text-[#020617] font-medium text-sm font-manrope">
+              <PrimaryMediumSm>
                 Миний захиалгууд
-              </p>
+              </PrimaryMediumSm>
               <p className="text-[#64748B] font-normal text-sm font-manrope truncate w-full text-left">
                 Захиалсан, хүргэгдсэн, цуцлагдсан
               </p>
@@ -398,9 +399,9 @@ export const ProfileSidebar = ({
               <Settings />
             </div>
             <div className="flex-1 min-w-0 flex flex-col items-start gap-0.5 py-3.5">
-              <p className="text-[#020617] font-medium text-sm font-manrope">
+              <PrimaryMediumSm>
                 Тохиргоо
-              </p>
+              </PrimaryMediumSm>
               <p className="text-[#64748B] font-normal text-sm font-manrope truncate w-full text-left">
                 Хаяг, бусад холболт, баталгаат утас
               </p>
@@ -420,9 +421,9 @@ export const ProfileSidebar = ({
               <HelpCircle />
             </div>
             <div className="flex-1 min-w-0 flex flex-col items-start gap-0.5 py-3.5">
-              <p className="text-[#020617] font-medium text-sm font-manrope">
+              <PrimaryMediumSm>
                 Тусламж
-              </p>
+              </PrimaryMediumSm>
               <p className="text-[#64748B] font-normal text-sm font-manrope truncate w-full text-left">
                 Салбар, түгээмэл асуулт, үйлчилгээний нөхцөл
               </p>

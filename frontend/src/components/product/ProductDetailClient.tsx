@@ -42,6 +42,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import type { ProductWithDetails } from "@/lib/queries/products";
+import { MutedTextSm, PrimaryMediumSm } from "@/components/ui/typography";
 
 export function ProductDetailClient({
   slug,
@@ -505,9 +506,9 @@ export function ProductDetailClient({
     return (
       <div className="w-full bg-white flex justify-center">
         <div className="flex flex-col items-center justify-center max-w-[1064px] w-full py-20">
-          <p className="text-[#64748B] font-normal text-sm font-manrope">
+          <MutedTextSm>
             Бүтээгдэхүүн олдсонгүй
-          </p>
+          </MutedTextSm>
         </div>
       </div>
     );
@@ -852,9 +853,9 @@ export function ProductDetailClient({
                           ),
                         )}
                       </div>
-                      <p className="text-[#020617] font-medium text-sm font-manrope">
+                      <PrimaryMediumSm>
                         {reviewSummary?.averageRating ?? 0}
-                      </p>
+                      </PrimaryMediumSm>
                       <p className="text-[#64748B] font-normal text-xs font-manrope underline underline-offset-2">
                         {reviewSummary?.totalCount ?? 0} Сэтгэгдэл
                       </p>
@@ -1132,9 +1133,9 @@ export function ProductDetailClient({
             {/* Total Block */}
             <div className="fixed bottom-0 left-0 right-0 z-30 md:static flex flex-col gap-3 md:gap-5">
               <div className="hidden md:flex justify-end items-end gap-3 px-0.5">
-                <p className="text-[#020617] font-medium text-sm font-manrope">
+                <PrimaryMediumSm>
                   Сонгосон хувилбарын үнэ:
-                </p>
+                </PrimaryMediumSm>
                 <p className="text-[#020617] font-semibold text-xl font-manrope tracking-[-1.2px] leading-6 transition-all duration-300">
                   {formatPrice(sellingPrice * quantity)}
                 </p>

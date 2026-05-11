@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { useScrollLock } from "@/lib/hooks/useScrollLock";
 import { Cancel, Search } from "../svg";
+import { PrimaryHeading } from "@/components/ui/typography";
 
 export interface SelectOption {
   value: string;
@@ -92,9 +93,9 @@ export const SelectModal = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <p className="text-[#020617] font-semibold text-xl font-manrope">
+          <PrimaryHeading>
             Сонгох
-          </p>
+          </PrimaryHeading>
           <button
             onClick={onClose}
             className="p-1 cursor-pointer"

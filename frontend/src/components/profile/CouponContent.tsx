@@ -7,6 +7,7 @@ import { CouponCard, type CouponData } from "./CouponCard";
 import { AddCouponModal } from "./AddCouponModal";
 import { createClient } from "@/lib/supabase/client";
 import { parseAsUTC } from "@/lib/utils/formatters";
+import { MutedText } from "@/components/ui/typography";
 
 const tabs = ["Идэвхтэй", "Ашигласан", "Эрх дууссан"] as const;
 
@@ -253,9 +254,9 @@ export const CouponContent = ({ onCouponCountChange }: CouponContentProps) => {
               <div className="p-[9px]">
                 <Coupon />
               </div>
-              <p className="text-[#64748B] font-normal text-base font-manrope">
+              <MutedText>
                 Одоогоор купон алга байна
-              </p>
+              </MutedText>
             </div>
 
             <button

@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useScrollLock } from "@/lib/hooks/useScrollLock";
 import { Cancel } from "../svg";
 import { MPointBadge } from "../svg";
+import { MutedTextSm, PrimarySemiboldSm } from "@/components/ui/typography";
 
 interface PointDetailData {
   orderId: string | null;
@@ -140,22 +141,22 @@ export const PointDetailModal = ({
         {/* Balance Breakdown */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <p className="text-[#020617] font-semibold text-sm font-manrope">
+            <PrimarySemiboldSm>
               Эхний үлдэгдэл:
-            </p>
+            </PrimarySemiboldSm>
             <div className="flex items-center gap-1">
-              <p className="text-[#020617] font-semibold text-sm font-manrope">
+              <PrimarySemiboldSm>
                 {data.balanceBefore.toLocaleString()}
-              </p>
+              </PrimarySemiboldSm>
               <MPointBadge />
             </div>
           </div>
 
           {data.used !== 0 && (
             <div className="flex items-center justify-between">
-              <p className="text-[#64748B] font-normal text-sm font-manrope">
+              <MutedTextSm>
                 Ашигласан:
-              </p>
+              </MutedTextSm>
               <div className="flex items-center gap-1">
                 <p className="text-rose-500 font-semibold text-sm font-manrope">
                   -{Math.abs(data.used).toLocaleString()}
@@ -167,9 +168,9 @@ export const PointDetailModal = ({
 
           {data.earned !== 0 && (
             <div className="flex items-center justify-between">
-              <p className="text-[#64748B] font-normal text-sm font-manrope">
+              <MutedTextSm>
                 Нэмэгдсэн:
-              </p>
+              </MutedTextSm>
               <div className="flex items-center gap-1">
                 <p className="text-teal-500 font-semibold text-sm font-manrope">
                   +{data.earned.toLocaleString()}
@@ -180,13 +181,13 @@ export const PointDetailModal = ({
           )}
 
           <div className="flex items-center justify-between">
-            <p className="text-[#020617] font-semibold text-sm font-manrope">
+            <PrimarySemiboldSm>
               Эцсийн үлдэгдэл:
-            </p>
+            </PrimarySemiboldSm>
             <div className="flex items-center gap-1">
-              <p className="text-[#020617] font-semibold text-sm font-manrope">
+              <PrimarySemiboldSm>
                 {data.balanceAfter.toLocaleString()}
-              </p>
+              </PrimarySemiboldSm>
               <MPointBadge />
             </div>
           </div>
@@ -197,9 +198,9 @@ export const PointDetailModal = ({
 
         {/* Description */}
         <div className="flex flex-col gap-1 pb-4">
-          <p className="text-[#020617] font-semibold text-sm font-manrope">
+          <PrimarySemiboldSm>
             Гүйлгээний тайлбар:
-          </p>
+          </PrimarySemiboldSm>
           <p className="text-[#64748B] font-normal text-sm font-manrope leading-5 py-0.5">
             {data.description}
           </p>

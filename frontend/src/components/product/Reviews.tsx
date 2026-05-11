@@ -14,6 +14,7 @@ import { ReviewModal } from "./ReviewModal";
 import { RatingModal } from "./RatingModal";
 import Image from "next/image";
 import { parseAsUTC } from "@/lib/utils/formatters";
+import { MutedText, PrimaryHeading } from "@/components/ui/typography";
 
 interface ReviewsProps {
   productId: string;
@@ -85,9 +86,9 @@ export const Reviews = ({
               onClick={onMobileTitleClick}
               className="py-1 flex items-center justify-between cursor-pointer md:pointer-events-none"
             >
-              <p className="text-[#020617] font-semibold text-xl font-manrope">
+              <PrimaryHeading>
                 Үнэлгээ ба сэтгэгдлүүд
-              </p>
+              </PrimaryHeading>
               <span className="md:hidden">
                 <ChevronRightProduct />
               </span>
@@ -205,11 +206,11 @@ export const Reviews = ({
               <div className="p-[9px]">
                 <MessageCircle size={30} color="#64748B" strokeWidth={1.5} />
               </div>
-              <p className="text-[#64748B] font-normal text-base font-manrope">
+              <MutedText>
                 {selectedRating
                   ? `${selectedRating} одтой сэтгэгдэл байхгүй байна`
                   : "Сэтгэгдэл байхгүй байна"}
-              </p>
+              </MutedText>
             </div>
 
             {selectedRating ? (

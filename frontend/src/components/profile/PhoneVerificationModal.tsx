@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useScrollLock } from "@/lib/hooks/useScrollLock";
 import { Cancel } from "../svg";
 import { createClient } from "@/lib/supabase/client";
+import { PrimaryHeading } from "@/components/ui/typography";
 
 const OTP_COOLDOWN = 90;
 
@@ -336,9 +337,9 @@ export const PhoneVerificationModal = ({
                 </svg>
               </button>
             )}
-            <p className="text-[#020617] font-semibold text-xl font-manrope">
+            <PrimaryHeading>
               {step === "phone" ? "Идэвхжүүлэх" : "Баталгаажуулах"}
-            </p>
+            </PrimaryHeading>
           </div>
           <button
             onClick={onClose}

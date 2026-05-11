@@ -13,6 +13,7 @@ import { useProductDetail } from "@/lib/hooks/useProductDetail";
 import type { ProductVariant } from "@/types/product";
 import type { ProductWithDetails, OptionGroup } from "@/lib/queries/products";
 import { Check } from "lucide-react";
+import { MutedMediumSm, PrimaryHeading, PrimarySemiboldSm } from "@/components/ui/typography";
 
 interface AddToCartModalProps {
   isOpen: boolean;
@@ -648,9 +649,9 @@ export const AddToCartModal = ({
             >
               {/* Header */}
               <div className="flex items-center justify-between">
-                <p className="text-[#020617] font-semibold text-xl font-manrope">
+                <PrimaryHeading>
                   Сагсанд нэмэгдлээ
-                </p>
+                </PrimaryHeading>
                 <button
                   onClick={onClose}
                   className="p-1 cursor-pointer"
@@ -728,9 +729,9 @@ export const AddToCartModal = ({
                                   {itemDiscount}%
                                 </p>
                               )}
-                              <p className="text-[#020617] font-semibold text-sm font-manrope">
+                              <PrimarySemiboldSm>
                                 {formatPrice(itemSellingPrice)}
-                              </p>
+                              </PrimarySemiboldSm>
                             </div>
                           </div>
                         </div>
@@ -757,9 +758,9 @@ export const AddToCartModal = ({
                   <div className="flex flex-col gap-1">
                     <div className="flex flex-col">
                       {(selectedVariant?.sku || resolvedProduct.sku) && (
-                        <p className="text-[#64748B] font-medium text-sm font-manrope">
+                        <MutedMediumSm>
                           {selectedVariant?.sku || resolvedProduct.sku}
-                        </p>
+                        </MutedMediumSm>
                       )}
                       <p className="text-[#020617] font-semibold text-sm font-manrope line-clamp-1 leading-5">
                         {displayName}
@@ -778,9 +779,9 @@ export const AddToCartModal = ({
                             {discount}%
                           </p>
                         )}
-                        <p className="text-[#020617] font-semibold text-sm font-manrope">
+                        <PrimarySemiboldSm>
                           {formatPrice(sellingPrice)}
-                        </p>
+                        </PrimarySemiboldSm>
                       </div>
                     </div>
                   </div>
@@ -1295,9 +1296,9 @@ export const AddToCartModal = ({
                                 {discount}%
                               </p>
                             )}
-                            <p className="text-[#020617] font-semibold text-sm font-manrope">
+                            <PrimarySemiboldSm>
                               {formatPrice(sellingPrice)}
-                            </p>
+                            </PrimarySemiboldSm>
                           </div>
                         </div>
                       </div>
@@ -1389,9 +1390,9 @@ export const AddToCartModal = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <p className="text-[#020617] font-semibold text-xl font-manrope">
+          <PrimaryHeading>
             Сагсанд нэмэгдлээ
-          </p>
+          </PrimaryHeading>
           <button
             onClick={onClose}
             className="p-1 cursor-pointer"
@@ -1420,9 +1421,9 @@ export const AddToCartModal = ({
           <div className="flex flex-col gap-1">
             <div className="flex flex-col">
               {(selectedVariant?.sku || resolvedProduct.sku) && (
-                <p className="text-[#64748B] font-medium text-sm font-manrope">
+                <MutedMediumSm>
                   {selectedVariant?.sku || resolvedProduct.sku}
-                </p>
+                </MutedMediumSm>
               )}
               <p className="text-[#020617] font-semibold text-sm font-manrope leading-5">
                 {displayName}
@@ -1441,9 +1442,9 @@ export const AddToCartModal = ({
                     {discount}%
                   </p>
                 )}
-                <p className="text-[#020617] font-semibold text-sm font-manrope">
+                <PrimarySemiboldSm>
                   {formatPrice(sellingPrice)}
-                </p>
+                </PrimarySemiboldSm>
               </div>
             </div>
           </div>

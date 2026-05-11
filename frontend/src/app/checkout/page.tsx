@@ -35,6 +35,7 @@ import type {
 } from "@/components/checkout/PaymentModal";
 import { createClient } from "@/lib/supabase/client";
 import type { DeliveryZone } from "@/types/database";
+import { PrimaryHeading } from "@/components/ui/typography";
 
 export default function CheckoutPage() {
   const [addressName, setAddressName] = useState("");
@@ -674,9 +675,9 @@ export default function CheckoutPage() {
                 <Success />
               </div>
               <div className="flex flex-col items-center gap-2">
-                <p className="text-[#020617] font-semibold text-xl font-manrope">
+                <PrimaryHeading>
                   Захиалга баталгаажлаа
-                </p>
+                </PrimaryHeading>
                 <p className="text-[#64748B] font-normal text-base font-manrope text-center">
                   Та захиалгаа профайл цэснээс хянах боломжтой
                 </p>

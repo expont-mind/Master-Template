@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import { parseAsUTC } from "@/lib/utils/formatters";
 import { PointDetailModal } from "./PointDetailModal";
+import { MutedText, PrimaryMediumSm } from "@/components/ui/typography";
 
 interface PointTransaction {
   id: string;
@@ -183,9 +184,9 @@ export const PointContent = ({ onBalanceChange }: PointContentProps) => {
               <div className="p-[9px]">
                 <HelpCircle />
               </div>
-              <p className="text-[#64748B] font-normal text-base font-manrope">
+              <MutedText>
                 Одоогоор мэдээлэл алга байна
-              </p>
+              </MutedText>
             </div>
           </div>
         ) : (
@@ -300,9 +301,9 @@ export const PointContent = ({ onBalanceChange }: PointContentProps) => {
       {/* Transaction History */}
       <div className="flex flex-col gap-3 md:gap-4 px-4 md:px-0 pt-5 md:pt-10">
         <div className="flex flex-col gap-3">
-          <p className="text-[#020617] font-medium text-sm font-manrope">
+          <PrimaryMediumSm>
             Гүйлгээний түүх
-          </p>
+          </PrimaryMediumSm>
 
           {/* Tabs */}
           <div className="flex gap-2">
@@ -330,9 +331,9 @@ export const PointContent = ({ onBalanceChange }: PointContentProps) => {
                 <div className="p-[9px]">
                   <Point />
                 </div>
-                <p className="text-[#64748B] font-normal text-base font-manrope">
+                <MutedText>
                   Одоогоор гүйлгээ алга байна
-                </p>
+                </MutedText>
               </div>
               <Link
                 href="/products"

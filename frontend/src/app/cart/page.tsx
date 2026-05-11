@@ -31,6 +31,7 @@ import { VariantEditSheet } from "@/components/cart/VariantEditSheet";
 import type { CouponData } from "@/components/profile/CouponCard";
 import type { DeliveryZone } from "@/types/database";
 import { ChevronDown } from "lucide-react";
+import { MutedText, MutedTextSm, PrimaryMediumBase, PrimaryMediumSm, PrimarySemiboldSm } from "@/components/ui/typography";
 
 export default function CartPage() {
   const items = useCartStore((s) => s.items);
@@ -172,9 +173,9 @@ export default function CartPage() {
                 <p className="text-[#020617] font-black text-base font-manrope">
                   {items.length}
                 </p>
-                <p className="text-[#020617] font-medium text-base font-manrope">
+                <PrimaryMediumBase>
                   Бүтээгдэхүүн
-                </p>
+                </PrimaryMediumBase>
               </div>
               <div className="py-2">
                 <div className="w-full h-px bg-[#E2E8F0]" />
@@ -186,9 +187,9 @@ export default function CartPage() {
                 <div className="py-2">
                   <ShoppingCart />
                 </div>
-                <p className="text-[#64748B] font-normal text-base font-manrope">
+                <MutedText>
                   Одоогоор бүтээгдэхүүн сагслаагүй байна
-                </p>
+                </MutedText>
               </div>
 
               <Link
@@ -322,19 +323,19 @@ export default function CartPage() {
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <p className="text-[#64748B] font-normal text-sm font-manrope">
+              <MutedTextSm>
                 Үнийн дүн ({totalCount}ш)
-              </p>
-              <p className="text-[#020617] font-medium text-sm font-manrope">
+              </MutedTextSm>
+              <PrimaryMediumSm>
                 {formatPrice(subtotal)}
-              </p>
+              </PrimaryMediumSm>
             </div>
 
             {totalDiscount > 0 && (
               <div className="flex items-center justify-between">
-                <p className="text-[#64748B] font-normal text-sm font-manrope">
+                <MutedTextSm>
                   Нийт хэмнэсэн
-                </p>
+                </MutedTextSm>
                 <p className="text-[#F43F5E] font-medium text-sm font-manrope">
                   -{formatPrice(totalDiscount)}
                 </p>
@@ -343,9 +344,9 @@ export default function CartPage() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <p className="text-[#64748B] font-normal text-base font-manrope">
+                <MutedText>
                   {BRAND.name} point
-                </p>
+                </MutedText>
                 {selectedPoints ? (
                   <button
                     onClick={() => setSelectedPoints(null)}
@@ -404,9 +405,9 @@ export default function CartPage() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <p className="text-[#64748B] font-normal text-base font-manrope">
+                <MutedText>
                   Миний купон
-                </p>
+                </MutedText>
                 <button
                   onClick={() => setShowCouponModal(true)}
                   className="flex items-center gap-1 pl-3 h-6 pr-2 border border-[#E2E8F0] rounded-full cursor-pointer"
@@ -431,9 +432,9 @@ export default function CartPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <p className="text-[#64748B] font-normal text-sm font-manrope">
+              <MutedTextSm>
                 Хүргэлт
-              </p>
+              </MutedTextSm>
               <p
                 className={`font-medium text-sm font-manrope ${deliveryFee === 0 ? "text-teal-600" : "text-[#020617]"}`}
               >
@@ -461,9 +462,9 @@ export default function CartPage() {
             <p className="text-[#020617] font-black text-base font-manrope">
               {items.length}
             </p>
-            <p className="text-[#020617] font-medium text-base font-manrope">
+            <PrimaryMediumBase>
               Бүтээгдэхүүн
-            </p>
+            </PrimaryMediumBase>
           </div>
           <button
             onClick={() => setShowClearModal(true)}
@@ -656,9 +657,9 @@ export default function CartPage() {
                 <p className="text-[#020617] font-black text-base font-manrope">
                   {items.length}
                 </p>
-                <p className="text-[#020617] font-medium text-base font-manrope">
+                <PrimaryMediumBase>
                   Бүтээгдэхүүн
-                </p>
+                </PrimaryMediumBase>
               </div>
               <button
                 onClick={() => setShowClearModal(true)}
@@ -724,9 +725,9 @@ export default function CartPage() {
                                 {displayName}
                               </Link>
                               {variantInfo && (
-                                <p className="text-[#64748B] font-normal text-sm font-manrope">
+                                <MutedTextSm>
                                   {variantInfo}
-                                </p>
+                                </MutedTextSm>
                               )}
                             </div>
 
@@ -742,9 +743,9 @@ export default function CartPage() {
                                     {discount}%
                                   </p>
                                 )}
-                                <p className="text-[#020617] font-semibold text-sm font-manrope">
+                                <PrimarySemiboldSm>
                                   {formatPrice(sellingPrice)}
-                                </p>
+                                </PrimarySemiboldSm>
                               </div>
                             </div>
                           </div>
@@ -769,9 +770,9 @@ export default function CartPage() {
                             />
                           </button>
                           <div className="w-11 flex items-center justify-center">
-                            <p className="text-[#020617] font-medium text-base font-manrope">
+                            <PrimaryMediumBase>
                               {item.quantity}
-                            </p>
+                            </PrimaryMediumBase>
                           </div>
                           <button
                             onClick={() =>
@@ -825,19 +826,19 @@ export default function CartPage() {
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
-                    <p className="text-[#64748B] font-normal text-base font-manrope">
+                    <MutedText>
                       Үнийн дүн ({totalCount}ш)
-                    </p>
-                    <p className="text-[#020617] font-medium text-base font-manrope">
+                    </MutedText>
+                    <PrimaryMediumBase>
                       {formatPrice(subtotal)}
-                    </p>
+                    </PrimaryMediumBase>
                   </div>
 
                   {totalDiscount > 0 && (
                     <div className="flex items-center justify-between">
-                      <p className="text-[#64748B] font-normal text-base font-manrope">
+                      <MutedText>
                         Хэмнэсэн
-                      </p>
+                      </MutedText>
                       <p className="text-[#F43F5E] font-medium text-base font-manrope">
                         -{formatPrice(totalDiscount)}
                       </p>
@@ -846,9 +847,9 @@ export default function CartPage() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
-                      <p className="text-[#64748B] font-normal text-base font-manrope">
+                      <MutedText>
                         {BRAND.name} point
-                      </p>
+                      </MutedText>
                       {selectedPoints ? (
                         <button
                           onClick={() => setSelectedPoints(null)}
@@ -907,9 +908,9 @@ export default function CartPage() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
-                      <p className="text-[#64748B] font-normal text-base font-manrope">
+                      <MutedText>
                         Миний купон
-                      </p>
+                      </MutedText>
                       <button
                         onClick={() => setShowCouponModal(true)}
                         className="flex items-center gap-1 pl-3 h-6 pr-2 border border-[#E2E8F0] rounded-full cursor-pointer"
@@ -934,9 +935,9 @@ export default function CartPage() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <p className="text-[#64748B] font-normal text-base font-manrope">
+                    <MutedText>
                       Хүргэлт
-                    </p>
+                    </MutedText>
                     <p
                       className={`font-medium text-base font-manrope ${deliveryFee === 0 ? "text-teal-600" : "text-[#020617]"}`}
                     >

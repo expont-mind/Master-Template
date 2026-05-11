@@ -10,6 +10,7 @@ import { log } from "@/lib/utils/logger";
 import { useQueryClient } from "@tanstack/react-query";
 import { compressImages } from "@/lib/utils/image-compression";
 import { reviewKeys } from "@/lib/queries/reviews";
+import { PrimaryHeading, PrimarySm } from "@/components/ui/typography";
 
 interface RatingModalProps {
   isOpen: boolean;
@@ -159,9 +160,9 @@ export const RatingModal = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <p className="text-[#020617] font-semibold text-xl font-manrope">
+          <PrimaryHeading>
             Үнэлгээ өгөх
-          </p>
+          </PrimaryHeading>
           <button
             onClick={handleClose}
             className="p-1 cursor-pointer"
@@ -201,12 +202,12 @@ export const RatingModal = ({
 
         {/* Rating Section */}
         <div className="flex flex-col items-center pb-2">
-          <p className="text-[#020617] font-normal text-sm font-manrope">
+          <PrimarySm>
             Үнэлгээ{" "}
             {rating > 0 && (
               <span className="text-[#64748B]">({rating} од сонгогдсон)</span>
             )}
-          </p>
+          </PrimarySm>
           <div className="flex items-center">
             {Array.from({ length: 5 }, (_, i) => (
               <button

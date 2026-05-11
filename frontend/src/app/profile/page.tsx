@@ -34,6 +34,7 @@ import {
   ChevronRight16Gray,
 } from "@/components/svg";
 import Image from "next/image";
+import { MutedText } from "@/components/ui/typography";
 
 type UserRow = Database["public"]["Tables"]["users"]["Row"];
 type AddressRow = Database["public"]["Tables"]["addresses"]["Row"];
@@ -581,9 +582,9 @@ function ProfilePageContent() {
                     <div className="p-[9px]">
                       {mobileEmptyState[mobileOrderTab].icon}
                     </div>
-                    <p className="text-[#64748B] font-normal text-base font-manrope">
+                    <MutedText>
                       {mobileEmptyState[mobileOrderTab].text}
-                    </p>
+                    </MutedText>
                   </div>
                 ) : (
                   mobileFilteredOrders.map((order) => (

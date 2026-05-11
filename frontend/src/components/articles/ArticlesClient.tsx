@@ -5,6 +5,7 @@ import { ArticleCard } from "./ArticleCard";
 import { SectionTitle } from "@/components/home/SectionTitle";
 import { articleKeys, getArticles } from "@/lib/queries/articles";
 import { ChevronRight } from "../svg";
+import { MutedText } from "@/components/ui/typography";
 
 function ArticleCardSkeleton() {
   return (
@@ -49,9 +50,9 @@ export function ArticlesClient() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <p className="text-[#64748B] font-normal text-base font-manrope">
+              <MutedText>
                 Нийтлэл олдсонгүй
-              </p>
+              </MutedText>
             </div>
           )}
         </div>

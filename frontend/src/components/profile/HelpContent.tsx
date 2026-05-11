@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AboutIcon, FAQIcon, LocationProfile, Slash, TermsIcon } from "../svg";
+import { PrimaryMediumSm } from "@/components/ui/typography";
 
 // 20x20 arrow right icon
 const ArrowRight20 = () => (
@@ -101,9 +102,9 @@ export const HelpContent = () => {
               }`}
             >
               <div className="flex-1 flex flex-col gap-0.5 items-start min-w-0">
-                <p className="text-[#020617] font-medium text-sm font-manrope">
+                <PrimaryMediumSm>
                   {item.label}
-                </p>
+                </PrimaryMediumSm>
                 <p className="text-[#64748B] font-normal text-sm font-manrope truncate w-full text-left">
                   {item.subtitle}
                 </p>

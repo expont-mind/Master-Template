@@ -19,6 +19,7 @@ import { getAuthCallbackUrl } from "@/lib/supabase/auth-helpers";
 import type { User as SupabaseUser, Provider } from "@supabase/supabase-js";
 import { ClearWishlistModal } from "@/components/wishlist/ClearWishlistModal";
 import type { Product } from "@/types/database";
+import { MutedText, MutedTextSm, PrimaryHeading, PrimaryMediumBase, PrimarySm } from "@/components/ui/typography";
 
 export default function WishlistPage() {
   const items = useWishlistStore((s) => s.items);
@@ -310,9 +311,9 @@ export default function WishlistPage() {
               <div className="w-full max-w-[375px] bg-white border border-[#E2E8F0] rounded-[10px] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.10),0_2px_4px_-2px_rgba(0,0,0,0.10)] p-6 flex flex-col gap-3.5">
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                  <p className="text-[#020617] font-semibold text-xl font-manrope">
+                  <PrimaryHeading>
                     Нэвтрэх
-                  </p>
+                  </PrimaryHeading>
                   <button
                     onClick={() => router.back()}
                     className="p-1 cursor-pointer"
@@ -524,9 +525,9 @@ export default function WishlistPage() {
                 <p className="text-[#020617] font-black text-base font-manrope">
                   {items.length}
                 </p>
-                <p className="text-[#020617] font-medium text-base font-manrope">
+                <PrimaryMediumBase>
                   Бүтээгдэхүүн
-                </p>
+                </PrimaryMediumBase>
               </div>
               <div className="py-2">
                 <div className="w-full h-px bg-[#E2E8F0]" />
@@ -538,9 +539,9 @@ export default function WishlistPage() {
                 <div className="py-2">
                   <Heart />
                 </div>
-                <p className="text-[#64748B] font-normal text-base font-manrope">
+                <MutedText>
                   Одоогоор бүтээгдэхүүн хадгалаагүй байна
-                </p>
+                </MutedText>
               </div>
 
               <Link
@@ -563,14 +564,14 @@ export default function WishlistPage() {
         <div className="px-0.5 pb-0 md:pb-2 pt-5 md:pt-[52px]">
           <div className="items-center gap-1.5 flex md:hidden">
             <Link href="/profile">
-              <p className="text-[#64748B] font-normal text-sm font-manrope">
+              <MutedTextSm>
                 Профайл
-              </p>
+              </MutedTextSm>
             </Link>
             <Slash />
-            <p className="text-[#020617] font-normal text-sm font-manrope">
+            <PrimarySm>
               Хадгалсан
-            </p>
+            </PrimarySm>
           </div>
           <p className="text-[#020617] font-bold text-2xl md:text-xl md:text-[26px] leading-9 font-manrope">
             Хадгалсан
@@ -583,9 +584,9 @@ export default function WishlistPage() {
               <p className="text-[#020617] font-black text-base font-manrope">
                 {items.length}
               </p>
-              <p className="text-[#020617] font-medium text-base font-manrope">
+              <PrimaryMediumBase>
                 Бүтээгдэхүүн
-              </p>
+              </PrimaryMediumBase>
             </div>
             <button
               onClick={() => setShowClearModal(true)}

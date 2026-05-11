@@ -10,6 +10,7 @@ import {
   KHOROO_OPTIONS,
 } from "@/components/checkout/constants";
 import type { AddressWithId } from "@/lib/hooks/useCheckout";
+import { PrimaryHeading } from "@/components/ui/typography";
 
 interface AddressSelectModalProps {
   isOpen: boolean;
@@ -95,9 +96,9 @@ export function AddressSelectModal({
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <p className="text-[#020617] font-semibold text-xl font-manrope">
+          <PrimaryHeading>
             Хаяг сонгох
-          </p>
+          </PrimaryHeading>
           <button
             onClick={onClose}
             className="p-1 cursor-pointer"

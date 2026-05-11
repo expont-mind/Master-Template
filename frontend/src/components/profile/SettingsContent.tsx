@@ -5,6 +5,7 @@ import { stripPhonePrefix } from "@/lib/utils/formatters";
 import { Device, LocationProfile, Logout, PhoneCall, Slash } from "../svg";
 import type { SideMenu } from "./ProfileSidebar";
 import Link from "next/link";
+import { PrimaryMediumSm } from "@/components/ui/typography";
 
 type UserRow = Database["public"]["Tables"]["users"]["Row"];
 type AddressRow = Database["public"]["Tables"]["addresses"]["Row"];
@@ -131,9 +132,9 @@ export const SettingsContent = ({
             >
               <div className="shrink-0 text-[#020617]">{item.icon}</div>
               <div className="flex-1 flex items-center py-3.5 min-w-0">
-                <p className="text-[#020617] font-medium text-sm font-manrope">
+                <PrimaryMediumSm>
                   {item.label}
-                </p>
+                </PrimaryMediumSm>
               </div>
             </button>
           ) : (
@@ -149,9 +150,9 @@ export const SettingsContent = ({
                 }`}
               >
                 <div className="flex-1 flex flex-col gap-0.5 items-start min-w-0">
-                  <p className="text-[#020617] font-medium text-sm font-manrope">
+                  <PrimaryMediumSm>
                     {item.label}
-                  </p>
+                  </PrimaryMediumSm>
                   <p className="text-[#64748B] font-normal text-sm font-manrope truncate w-full text-left">
                     {item.subtitle}
                   </p>

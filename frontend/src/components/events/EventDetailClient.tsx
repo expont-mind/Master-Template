@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Slash, MapPin } from "@/components/svg";
 import { parseAsUTC } from "@/lib/utils/formatters";
 import type { Event } from "@/types/database";
+import { PrimarySm } from "@/components/ui/typography";
 
 interface EventDetailClientProps {
   event: Event;
@@ -70,9 +71,9 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
               Эвэнт
             </Link>
             <Slash />
-            <p className="text-[#020617] font-normal text-sm font-manrope">
+            <PrimarySm>
               {event.title}
-            </p>
+            </PrimarySm>
           </div>
 
           {/* Event Title */}

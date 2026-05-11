@@ -6,6 +6,7 @@ import { useScrollLock } from "@/lib/hooks/useScrollLock";
 import Image from "next/image";
 import { Cancel, ImagePlus } from "../svg";
 import { X } from "lucide-react";
+import { PrimaryHeading } from "@/components/ui/typography";
 
 interface ReviewModalProps {
   isOpen: boolean;
@@ -119,9 +120,9 @@ export const ReviewModal = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <p className="text-[#020617] font-semibold text-xl font-manrope">
+          <PrimaryHeading>
             Сэтгэгдэл бичих
-          </p>
+          </PrimaryHeading>
           <button
             onClick={() => {
               setComment("");

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Search, SearchBig } from "@/components/svg";
 import { useBrands } from "@/lib/hooks/useBrands";
 import { ROUTES } from "@/lib/utils/constants";
+import { MutedText, PrimaryMediumBase } from "@/components/ui/typography";
 
 // Desktop: 4 rows of 7
 const ALPHABET_DESKTOP = [
@@ -161,9 +162,9 @@ export function BrandsClient() {
                     className="flex items-center h-[64px] justify-between pl-4 border border-[#F1F5F9] bg-[#F8FAFC] hover:border-[#020617] overflow-hidden rounded-lg transition-colors duration-200 cursor-pointer"
                   >
                     <div className="flex flex-col">
-                      <p className="text-[#020617] font-medium text-base font-manrope">
+                      <PrimaryMediumBase>
                         {brand.name}
-                      </p>
+                      </PrimaryMediumBase>
                       <p className="text-[#64748B] font-light text-xs font-manrope">
                         {brand.type ?? "Бусад"}
                       </p>
@@ -187,9 +188,9 @@ export function BrandsClient() {
                     <div className="p-[9px]">
                       <SearchBig />
                     </div>
-                    <p className="text-[#64748B] font-normal text-base font-manrope">
+                    <MutedText>
                       Хайлтад тохирох брэнд олдсонгүй
-                    </p>
+                    </MutedText>
                   </div>
                 )}
               </div>

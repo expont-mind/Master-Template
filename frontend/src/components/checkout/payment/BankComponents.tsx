@@ -2,6 +2,7 @@
 
 import { Copy } from "@/components/svg";
 import { Check } from "lucide-react";
+import { PrimarySm } from "@/components/ui/typography";
 
 export function BankField({
   label,
@@ -86,9 +87,9 @@ export function BankAppCard({
         </div>
       )}
       <div className="flex flex-col min-w-0">
-        <p className="text-[#020617] font-normal text-sm font-manrope">
+        <PrimarySm>
           {bank.name}
-        </p>
+        </PrimarySm>
         {description && (
           <p className="text-[#64748B] font-normal text-xs font-manrope hidden md:block">
             {description}

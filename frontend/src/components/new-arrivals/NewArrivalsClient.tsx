@@ -6,6 +6,7 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { ChevronDownBig } from "@/components/svg";
 import { homeKeys, getNewProducts } from "@/lib/queries/home";
 import type { Product } from "@/types/database";
+import { MutedText } from "@/components/ui/typography";
 
 const PRODUCTS_PER_BATCH = 96;
 
@@ -91,9 +92,9 @@ function ProductGrid({
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <p className="text-[#64748B] font-normal text-base font-manrope">
+        <MutedText>
           Бүтээгдэхүүн олдсонгүй
-        </p>
+        </MutedText>
       </div>
     );
   }

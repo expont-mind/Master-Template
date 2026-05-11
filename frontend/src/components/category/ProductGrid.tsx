@@ -5,6 +5,7 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { ChevronDownBig, SearchBig } from "@/components/svg";
 import type { ProductListItem } from "@/types/product";
 import type { Product } from "@/types/database";
+import { MutedText } from "@/components/ui/typography";
 
 const PRODUCTS_PER_BATCH = 96; // 8 pages of 12 products
 
@@ -93,9 +94,9 @@ export function ProductGrid({
         <div className="p-[9px]">
           <SearchBig />
         </div>
-        <p className="text-[#64748B] font-normal text-base font-manrope">
+        <MutedText>
           Хайлтад тохирох бүтээгдэхүүн олдсонгүй
-        </p>
+        </MutedText>
       </div>
     );
   }

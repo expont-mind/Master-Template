@@ -7,6 +7,7 @@ import { CouponCard, type CouponData } from "@/components/profile/CouponCard";
 import { createClient } from "@/lib/supabase/client";
 import { parseAsUTC } from "@/lib/utils/formatters";
 import { Cancel, Coupon } from "../svg";
+import { PrimaryHeading } from "@/components/ui/typography";
 
 const SCOPE_TABLE_MAP: Record<string, string> = {
   product: "coupon_products",
@@ -253,9 +254,9 @@ export const CouponSelectModal = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <p className="text-[#020617] font-semibold text-xl font-manrope">
+          <PrimaryHeading>
             Купон ашиглах
-          </p>
+          </PrimaryHeading>
           <button
             onClick={onClose}
             className="p-1 cursor-pointer"

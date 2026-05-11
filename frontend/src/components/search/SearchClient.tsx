@@ -11,6 +11,7 @@ import { logSearch } from "@/lib/queries/search";
 import { log } from "@/lib/utils/logger";
 import type { ProductFilters, ProductListItem } from "@/lib/queries/search";
 import type { Product } from "@/types/database";
+import { MutedText, PrimaryMediumSm } from "@/components/ui/typography";
 
 const PRODUCTS_PER_BATCH = 96;
 
@@ -99,9 +100,9 @@ function SearchProductGrid({
         <div className="p-[9px]">
           <SearchBig />
         </div>
-        <p className="text-[#64748B] font-normal text-base font-manrope">
+        <MutedText>
           Хайлтад тохирох бүтээгдэхүүн олдсонгүй
-        </p>
+        </MutedText>
       </div>
     );
   }
@@ -229,9 +230,9 @@ function SearchContent() {
                 <p className="text-[#020617] font-semibold text-base font-manrope">
                   {total}
                 </p>
-                <p className="text-[#020617] font-medium text-sm font-manrope">
+                <PrimaryMediumSm>
                   бүтээгдэхүүн
-                </p>
+                </PrimaryMediumSm>
               </div>
 
               <div className="flex gap-1.5 sm:gap-2">

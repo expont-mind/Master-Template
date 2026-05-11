@@ -11,6 +11,7 @@ import type { Database } from "@/types/database";
 import Link from "next/link";
 import { Box, TruckGray, BoxCancel, ChevronRightProduct, Slash } from "../svg";
 import Image from "next/image";
+import { MutedText } from "@/components/ui/typography";
 
 type UserRow = Database["public"]["Tables"]["users"]["Row"];
 type AddressRow = Database["public"]["Tables"]["addresses"]["Row"];
@@ -216,9 +217,9 @@ export const OrdersContent = ({
           <div className="flex flex-col items-center justify-center py-10 gap-10">
             <div className="flex flex-col items-center justify-center">
               <div className="p-[9px]">{emptyStateContent[activeTab].icon}</div>
-              <p className="text-[#64748B] font-normal text-base font-manrope">
+              <MutedText>
                 {emptyStateContent[activeTab].text}
-              </p>
+              </MutedText>
             </div>
 
             <Link
