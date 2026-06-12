@@ -54,3 +54,7 @@ coverage/
 *.tmp
 .tmp/
 .cleanup-prompts/
+
+# Python bytecode (uipro skill scripts)
+__pycache__/
+*.pyc
