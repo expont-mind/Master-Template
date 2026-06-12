@@ -33,6 +33,7 @@ Two files, pure deletes.
 ### i18n
 
 Remove from `express/src/lib/i18n/dictionaries/{en,ko,mn}.json`:
+
 - `staff.inbox.savedViews`
 - `staff.inbox.printLabel` (the inbox-side one; the `staff.intake.scan.printLabel` used in the intake wizard stays).
 
@@ -137,6 +138,7 @@ Resolve an open issue.
 ### i18n keys to add
 
 Under `staff.inbox.issues.*`:
+
 - `modal.title`, `modal.category`, `modal.note`, `modal.submit`, `modal.cancel`
 - `resolve.title`, `resolve.note`, `resolve.confirm`
 - `category.wrong_address`, `category.unreachable`, `category.damaged`, `category.delayed`, `category.customer_change`, `category.other`
@@ -147,6 +149,7 @@ Under `staff.inbox.issues.*`:
 ### Scope
 
 Editable fields:
+
 - `recipient_name`, `recipient_phone` (stored on `express_addresses` with `address_type = 'korea_pickup'`)
 - `kr_province`, `kr_city`, `kr_street`, `kr_building`, `kr_detail`
 - `pickup_scheduled_at` (stored on `express_shipments`)
@@ -195,6 +198,7 @@ A new `editShipmentSchema` colocated with the modal, mirroring `koreaAddressSche
 ### i18n keys to add
 
 Under `staff.inbox.edit.*`:
+
 - `title`, `recipient`, `phone`, `pickupTime`, `pickupTimeClear`
 - `save`, `cancel`, `saved`, `noChanges`, `lockedAfterTransit`
 

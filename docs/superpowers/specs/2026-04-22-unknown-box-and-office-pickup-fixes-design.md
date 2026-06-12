@@ -12,7 +12,7 @@ Two non-functional edge cases were reported in the Express shipment flow:
    picker offers a `?` preset ("Not sure — measured at pickup"). The hint
    copy promises "Our staff will measure and weigh the box at the Incheon
    warehouse." But the Korea intake wizard only has `scan → weigh → photo
-   → label` steps. No step captures `dimensions_cm`, so an unknown box
+→ label` steps. No step captures `dimensions_cm`, so an unknown box
    keeps `dimensions_cm = ""` forever. The customer-facing promise is
    silently broken.
 
@@ -63,11 +63,11 @@ weight reading.
 **Trigger condition (when to show the block):**
 
 ```ts
-const needsDimensions =
-  pkg.box_size === "unknown" || !pkg.dimensions_cm;
+const needsDimensions = pkg.box_size === "unknown" || !pkg.dimensions_cm;
 ```
 
 This covers:
+
 - customer picked `?` (unknown)
 - legacy packages with no `box_size` and empty `dimensions_cm`
 
@@ -76,6 +76,7 @@ Preset sizes (S/M/L/XL) and `custom` boxes already have
 them and the step behaves exactly as before.
 
 **UI:**
+
 - A dedicated subsection below the actual-weight block, inside the same
   card.
 - Eyebrow: `t("staff.intake.weigh.measure")` ("Measure" · 측정 ·
@@ -92,6 +93,7 @@ them and the step behaves exactly as before.
   and recombined as `` `${w} × ${h} × ${d}` `` on submit.
 
 **Validation:**
+
 - All three inputs must be non-empty and parse to positive numbers
   before the step's "Continue" button is enabled.
 - We trim whitespace and accept integer or decimal cm values — no
@@ -101,6 +103,7 @@ them and the step behaves exactly as before.
   existing weight rules (unchanged).
 
 **Write path:**
+
 - Single call, same shape as today:
   ```ts
   await intake.advance(pkg.id, shipment.id, "photo", {
@@ -116,9 +119,9 @@ them and the step behaves exactly as before.
 New keys in
 [`express/src/lib/i18n/dictionaries/{en,ko,mn}.json`](../../../express/src/lib/i18n/dictionaries):
 
-| key | en | ko | mn |
-|-----|----|----|----|
-| `staff.intake.weigh.measure` | Measure | 측정 | Хэмжих |
+| key                              | en                                                                               | ko                                                                           | mn                                                                                 |
+| -------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `staff.intake.weigh.measure`     | Measure                                                                          | 측정                                                                         | Хэмжих                                                                             |
 | `staff.intake.weigh.measureHelp` | This box was marked "not sure" — measure width, height and depth in centimeters. | "잘 모르겠어요"로 접수된 박스입니다. 가로·세로·높이(cm)를 재서 입력해주세요. | "Мэдэхгүй" гэж бүртгэгдсэн хайрцаг. Өргөн, өндөр, гүнийг см-ээр хэмжиж оруулна уу. |
 
 Existing `shipment.form.width/height/depth` (already present in the
@@ -148,11 +151,11 @@ delivery-specific text or city fallbacks for shipments regardless of
 
 ### i18n (new keys)
 
-| key | en | ko | mn |
-|-----|----|----|----|
-| `shipment.form.review.pickup` | Pickup | 수령 | Авах |
-| `shipment.pickedUpOn` | Picked up on {date} | {date}에 수령함 | {date}-нд хүлээн авсан |
-| `shipment.route.officePickup` | Office pickup | 사무실 수령 | Оффисоос авах |
+| key                           | en                  | ko              | mn                     |
+| ----------------------------- | ------------------- | --------------- | ---------------------- |
+| `shipment.form.review.pickup` | Pickup              | 수령            | Авах                   |
+| `shipment.pickedUpOn`         | Picked up on {date} | {date}에 수령함 | {date}-нд хүлээн авсан |
+| `shipment.route.officePickup` | Office pickup       | 사무실 수령     | Оффисоос авах          |
 
 ### File changes
 
@@ -169,7 +172,7 @@ delivery-specific text or city fallbacks for shipments regardless of
    - The `toCity` headline (line ~48) currently falls back to
      `t("map.mongolia")`. When `office_pickup`, use
      `t("shipment.route.officePickup")` so the header reads
-     "*Seoul* → *Office pickup*" rather than a generic country.
+     "_Seoul_ → _Office pickup_" rather than a generic country.
 
 2. **[`express/src/components/staff/StaffShipmentDetail.tsx`](../../../express/src/components/staff/StaffShipmentDetail.tsx)**
    - Same two changes (handoff-card eyebrow, `toCity` fallback) as
@@ -195,7 +198,7 @@ delivery-specific text or city fallbacks for shipments regardless of
 ### Verification touchpoints (no change expected, just confirmed correct)
 
 - `DispatchView` already `.filter(s => s.delivery_preference ===
-  "home_delivery")` — office pickups never enter the dispatch board.
+"home_delivery")` — office pickups never enter the dispatch board.
 - `WarehouseActions` already branches
   `home_delivery → out_for_delivery` vs `else → ready_for_pickup`.
 - `useDriverQueue` restricts to `out_for_delivery,completed` — driver

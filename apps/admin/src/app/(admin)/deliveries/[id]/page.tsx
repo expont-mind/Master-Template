@@ -1,0 +1,8 @@
+import { use } from "react";
+
+import { DeliveryForm } from "@/components/delivery";
+
+export default function EditDeliveryPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  return <DeliveryForm id={id} />;
+}

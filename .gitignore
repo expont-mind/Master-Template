@@ -1,1 +1,56 @@
+# OS
 .DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# Turborepo
+.turbo/
+
+# Vercel
+.vercel/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Per-client rebrand config (contains client data — never commit)
+rebrand.config.yaml
+
+# Supabase CLI local cache (per-client, not source)
+**/supabase/.temp/
+**/supabase/.branches/
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Coverage / cache
+coverage/
+.cache/
+.eslintcache
+
+# Temp
+*.tmp
+.tmp/
+.cleanup-prompts/

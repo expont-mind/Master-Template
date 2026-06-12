@@ -1,0 +1,340 @@
+{
+  "info": {
+    "_postman_id": "62437d5d-d45d-41dc-8456-c9c02e0b0d97",
+    "name": "Ecommerce - Documentation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "18163896",
+    "_collection_link": "https://meedku.postman.co/workspace/R%26D~fcd39212-2b52-481b-bb06-7873006544d0/collection/18163896-62437d5d-d45d-41dc-8456-c9c02e0b0d97?action=share&source=collection_link&creator=18163896"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Access Token - Get",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.environment.set(\"access_token\", response.access_token);",
+                  "pm.environment.set(\"refresh_token\", response.refresh_token);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "client_credentials",
+                  "type": "text"
+                },
+                {
+                  "key": "client_id",
+                  "value": "{{clientId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "client_secret",
+                  "value": "{{clientSecret}}",
+                  "type": "text"
+                },
+                {
+                  "key": "scope",
+                  "value": "openid",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{ecom_api_gw}}/auth/token",
+              "host": ["{{ecom_api_gw}}"],
+              "path": ["auth", "token"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token - Exchange",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "refresh_token",
+                  "type": "text"
+                },
+                {
+                  "key": "client_id",
+                  "value": "{{clientId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "client_secret",
+                  "value": "{{clientSecret}}",
+                  "type": "text"
+                },
+                {
+                  "key": "scope",
+                  "value": "openid",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "refresh_token",
+                  "value": "{{refresh_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{ecom_api_gw}}/auth/refresh",
+              "host": ["{{ecom_api_gw}}"],
+              "path": ["auth", "refresh"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Invoice",
+      "item": [
+        {
+          "name": "Get invoices",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-gw-client-id",
+                "value": "1011450",
+                "description": "Skele regnum user",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "x-api-gw-user-uuid",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "Accept-Language",
+                "value": "mn",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{ecom_api_gw}}/api/payments/invoices?status=0&page=1&limit=5&walletId={{wallet_id}}",
+              "host": ["{{ecom_api_gw}}"],
+              "path": ["api", "payments", "invoices"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "0"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                },
+                {
+                  "key": "walletId",
+                  "value": "{{wallet_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create invoice",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"invoice_number\", jsonData.response.invoiceNumber);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"amount\": 20000,\n    \"description\": \"[{{current}}] | {{$randomFullName}} test description\",\n    \"walletId\": {{wallet_id}},\n    \"phoneNumber\": 99468978\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{ecom_api_gw}}/api/payments/invoices",
+              "host": ["{{ecom_api_gw}}"],
+              "path": ["api", "payments", "invoices"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get invoice",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{ecom_api_gw}}/api/payments/invoices/:invoiceNumber",
+              "host": ["{{ecom_api_gw}}"],
+              "path": ["api", "payments", "invoices", ":invoiceNumber"],
+              "variable": [
+                {
+                  "key": "invoiceNumber",
+                  "value": "{{invoice_number}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel invoice",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{ecom_api_gw}}/api/payments/invoices/:invoiceNumber",
+              "host": ["{{ecom_api_gw}}"],
+              "path": ["api", "payments", "invoices", ":invoiceNumber"],
+              "variable": [
+                {
+                  "key": "invoiceNumber",
+                  "value": "{{invoice_number}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reference",
+      "item": [
+        {
+          "name": "Reference - Branches",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{ecom_api_gw}}/api/branches",
+              "host": ["{{ecom_api_gw}}"],
+              "path": ["api", "branches"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reference - Branch",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{ecom_api_gw}}/api/branches/:branch_id",
+              "host": ["{{ecom_api_gw}}"],
+              "path": ["api", "branches", ":branch_id"],
+              "variable": [
+                {
+                  "key": "branch_id",
+                  "value": "{{branch_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

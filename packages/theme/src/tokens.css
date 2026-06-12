@@ -1,0 +1,55 @@
+/*
+ * Tailwind v4 @theme integration. Maps the CSS variables defined in brand.css
+ * onto Tailwind's color/space/radius scales so utility classes
+ * (`bg-brand-primary`, `text-status-success-text`, etc.) resolve at runtime.
+ *
+ * Import order in your app's globals.css MUST be:
+ *   @import "tailwindcss";
+ *   @import "@repo/theme/brand.css";
+ *   @import "@repo/theme/tokens.css";
+ */
+
+@theme inline {
+  /* Brand identity */
+  --color-brand-primary: var(--color-brand-primary);
+  --color-brand-primary-hover: var(--color-brand-primary-hover);
+  --color-brand-primary-active: var(--color-brand-primary-active);
+  --color-brand-primary-foreground: var(--color-brand-primary-foreground);
+  --color-brand-secondary: var(--color-brand-secondary);
+  --color-brand-secondary-foreground: var(--color-brand-secondary-foreground);
+  --color-brand-accent: var(--color-brand-accent);
+  --color-brand-accent-foreground: var(--color-brand-accent-foreground);
+
+  /* Semantic neutrals */
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-subtle: var(--color-text-subtle);
+  --color-surface: var(--color-surface);
+  --color-surface-dark: var(--color-surface-dark);
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-overlay: var(--color-overlay);
+  --color-border: var(--color-border);
+  --color-border-light: var(--color-border-light);
+  --color-border-strong: var(--color-border-strong);
+  --color-link: var(--color-link);
+
+  /* Status */
+  --color-status-warning-bg: var(--color-status-warning-bg);
+  --color-status-warning-text: var(--color-status-warning-text);
+  --color-status-error-bg: var(--color-status-error-bg);
+  --color-status-error-text: var(--color-status-error-text);
+  --color-status-success-bg: var(--color-status-success-bg);
+  --color-status-success-text: var(--color-status-success-text);
+  --color-status-info-bg: var(--color-status-info-bg);
+  --color-status-info-text: var(--color-status-info-text);
+
+  /* Radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-full: var(--radius-full);
+}

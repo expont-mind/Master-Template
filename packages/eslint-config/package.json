@@ -1,0 +1,29 @@
+{
+  "name": "@repo/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./next": "./next.mjs",
+    "./strict": "./strict.mjs",
+    "./library": "./library.mjs",
+    "./design-tokens": "./design-tokens.mjs"
+  },
+  "dependencies": {
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-no-relative-import-paths": "^1.5.5",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "typescript-eslint": "^8.18.1"
+  },
+  "peerDependencies": {
+    "eslint": "^9",
+    "eslint-config-next": "^16"
+  },
+  "peerDependenciesMeta": {
+    "eslint-config-next": {
+      "optional": true
+    }
+  }
+}

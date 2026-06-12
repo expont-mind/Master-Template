@@ -15,6 +15,7 @@
 ## File map
 
 **Delete/modify:**
+
 - `express/src/components/staff/korea/InboxToolbar.tsx` — drop Saved views, wire Log issue
 - `express/src/components/staff/korea/InboxDetail.tsx` — drop Print label, wire Edit
 - `express/src/components/staff/korea/ActivityFeed.tsx` — render issue entries
@@ -24,6 +25,7 @@
 - `express/src/types/express.ts` — add `ExpressShipmentIssue`, `IssueCategory`
 
 **Create:**
+
 - `express/supabase/migrations/015_express_shipment_issues.sql`
 - `express/src/app/api/express/shipments/[id]/issues/route.ts`
 - `express/src/app/api/express/shipments/[id]/issues/[issueId]/resolve/route.ts`
@@ -42,6 +44,7 @@
 ### Task 1: Remove Saved views button
 
 **Files:**
+
 - Modify: `express/src/components/staff/korea/InboxToolbar.tsx`
 - Modify: `express/src/lib/i18n/dictionaries/{en,ko,mn}.json`
 
@@ -52,6 +55,7 @@ In `express/src/components/staff/korea/InboxToolbar.tsx`, delete lines 63–70 (
 - [ ] **Step 2: Remove the i18n key from all three dictionaries**
 
 Remove `"staff.inbox.savedViews": ...` line from each of:
+
 - `express/src/lib/i18n/dictionaries/en.json`
 - `express/src/lib/i18n/dictionaries/ko.json`
 - `express/src/lib/i18n/dictionaries/mn.json`
@@ -61,6 +65,7 @@ Remove `"staff.inbox.savedViews": ...` line from each of:
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/components/staff/korea/InboxToolbar.tsx
 ```
+
 Expected: exit 0 both.
 
 - [ ] **Step 4: Commit**
@@ -75,6 +80,7 @@ git commit -m "feat(express/inbox): remove stub Saved views button"
 ### Task 2: Remove Print label button
 
 **Files:**
+
 - Modify: `express/src/components/staff/korea/InboxDetail.tsx`
 - Modify: `express/src/lib/i18n/dictionaries/{en,ko,mn}.json`
 
@@ -83,12 +89,12 @@ git commit -m "feat(express/inbox): remove stub Saved views button"
 In `express/src/components/staff/korea/InboxDetail.tsx`, delete the button at lines 157–162:
 
 ```tsx
-          <button
-            type="button"
-            className="inline-flex h-9 cursor-pointer items-center rounded-full border border-line bg-transparent px-4 font-sans text-[12px] font-medium tracking-[0.01em] text-text transition-colors hover:border-text"
-          >
-            {t("staff.inbox.printLabel")}
-          </button>
+<button
+  type="button"
+  className="inline-flex h-9 cursor-pointer items-center rounded-full border border-line bg-transparent px-4 font-sans text-[12px] font-medium tracking-[0.01em] text-text transition-colors hover:border-text"
+>
+  {t("staff.inbox.printLabel")}
+</button>
 ```
 
 - [ ] **Step 2: Remove i18n key from all three dictionaries**
@@ -100,6 +106,7 @@ Remove `"staff.inbox.printLabel": ...` line from each of `en.json`, `ko.json`, `
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/components/staff/korea/InboxDetail.tsx
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 4: Commit**
@@ -116,6 +123,7 @@ git commit -m "feat(express/inbox): remove stub Print label button"
 ### Task 3: Create `express_shipment_issues` table + RLS
 
 **Files:**
+
 - Create: `express/supabase/migrations/015_express_shipment_issues.sql`
 
 - [ ] **Step 1: Write the migration**
@@ -190,6 +198,7 @@ COMMENT ON TABLE express_shipment_issues IS
 ```bash
 cd express && npx supabase db push
 ```
+
 Expected: "Applied migration 015_express_shipment_issues.sql".
 
 - [ ] **Step 3: Verify in psql**
@@ -197,6 +206,7 @@ Expected: "Applied migration 015_express_shipment_issues.sql".
 ```bash
 npx supabase db psql -c "\d express_shipment_issues"
 ```
+
 Expected: table with 10 columns, 2 indexes, 3 policies.
 
 - [ ] **Step 4: Commit**
@@ -211,6 +221,7 @@ git commit -m "feat(express/issues): add express_shipment_issues table + RLS"
 ### Task 4: Add TypeScript types for issues
 
 **Files:**
+
 - Modify: `express/src/types/express.ts`
 
 - [ ] **Step 1: Add types at the bottom of the file**
@@ -247,6 +258,7 @@ export interface ExpressShipmentIssue {
 ```bash
 cd express && npx tsc --noEmit
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 3: Commit**
@@ -261,6 +273,7 @@ git commit -m "feat(express/issues): add ExpressShipmentIssue + IssueCategory ty
 ### Task 5: Create issues API routes
 
 **Files:**
+
 - Create: `express/src/app/api/express/shipments/[id]/issues/route.ts`
 - Create: `express/src/app/api/express/shipments/[id]/issues/[issueId]/resolve/route.ts`
 
@@ -282,10 +295,7 @@ import { ISSUE_CATEGORIES, type IssueCategory } from "@/types/express";
  *   - Returns: the inserted issue row.
  */
 
-export async function POST(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id: shipmentId } = await context.params;
 
   const userClient = await createClient();
@@ -310,24 +320,15 @@ export async function POST(
   try {
     body = (await request.json()) ?? {};
   } catch {
-    return NextResponse.json(
-      { error: "Invalid JSON body" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
   const category = body.category as IssueCategory;
   const note = typeof body.note === "string" ? body.note.trim() : "";
   if (!ISSUE_CATEGORIES.includes(category)) {
-    return NextResponse.json(
-      { error: "Invalid category" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Invalid category" }, { status: 400 });
   }
   if (note.length < 1 || note.length > 2000) {
-    return NextResponse.json(
-      { error: "Note must be 1..2000 characters" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Note must be 1..2000 characters" }, { status: 400 });
   }
 
   const { data: shipment, error: shipErr } = await admin
@@ -409,10 +410,7 @@ export async function POST(
     // no body — fine
   }
   if (resolutionNote.length > 2000) {
-    return NextResponse.json(
-      { error: "Resolution note too long" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Resolution note too long" }, { status: 400 });
   }
 
   const { data: existing, error: fetchErr } = await admin
@@ -425,10 +423,7 @@ export async function POST(
     return NextResponse.json({ error: "Issue not found" }, { status: 404 });
   }
   if (existing.resolved_at) {
-    return NextResponse.json(
-      { error: "Issue already resolved" },
-      { status: 409 },
-    );
+    return NextResponse.json({ error: "Issue already resolved" }, { status: 409 });
   }
 
   const { data: issue, error: updErr } = await admin
@@ -453,6 +448,7 @@ export async function POST(
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/app/api/express/shipments
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 4: Smoke-test with curl (optional but recommended)**
@@ -465,6 +461,7 @@ curl -X POST http://localhost:3002/api/express/shipments/<REAL_ID>/issues \
   -d '{"category":"wrong_address","note":"Needs street number"}' \
   -H "Cookie: <paste auth cookie>"
 ```
+
 Expected: `{"issue":{...}}` with status 200 and a new row visible in Supabase Studio.
 
 - [ ] **Step 5: Commit**
@@ -481,6 +478,7 @@ git commit -m "feat(express/issues): POST issue + resolve API routes"
 ### Task 6: Add i18n keys for issues
 
 **Files:**
+
 - Modify: `express/src/lib/i18n/dictionaries/{en,ko,mn}.json`
 
 - [ ] **Step 1: Add the English keys**
@@ -576,6 +574,7 @@ git commit -m "feat(express/issues): add i18n keys for issue modal + timeline"
 ### Task 7: Create useShipmentIssues hooks
 
 **Files:**
+
 - Create: `express/src/hooks/useShipmentIssues.ts`
 
 - [ ] **Step 1: Write the hooks**
@@ -588,10 +587,7 @@ Create `express/src/hooks/useShipmentIssues.ts`:
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { queryKeys } from "@/lib/query-keys";
-import type {
-  ExpressShipmentIssue,
-  IssueCategory,
-} from "@/types/express";
+import type { ExpressShipmentIssue, IssueCategory } from "@/types/express";
 
 export function useShipmentIssues(shipmentId: string | undefined) {
   return useQuery<ExpressShipmentIssue[]>({
@@ -612,20 +608,13 @@ export function useShipmentIssues(shipmentId: string | undefined) {
 
 export function useCreateShipmentIssue(shipmentId: string) {
   const qc = useQueryClient();
-  return useMutation<
-    ExpressShipmentIssue,
-    Error,
-    { category: IssueCategory; note: string }
-  >({
+  return useMutation<ExpressShipmentIssue, Error, { category: IssueCategory; note: string }>({
     mutationFn: async ({ category, note }) => {
-      const res = await fetch(
-        `/api/express/shipments/${shipmentId}/issues`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ category, note }),
-        },
-      );
+      const res = await fetch(`/api/express/shipments/${shipmentId}/issues`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category, note }),
+      });
       const payload = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(payload?.error ?? "Failed to log issue");
       return payload.issue as ExpressShipmentIssue;
@@ -639,20 +628,13 @@ export function useCreateShipmentIssue(shipmentId: string) {
 
 export function useResolveShipmentIssue(shipmentId: string) {
   const qc = useQueryClient();
-  return useMutation<
-    ExpressShipmentIssue,
-    Error,
-    { issueId: string; resolution_note?: string }
-  >({
+  return useMutation<ExpressShipmentIssue, Error, { issueId: string; resolution_note?: string }>({
     mutationFn: async ({ issueId, resolution_note }) => {
-      const res = await fetch(
-        `/api/express/shipments/${shipmentId}/issues/${issueId}/resolve`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ resolution_note: resolution_note ?? "" }),
-        },
-      );
+      const res = await fetch(`/api/express/shipments/${shipmentId}/issues/${issueId}/resolve`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resolution_note: resolution_note ?? "" }),
+      });
       const payload = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(payload?.error ?? "Failed to resolve");
       return payload.issue as ExpressShipmentIssue;
@@ -670,6 +652,7 @@ export function useResolveShipmentIssue(shipmentId: string) {
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/hooks/useShipmentIssues.ts
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 3: Commit**
@@ -684,6 +667,7 @@ git commit -m "feat(express/issues): hooks for fetching, creating, resolving iss
 ### Task 8: Create LogIssueModal component
 
 **Files:**
+
 - Create: `express/src/components/staff/korea/LogIssueModal.tsx`
 
 - [ ] **Step 1: Write the modal**
@@ -748,10 +732,7 @@ export function LogIssueModal({ shipmentId, open, onClose }: Props) {
         aria-labelledby="log-issue-title"
         className="w-full max-w-[480px] rounded-ec border border-line bg-chrome p-7 shadow-[0_24px_60px_rgba(0,0,0,0.22)]"
       >
-        <h3
-          id="log-issue-title"
-          className="font-serif text-2xl font-light tracking-[-0.02em]"
-        >
+        <h3 id="log-issue-title" className="font-serif text-2xl font-light tracking-[-0.02em]">
           {t("staff.inbox.issues.modal.title")}
         </h3>
 
@@ -760,10 +741,7 @@ export function LogIssueModal({ shipmentId, open, onClose }: Props) {
             <label className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-dim">
               {t("staff.inbox.issues.modal.category")}
             </label>
-            <Select
-              value={category}
-              onValueChange={(v) => setCategory(v as IssueCategory)}
-            >
+            <Select value={category} onValueChange={(v) => setCategory(v as IssueCategory)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -810,9 +788,7 @@ export function LogIssueModal({ shipmentId, open, onClose }: Props) {
             disabled={!canSubmit}
             className="inline-flex h-9 cursor-pointer items-center gap-[6px] rounded-full border border-transparent bg-text px-[16px] font-mono text-[12px] font-medium text-bg transition-colors hover:bg-amber hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {create.isPending && (
-              <Loader2 size={12} className="animate-spin" />
-            )}
+            {create.isPending && <Loader2 size={12} className="animate-spin" />}
             {t("staff.inbox.issues.modal.submit")}
           </button>
         </div>
@@ -827,6 +803,7 @@ export function LogIssueModal({ shipmentId, open, onClose }: Props) {
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/components/staff/korea/LogIssueModal.tsx
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 3: Commit**
@@ -841,6 +818,7 @@ git commit -m "feat(express/issues): LogIssueModal component"
 ### Task 9: Wire up "Log issue" toolbar button
 
 **Files:**
+
 - Modify: `express/src/components/staff/korea/InboxToolbar.tsx`
 
 - [ ] **Step 1: Add props so the toolbar can receive the selected shipment**
@@ -882,9 +860,7 @@ Replace the existing disabled Log issue `<PillButton>` (currently the third Pill
   variant="primary"
   onClick={() => setIssueOpen(true)}
   disabled={!selectedShipmentId}
-  title={
-    selectedShipmentId ? undefined : t("staff.selectToView")
-  }
+  title={selectedShipmentId ? undefined : t("staff.selectToView")}
 >
   <Plus size={12} className="mr-[6px]" />
   {t("staff.inbox.logIssue")}
@@ -898,9 +874,7 @@ Right before the closing `</div>` of the outermost `<div className="flex flex-wr
 ```tsx
 return (
   <>
-    <div className="flex flex-wrap items-center gap-2">
-      {/* ...existing PillButtons... */}
-    </div>
+    <div className="flex flex-wrap items-center gap-2">{/* ...existing PillButtons... */}</div>
     {selectedShipmentId && (
       <LogIssueModal
         shipmentId={selectedShipmentId}
@@ -931,11 +905,13 @@ If the selected id isn't present at that level, lift it up or use nuqs (already 
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/components/staff/korea/InboxToolbar.tsx
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 7: Manual smoke test**
 
 Run `npm run dev`, log in as a staff user, navigate to the Korea inbox, select a shipment, click "Log issue", fill the form, submit. Confirm:
+
 - Toast "Issue logged" fires.
 - Modal closes.
 - New row in `express_shipment_issues` in Supabase Studio.
@@ -953,6 +929,7 @@ git commit -m "feat(express/issues): wire Log issue toolbar button to modal"
 ### Task 10: IssueTimelineEntry + ActivityFeed integration
 
 **Files:**
+
 - Create: `express/src/components/staff/korea/IssueTimelineEntry.tsx`
 - Modify: `express/src/components/staff/korea/ActivityFeed.tsx`
 
@@ -1076,9 +1053,7 @@ export function IssueTimelineEntry({ shipmentId, issue }: Props) {
                 disabled={resolve.isPending}
                 className="inline-flex h-9 cursor-pointer items-center gap-[6px] rounded-full border border-transparent bg-text px-[16px] font-mono text-[12px] font-medium text-bg transition-colors hover:bg-amber hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {resolve.isPending && (
-                  <Loader2 size={12} className="animate-spin" />
-                )}
+                {resolve.isPending && <Loader2 size={12} className="animate-spin" />}
                 {t("staff.inbox.issues.resolve.confirm")}
               </button>
             </div>
@@ -1173,6 +1148,7 @@ When re-inserting the skeleton markup, copy whatever `ActivityFeed.tsx` currentl
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/components/staff/korea/ActivityFeed.tsx src/components/staff/korea/IssueTimelineEntry.tsx
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 4: Manual smoke test**
@@ -1192,6 +1168,7 @@ git commit -m "feat(express/issues): render issues inside activity timeline"
 ### Task 11: Red-dot badge on inbox list rows
 
 **Files:**
+
 - Modify: `express/src/hooks/useStaffShipmentList.ts`
 - Modify: `express/src/components/staff/korea/ShipmentListCard.tsx`
 
@@ -1211,8 +1188,9 @@ Then, after fetching, map the row's `open_issues` into a derived count: filter c
 const withBadge = data.map((row) => ({
   ...row,
   open_issues_count:
-    (row as { open_issues?: Array<{ resolved_at: string | null }> })
-      .open_issues?.filter((i) => i.resolved_at === null).length ?? 0,
+    (row as { open_issues?: Array<{ resolved_at: string | null }> }).open_issues?.filter(
+      (i) => i.resolved_at === null,
+    ).length ?? 0,
 }));
 ```
 
@@ -1255,6 +1233,7 @@ Update the `shipment` prop type / interface in this file to include `open_issues
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/hooks/useStaffShipmentList.ts src/components/staff/korea/ShipmentListCard.tsx
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 4: Manual smoke test**
@@ -1276,6 +1255,7 @@ git commit -m "feat(express/issues): red-dot badge for unresolved issues on list
 ### Task 12: PATCH /api/express/shipments/[id] route
 
 **Files:**
+
 - Create: `express/src/app/api/express/shipments/[id]/route.ts`
 
 - [ ] **Step 1: Write the route**
@@ -1316,10 +1296,7 @@ function isStrOrNull(v: unknown): v is string | null {
   return v === null || typeof v === "string";
 }
 
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
+export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
 
   const userClient = await createClient();
@@ -1349,10 +1326,7 @@ export async function PATCH(
   try {
     body = (await request.json()) ?? {};
   } catch {
-    return NextResponse.json(
-      { error: "Invalid JSON body" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
   const { data: shipment, error: shipErr } = await admin
@@ -1378,9 +1352,7 @@ export async function PATCH(
   if (isStr(body.recipient_phone)) {
     addrPatch.recipient_phone = body.recipient_phone.trim();
   }
-  const k = body.korea_address as
-    | Record<string, unknown>
-    | undefined;
+  const k = body.korea_address as Record<string, unknown> | undefined;
   if (k && typeof k === "object") {
     if (isStr(k.kr_province)) addrPatch.kr_province = k.kr_province.trim();
     if (isStr(k.kr_city)) addrPatch.kr_city = k.kr_city.trim();
@@ -1393,9 +1365,7 @@ export async function PATCH(
   const shipPatch: Record<string, string | null> = {};
   if (isStrOrNull(body.pickup_scheduled_at)) {
     shipPatch.pickup_scheduled_at =
-      body.pickup_scheduled_at === null
-        ? null
-        : new Date(body.pickup_scheduled_at).toISOString();
+      body.pickup_scheduled_at === null ? null : new Date(body.pickup_scheduled_at).toISOString();
   }
 
   const changed: string[] = [];
@@ -1412,10 +1382,7 @@ export async function PATCH(
   }
 
   if (Object.keys(shipPatch).length > 0) {
-    const { error: updErr } = await admin
-      .from("express_shipments")
-      .update(shipPatch)
-      .eq("id", id);
+    const { error: updErr } = await admin.from("express_shipments").update(shipPatch).eq("id", id);
     if (updErr) {
       return NextResponse.json({ error: updErr.message }, { status: 500 });
     }
@@ -1445,6 +1412,7 @@ export async function PATCH(
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/app/api/express/shipments/[id]/route.ts
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 3: Commit**
@@ -1459,6 +1427,7 @@ git commit -m "feat(express/edit): PATCH /shipments/[id] with status gate"
 ### Task 13: Edit Zod schema + useShipmentUpdate hook
 
 **Files:**
+
 - Create: `express/src/components/staff/korea/editSchema.ts`
 - Create: `express/src/hooks/useShipmentUpdate.ts`
 
@@ -1470,21 +1439,12 @@ Create `express/src/components/staff/korea/editSchema.ts`:
 import { z } from "zod";
 
 export const editShipmentSchema = z.object({
-  recipient_name: z
-    .string()
-    .min(1, "error.required")
-    .max(100, "error.tooLong"),
-  recipient_phone: z
-    .string()
-    .min(7, "error.phoneShort")
-    .max(30, "error.tooLong"),
+  recipient_name: z.string().min(1, "error.required").max(100, "error.tooLong"),
+  recipient_phone: z.string().min(7, "error.phoneShort").max(30, "error.tooLong"),
   kr_province: z.string().min(1, "error.required").max(50, "error.tooLong"),
   kr_city: z.string().min(1, "error.required").max(50, "error.tooLong"),
   kr_street: z.string().min(1, "error.required").max(200, "error.tooLong"),
-  kr_building: z
-    .string()
-    .min(1, "error.required")
-    .max(100, "error.tooLong"),
+  kr_building: z.string().min(1, "error.required").max(100, "error.tooLong"),
   kr_detail: z.string().max(200, "error.tooLong").optional().or(z.literal("")),
   // datetime-local value (YYYY-MM-DDTHH:mm) or empty string for clear
   pickup_scheduled_at: z.string().optional().or(z.literal("")),
@@ -1517,10 +1477,7 @@ type PatchBody = {
   pickup_scheduled_at?: string | null;
 };
 
-export function buildPatch(
-  input: EditShipmentInput,
-  initial: EditShipmentInput,
-): PatchBody {
+export function buildPatch(input: EditShipmentInput, initial: EditShipmentInput): PatchBody {
   const p: PatchBody = {};
   const addr: PatchBody["korea_address"] = {};
   if (input.recipient_name !== initial.recipient_name) {
@@ -1542,20 +1499,14 @@ export function buildPatch(
   }
   if (Object.keys(addr).length > 0) p.korea_address = addr;
   if ((input.pickup_scheduled_at ?? "") !== (initial.pickup_scheduled_at ?? "")) {
-    p.pickup_scheduled_at = input.pickup_scheduled_at
-      ? input.pickup_scheduled_at
-      : null;
+    p.pickup_scheduled_at = input.pickup_scheduled_at ? input.pickup_scheduled_at : null;
   }
   return p;
 }
 
 export function useShipmentUpdate(shipmentId: string) {
   const qc = useQueryClient();
-  return useMutation<
-    { ok: true; changed: string[] },
-    Error,
-    PatchBody
-  >({
+  return useMutation<{ ok: true; changed: string[] }, Error, PatchBody>({
     mutationFn: async (patch) => {
       const res = await fetch(`/api/express/shipments/${shipmentId}`, {
         method: "PATCH",
@@ -1578,6 +1529,7 @@ export function useShipmentUpdate(shipmentId: string) {
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/hooks/useShipmentUpdate.ts src/components/staff/korea/editSchema.ts
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 4: Commit**
@@ -1593,6 +1545,7 @@ git commit -m "feat(express/edit): Zod schema + useShipmentUpdate hook"
 ### Task 14: Add i18n keys for edit
 
 **Files:**
+
 - Modify: `express/src/lib/i18n/dictionaries/{en,ko,mn}.json`
 
 - [ ] **Step 1: Add the English keys**
@@ -1658,6 +1611,7 @@ git commit -m "feat(express/edit): add i18n keys for edit modal"
 ### Task 15: EditShipmentModal component
 
 **Files:**
+
 - Create: `express/src/components/staff/korea/EditShipmentModal.tsx`
 
 - [ ] **Step 1: Write the modal**
@@ -1679,10 +1633,7 @@ import {
   KoreaAddressPicker,
   type PickedKoreaRegion,
 } from "@/components/address/KoreaAddressPicker";
-import {
-  editShipmentSchema,
-  type EditShipmentInput,
-} from "./editSchema";
+import { editShipmentSchema, type EditShipmentInput } from "./editSchema";
 import { useShipmentUpdate, buildPatch } from "@/hooks/useShipmentUpdate";
 import type { ExpressShipment, ExpressAddress } from "@/types/express";
 
@@ -1769,10 +1720,7 @@ export function EditShipmentModal({ shipment, open, onClose }: Props) {
         aria-labelledby="edit-shipment-title"
         className="max-h-[90vh] w-full max-w-[640px] overflow-y-auto rounded-ec border border-line bg-chrome p-7 shadow-[0_24px_60px_rgba(0,0,0,0.22)]"
       >
-        <h3
-          id="edit-shipment-title"
-          className="font-serif text-2xl font-light tracking-[-0.02em]"
-        >
+        <h3 id="edit-shipment-title" className="font-serif text-2xl font-light tracking-[-0.02em]">
           {t("staff.inbox.edit.title")}
         </h3>
 
@@ -1794,10 +1742,7 @@ export function EditShipmentModal({ shipment, open, onClose }: Props) {
           </Field>
 
           <div className="col-span-full">
-            <KoreaAddressPicker
-              locale={locale}
-              onChange={handlePickerChange}
-            />
+            <KoreaAddressPicker locale={locale} onChange={handlePickerChange} />
             <input type="hidden" {...register("kr_province")} />
             <input type="hidden" {...register("kr_city")} />
           </div>
@@ -1815,18 +1760,10 @@ export function EditShipmentModal({ shipment, open, onClose }: Props) {
             htmlFor="edit.kr_building"
             error={errors.kr_building?.message}
           >
-            <FieldInput
-              id="edit.kr_building"
-              {...register("kr_building")}
-              inputMode="numeric"
-            />
+            <FieldInput id="edit.kr_building" {...register("kr_building")} inputMode="numeric" />
           </Field>
 
-          <Field
-            label={t("address.kr.detail")}
-            htmlFor="edit.kr_detail"
-            fullWidth
-          >
+          <Field label={t("address.kr.detail")} htmlFor="edit.kr_detail" fullWidth>
             <FieldInput id="edit.kr_detail" {...register("kr_detail")} />
           </Field>
 
@@ -1856,9 +1793,7 @@ export function EditShipmentModal({ shipment, open, onClose }: Props) {
               disabled={!isDirty || update.isPending}
               className="inline-flex h-9 cursor-pointer items-center gap-[6px] rounded-full border border-transparent bg-text px-[16px] font-mono text-[12px] font-medium text-bg transition-colors hover:bg-amber hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {update.isPending && (
-                <Loader2 size={12} className="animate-spin" />
-              )}
+              {update.isPending && <Loader2 size={12} className="animate-spin" />}
               {t("staff.inbox.edit.save")}
             </button>
           </div>
@@ -1874,6 +1809,7 @@ export function EditShipmentModal({ shipment, open, onClose }: Props) {
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/components/staff/korea/EditShipmentModal.tsx
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 3: Commit**
@@ -1888,6 +1824,7 @@ git commit -m "feat(express/edit): EditShipmentModal component"
 ### Task 16: Wire up Edit button with status-aware disable
 
 **Files:**
+
 - Modify: `express/src/components/staff/korea/InboxDetail.tsx`
 
 - [ ] **Step 1: Add imports + state**
@@ -1936,11 +1873,7 @@ Find the Edit button block (the one with label `{t("common.edit")}` — previous
 Just before the root closing `</div>` of `InboxDetail`, add:
 
 ```tsx
-<EditShipmentModal
-  shipment={shipment}
-  open={editOpen}
-  onClose={() => setEditOpen(false)}
-/>
+<EditShipmentModal shipment={shipment} open={editOpen} onClose={() => setEditOpen(false)} />
 ```
 
 - [ ] **Step 4: Typecheck + lint**
@@ -1948,6 +1881,7 @@ Just before the root closing `</div>` of `InboxDetail`, add:
 ```bash
 cd express && npx tsc --noEmit && npx eslint src/components/staff/korea/InboxDetail.tsx
 ```
+
 Expected: exit 0.
 
 - [ ] **Step 5: Manual smoke test**
@@ -1972,6 +1906,7 @@ git commit -m "feat(express/edit): wire Edit button with status-aware disable"
 ```bash
 cd express && npx tsc --noEmit
 ```
+
 Expected: exit 0, no type errors anywhere.
 
 - [ ] **Step 2: Repo-wide lint (just this feature's files)**
@@ -1984,6 +1919,7 @@ npx eslint src/components/staff/korea \
   src/hooks/useStaffShipmentList.ts \
   src/types/express.ts
 ```
+
 Expected: 0 errors. Pre-existing data-table warnings are unrelated.
 
 - [ ] **Step 3: Browser walk-through (all four changes)**

@@ -15,6 +15,7 @@
 ## File inventory
 
 **Modify:**
+
 - `express/src/lib/i18n/dictionaries/en.json` — 3 new keys
 - `express/src/lib/i18n/dictionaries/ko.json` — 3 new keys
 - `express/src/lib/i18n/dictionaries/mn.json` — 3 new keys
@@ -28,6 +29,7 @@
 **Create:** none.
 
 **Reuse (already exist in all 3 dictionaries — do not re-add):**
+
 - `shipment.form.review.pickup` ("Pickup" / "픽업" / "Авах")
 - `shipment.form.officePickup` ("Office Pickup" / "사무실 수령" / "Оффисоос авах")
 - `shipment.form.width`, `shipment.form.height`, `shipment.form.depth`
@@ -38,29 +40,33 @@
 ## Task 1: Add new i18n keys
 
 **Files:**
+
 - Modify: `express/src/lib/i18n/dictionaries/en.json`
 - Modify: `express/src/lib/i18n/dictionaries/ko.json`
 - Modify: `express/src/lib/i18n/dictionaries/mn.json`
 
 Three new keys used by later tasks:
 
-| key | en | ko | mn |
-|-----|----|----|----|
-| `staff.intake.weigh.measure` | Measure | 측정 | Хэмжих |
+| key                              | en                                                                      | ko                                                                           | mn                                                                                 |
+| -------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `staff.intake.weigh.measure`     | Measure                                                                 | 측정                                                                         | Хэмжих                                                                             |
 | `staff.intake.weigh.measureHelp` | This box was marked "not sure" — measure width, height and depth in cm. | "잘 모르겠어요"로 접수된 박스입니다. 가로·세로·높이(cm)를 재서 입력해주세요. | "Мэдэхгүй" гэж бүртгэгдсэн хайрцаг. Өргөн, өндөр, гүнийг см-ээр хэмжиж оруулна уу. |
-| `shipment.pickedUpOn` | Picked up {date} | {date} 수령 완료 | {date}-нд авсан |
+| `shipment.pickedUpOn`            | Picked up {date}                                                        | {date} 수령 완료                                                             | {date}-нд авсан                                                                    |
 
 - [ ] **Step 1: Add keys to `en.json`**
 
 Insert `staff.intake.weigh.measure` + `staff.intake.weigh.measureHelp` next to the other `staff.intake.weigh.*` keys (around line 322 `staff.intake.weigh.scale`). Insert `shipment.pickedUpOn` next to `shipment.deliveredOn` (line 102).
 
 Add to `express/src/lib/i18n/dictionaries/en.json`:
+
 ```json
   "shipment.pickedUpOn": "Picked up {date}",
 ```
+
 next to the existing `"shipment.deliveredOn": "Delivered {date}",` line.
 
 Add near the other `staff.intake.weigh.*` keys:
+
 ```json
   "staff.intake.weigh.measure": "Measure",
   "staff.intake.weigh.measureHelp": "This box was marked \"not sure\" — measure width, height and depth in cm.",
@@ -108,6 +114,7 @@ for 'picked up on' ETA copy used by pickup shipments."
 ## Task 2: Measure "unknown" boxes during Korea intake
 
 **Files:**
+
 - Modify: `express/src/components/staff/korea/intake/WeighStep.tsx` (full-file rewrite — see step 2 for the complete result)
 
 Show a W × H × D block on the weigh step only when `pkg.box_size === "unknown"` or `pkg.dimensions_cm` is empty. Block "Continue" until all three fields are filled. Persist via the existing `intake.advance(..., "photo", { actual_weight_kg, dimensions_cm })` call.
@@ -152,22 +159,19 @@ export function WeighStep({ shipment, pkg, baseHref }: Props) {
   const intake = usePackageIntake();
 
   const expected = pkg.weight_kg != null ? Number(pkg.weight_kg) : 0;
-  const initialActual =
-    pkg.actual_weight_kg != null ? Number(pkg.actual_weight_kg) : expected;
+  const initialActual = pkg.actual_weight_kg != null ? Number(pkg.actual_weight_kg) : expected;
   const [actual, setActual] = useState<number>(initialActual);
   const delta = +(actual - expected).toFixed(2);
   const tolerance = Math.max(0.1, expected * 0.05); // 5% or 0.1 kg
   const withinTolerance = Math.abs(delta) <= tolerance;
 
-  const needsDimensions =
-    pkg.box_size === "unknown" || !pkg.dimensions_cm;
+  const needsDimensions = pkg.box_size === "unknown" || !pkg.dimensions_cm;
   const [initW, initH, initD] = parseDims(pkg.dimensions_cm);
   const [width, setWidth] = useState(initW);
   const [height, setHeight] = useState(initH);
   const [depth, setDepth] = useState(initD);
 
-  const dimsComplete =
-    width.trim() !== "" && height.trim() !== "" && depth.trim() !== "";
+  const dimsComplete = width.trim() !== "" && height.trim() !== "" && depth.trim() !== "";
   const canContinue = needsDimensions ? dimsComplete : true;
 
   async function handleContinue() {
@@ -180,9 +184,7 @@ export function WeighStep({ shipment, pkg, baseHref }: Props) {
     await intake.advance(
       pkg.id,
       shipment.id,
-      pkg.intake_step === "scan" || pkg.intake_step === "weigh"
-        ? "photo"
-        : pkg.intake_step,
+      pkg.intake_step === "scan" || pkg.intake_step === "weigh" ? "photo" : pkg.intake_step,
       updates,
     );
     router.push(`${baseHref}/photo`);
@@ -296,9 +298,7 @@ export function WeighStep({ shipment, pkg, baseHref }: Props) {
           type="button"
           onClick={handleContinue}
           disabled={intake.isPatching || !canContinue}
-          title={
-            !canContinue ? t("staff.intake.weigh.measureHelp") : undefined
-          }
+          title={!canContinue ? t("staff.intake.weigh.measureHelp") : undefined}
           className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full border border-transparent bg-text px-6 font-sans text-[13px] font-medium text-bg transition-colors hover:bg-amber hover:text-ink disabled:cursor-not-allowed disabled:opacity-60"
         >
           {t("staff.intake.weigh.continue")} →
@@ -356,9 +356,7 @@ function Dot({ active }: { active?: boolean }) {
   return (
     <span
       aria-hidden
-      className={`inline-block h-[6px] w-[6px] rounded-full ${
-        active ? "bg-ec-green" : "bg-line"
-      }`}
+      className={`inline-block h-[6px] w-[6px] rounded-full ${active ? "bg-ec-green" : "bg-line"}`}
     />
   );
 }
@@ -393,6 +391,7 @@ existing usePackageIntake.advance() call alongside actual_weight_kg."
 ## Task 3: Conditional column title in ReviewStep
 
 **Files:**
+
 - Modify: `express/src/components/shipment/ReviewStep.tsx:53-63`
 
 - [ ] **Step 1: Replace the `blocks` array to pick the title key based on `delivery_preference`**
@@ -400,38 +399,38 @@ existing usePackageIntake.advance() call alongside actual_weight_kg."
 In `express/src/components/shipment/ReviewStep.tsx`, change this block:
 
 ```tsx
-  const blocks = [
-    { l: t("shipment.form.review.boxes"), v: boxesSummary },
-    {
-      l: t("shipment.form.review.pickup"),
-      v: pickupLines.length > 0 ? pickupLines.join("\n") : "—",
-    },
-    {
-      l: t("shipment.form.review.delivery"),
-      v: deliveryLines.length > 0 ? deliveryLines.join("\n") : "—",
-    },
-  ];
+const blocks = [
+  { l: t("shipment.form.review.boxes"), v: boxesSummary },
+  {
+    l: t("shipment.form.review.pickup"),
+    v: pickupLines.length > 0 ? pickupLines.join("\n") : "—",
+  },
+  {
+    l: t("shipment.form.review.delivery"),
+    v: deliveryLines.length > 0 ? deliveryLines.join("\n") : "—",
+  },
+];
 ```
 
 to:
 
 ```tsx
-  const handoffLabel =
-    values.delivery_preference === "office_pickup"
-      ? t("shipment.form.review.pickup")
-      : t("shipment.form.review.delivery");
+const handoffLabel =
+  values.delivery_preference === "office_pickup"
+    ? t("shipment.form.review.pickup")
+    : t("shipment.form.review.delivery");
 
-  const blocks = [
-    { l: t("shipment.form.review.boxes"), v: boxesSummary },
-    {
-      l: t("shipment.form.review.pickup"),
-      v: pickupLines.length > 0 ? pickupLines.join("\n") : "—",
-    },
-    {
-      l: handoffLabel,
-      v: deliveryLines.length > 0 ? deliveryLines.join("\n") : "—",
-    },
-  ];
+const blocks = [
+  { l: t("shipment.form.review.boxes"), v: boxesSummary },
+  {
+    l: t("shipment.form.review.pickup"),
+    v: pickupLines.length > 0 ? pickupLines.join("\n") : "—",
+  },
+  {
+    l: handoffLabel,
+    v: deliveryLines.length > 0 ? deliveryLines.join("\n") : "—",
+  },
+];
 ```
 
 Note: the **first** pickup block (originating in Korea) is a different concept — it's the Korea pickup address. The third block is the Mongolia handoff and is the one that needs the conditional label.
@@ -456,9 +455,11 @@ chose office pickup. Pick the label from delivery_preference."
 ## Task 4: ShipmentDetail — conditional eyebrow + toCity + ETA
 
 **Files:**
+
 - Modify: `express/src/components/shipment/ShipmentDetail.tsx:41-48`, `:135-142`, `:47-48` header route
 
 When the shipment is office pickup:
+
 - Route headline shows `"Seoul → Office pickup"` instead of `"Seoul → Mongolia"`.
 - The address card's eyebrow says "Pickup" not "Delivery".
 - (No ETA change here — this file does not use `formatEta`. Detail shows `shipment.etaPrefix` / `shipment.flight_arrival_at` which is flight ETA; unchanged.)
@@ -468,18 +469,18 @@ When the shipment is office pickup:
 Locate (around line 47-48):
 
 ```tsx
-  const fromCity = korea_address?.kr_city ?? t("map.korea");
-  const toCity = mongolia_address?.mn_city ?? t("map.mongolia");
+const fromCity = korea_address?.kr_city ?? t("map.korea");
+const toCity = mongolia_address?.mn_city ?? t("map.mongolia");
 ```
 
 Replace with:
 
 ```tsx
-  const isOfficePickup = shipment.delivery_preference === "office_pickup";
-  const fromCity = korea_address?.kr_city ?? t("map.korea");
-  const toCity = isOfficePickup
-    ? t("shipment.form.officePickup")
-    : (mongolia_address?.mn_city ?? t("map.mongolia"));
+const isOfficePickup = shipment.delivery_preference === "office_pickup";
+const fromCity = korea_address?.kr_city ?? t("map.korea");
+const toCity = isOfficePickup
+  ? t("shipment.form.officePickup")
+  : (mongolia_address?.mn_city ?? t("map.mongolia"));
 ```
 
 - [ ] **Step 2: Make the address-card eyebrow conditional**
@@ -536,6 +537,7 @@ The route headline fell back to 'Mongolia' for office-pickup shipments
 ## Task 5: StaffShipmentDetail — same conditional fixes as ShipmentDetail
 
 **Files:**
+
 - Modify: `express/src/components/staff/StaffShipmentDetail.tsx:64-76`, `:220-229`
 
 - [ ] **Step 1: Make `toCity` pickup-aware**
@@ -543,30 +545,30 @@ The route headline fell back to 'Mongolia' for office-pickup shipments
 Locate (around line 64-72):
 
 ```tsx
-  const { shipment, korea_address, mongolia_address, packages, history } = data;
-  const currentIdx = statusIndex(shipment.status);
-  const total = statusTotal();
-  const progress = currentIdx / Math.max(total - 1, 1);
-  const chipKind = statusChipKind(shipment.status);
+const { shipment, korea_address, mongolia_address, packages, history } = data;
+const currentIdx = statusIndex(shipment.status);
+const total = statusTotal();
+const progress = currentIdx / Math.max(total - 1, 1);
+const chipKind = statusChipKind(shipment.status);
 
-  const fromCity = korea_address?.kr_city ?? t("map.korea");
-  const toCity = mongolia_address?.mn_city ?? t("map.mongolia");
+const fromCity = korea_address?.kr_city ?? t("map.korea");
+const toCity = mongolia_address?.mn_city ?? t("map.mongolia");
 ```
 
 Replace with:
 
 ```tsx
-  const { shipment, korea_address, mongolia_address, packages, history } = data;
-  const currentIdx = statusIndex(shipment.status);
-  const total = statusTotal();
-  const progress = currentIdx / Math.max(total - 1, 1);
-  const chipKind = statusChipKind(shipment.status);
+const { shipment, korea_address, mongolia_address, packages, history } = data;
+const currentIdx = statusIndex(shipment.status);
+const total = statusTotal();
+const progress = currentIdx / Math.max(total - 1, 1);
+const chipKind = statusChipKind(shipment.status);
 
-  const isOfficePickup = shipment.delivery_preference === "office_pickup";
-  const fromCity = korea_address?.kr_city ?? t("map.korea");
-  const toCity = isOfficePickup
-    ? t("shipment.form.officePickup")
-    : (mongolia_address?.mn_city ?? t("map.mongolia"));
+const isOfficePickup = shipment.delivery_preference === "office_pickup";
+const fromCity = korea_address?.kr_city ?? t("map.korea");
+const toCity = isOfficePickup
+  ? t("shipment.form.officePickup")
+  : (mongolia_address?.mn_city ?? t("map.mongolia"));
 ```
 
 - [ ] **Step 2: Make the address-card eyebrow conditional**
@@ -621,6 +623,7 @@ handoff card eyebrow switch to pickup-aware text."
 ## Task 6: InboxDetail — pickup-aware destination in headline
 
 **Files:**
+
 - Modify: `express/src/components/staff/korea/InboxDetail.tsx:160-162`
 
 - [ ] **Step 1: Make `toCity` pickup-aware**
@@ -628,26 +631,22 @@ handoff card eyebrow switch to pickup-aware text."
 Locate (around line 160-165):
 
 ```tsx
-  const fromCity = korea_address?.kr_city ?? t("map.korea");
-  const toCity = mongolia_address?.mn_city ?? t("map.mongolia");
-  const recipient =
-    mongolia_address?.recipient_name ?? korea_address?.recipient_name ?? "—";
-  const recipientPhone =
-    mongolia_address?.recipient_phone ?? korea_address?.recipient_phone ?? null;
+const fromCity = korea_address?.kr_city ?? t("map.korea");
+const toCity = mongolia_address?.mn_city ?? t("map.mongolia");
+const recipient = mongolia_address?.recipient_name ?? korea_address?.recipient_name ?? "—";
+const recipientPhone = mongolia_address?.recipient_phone ?? korea_address?.recipient_phone ?? null;
 ```
 
 Replace with:
 
 ```tsx
-  const isOfficePickup = shipment.delivery_preference === "office_pickup";
-  const fromCity = korea_address?.kr_city ?? t("map.korea");
-  const toCity = isOfficePickup
-    ? t("shipment.form.officePickup")
-    : (mongolia_address?.mn_city ?? t("map.mongolia"));
-  const recipient =
-    mongolia_address?.recipient_name ?? korea_address?.recipient_name ?? "—";
-  const recipientPhone =
-    mongolia_address?.recipient_phone ?? korea_address?.recipient_phone ?? null;
+const isOfficePickup = shipment.delivery_preference === "office_pickup";
+const fromCity = korea_address?.kr_city ?? t("map.korea");
+const toCity = isOfficePickup
+  ? t("shipment.form.officePickup")
+  : (mongolia_address?.mn_city ?? t("map.mongolia"));
+const recipient = mongolia_address?.recipient_name ?? korea_address?.recipient_name ?? "—";
+const recipientPhone = mongolia_address?.recipient_phone ?? korea_address?.recipient_phone ?? null;
 ```
 
 Note: leave `recipient` as-is. For office pickups we intentionally fall back to the Korea sender's name — they are the pickup party.
@@ -672,6 +671,7 @@ detail; now show the pickup label explicitly."
 ## Task 7: ShipmentList — row destination + pickup-aware formatEta
 
 **Files:**
+
 - Modify: `express/src/components/shipment/ShipmentList.tsx:125-131`, `:186-206`
 
 - [ ] **Step 1: Use pickup label for `to` in the row**
@@ -698,11 +698,11 @@ function ShipmentRow({
 Replace the last two lines with:
 
 ```tsx
-  const from = shipment.korea_address?.kr_city ?? "Korea";
-  const isOfficePickup = shipment.delivery_preference === "office_pickup";
-  const to = isOfficePickup
-    ? t("shipment.form.officePickup")
-    : (shipment.mongolia_address?.mn_city ?? "Mongolia");
+const from = shipment.korea_address?.kr_city ?? "Korea";
+const isOfficePickup = shipment.delivery_preference === "office_pickup";
+const to = isOfficePickup
+  ? t("shipment.form.officePickup")
+  : (shipment.mongolia_address?.mn_city ?? "Mongolia");
 ```
 
 - [ ] **Step 2: Pickup-aware formatEta**
@@ -736,15 +736,15 @@ function formatEta(
 Replace the first `if` block with:
 
 ```tsx
-  if (shipment.status === "completed" && shipment.delivered_at) {
-    const key =
-      shipment.delivery_preference === "office_pickup"
-        ? "shipment.pickedUpOn"
-        : "shipment.deliveredOn";
-    return t(key, {
-      date: new Date(shipment.delivered_at).toLocaleDateString(),
-    });
-  }
+if (shipment.status === "completed" && shipment.delivered_at) {
+  const key =
+    shipment.delivery_preference === "office_pickup"
+      ? "shipment.pickedUpOn"
+      : "shipment.deliveredOn";
+  return t(key, {
+    date: new Date(shipment.delivered_at).toLocaleDateString(),
+  });
+}
 ```
 
 - [ ] **Step 3: Typecheck**
@@ -844,6 +844,7 @@ Expected: upstream updated on `152-express`.
 ## Self-review notes
 
 **Spec coverage:**
+
 - Bug 1 design (WeighStep conditional measurement) → Task 2 ✓
 - Bug 2 eyebrow fix in ShipmentDetail → Task 4 ✓
 - Bug 2 eyebrow fix in StaffShipmentDetail → Task 5 ✓

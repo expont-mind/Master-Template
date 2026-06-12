@@ -1,0 +1,23 @@
+# Generated / managed by tooling
+**/.next/**
+**/node_modules/**
+**/dist/**
+**/.turbo/**
+**/.vercel/**
+**/coverage/**
+**/build/**
+
+# Generated database types — regenerated, not hand-edited
+**/types/database.ts
+packages/db-types/src/database.ts
+
+# Lockfiles
+pnpm-lock.yaml
+package-lock.json
+
+# Public assets
+**/public/**
+
+# IDE
+.idea/
+.vscode/

@@ -1,0 +1,47 @@
+{
+  "name": "@monpang/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.93.2",
+    "@tanstack/react-query": "^5.90.20",
+    "@upstash/redis": "^1.36.1",
+    "@vercel/analytics": "^1.6.1",
+    "browser-image-compression": "^2.0.2",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.563.0",
+    "next": "16.1.6",
+    "nextjs-toploader": "^3.9.17",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "tailwind-merge": "^3.4.0",
+    "zustand": "^5.0.10",
+    "@repo/config-brand": "workspace:*",
+    "@repo/db-types": "workspace:*",
+    "@repo/ui-utils": "workspace:*",
+    "@repo/supabase": "workspace:*",
+    "@repo/logger": "workspace:*",
+    "@repo/config-site": "workspace:*",
+    "@repo/theme": "workspace:*"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "@repo/tsconfig": "workspace:*",
+    "@repo/eslint-config": "workspace:*"
+  }
+}

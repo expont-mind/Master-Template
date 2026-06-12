@@ -1,0 +1,290 @@
+// Internal async helpers shared across the checkout server actions.
+// These take an admin Supabase client as a parameter — they are NOT
+// server actions themselves, so this file has no `"use server"` directive.
+
+import { createAdminClient } from "@/lib/supabase/admin";
+import { DELIVERY_ZONES_CONFIG } from "@/lib/utils/brand-config";
+import { log } from "@/lib/utils/logger";
+
+import type { OrderItemPayload } from "./_shared";
+import type { User } from "@supabase/supabase-js";
+
+type AdminClient = ReturnType<typeof createAdminClient>;
+
+type UserMetadata = Record<string, unknown> & {
+  first_name?: string;
+  last_name?: string;
+  given_name?: string;
+  family_name?: string;
+  full_name?: string;
+  name?: string;
+  avatar_url?: string;
+  picture?: string;
+};
+
+function fallbackNameParts(meta: UserMetadata): string[] {
+  return ((meta.full_name || meta.name || "") as string).split(" ");
+}
+
+function extractFirstName(meta: UserMetadata): string | null {
+  return meta.first_name ?? meta.given_name ?? (fallbackNameParts(meta)[0] || null);
+}
+
+function extractLastName(meta: UserMetadata): string | null {
+  return meta.last_name ?? meta.family_name ?? (fallbackNameParts(meta).slice(1).join(" ") || null);
+}
+
+/**
+ * Ensure a public.users row exists for the given auth user.
+ * Fixes rare cases where the auth trigger silently fails,
+ * causing FK violations on orders.user_id -> public.users(id).
+ */
+export async function ensurePublicUser(admin: AdminClient, user: User): Promise<void> {
+  const { data } = await admin.from("users").select("id").eq("id", user.id).maybeSingle();
+
+  if (data) return;
+
+  const meta = (user.user_metadata ?? {}) as UserMetadata;
+  await admin.from("users").upsert(
+    {
+      id: user.id,
+      email: user.email ?? null,
+      first_name: extractFirstName(meta),
+      last_name: extractLastName(meta),
+      primary_phone: user.phone?.replace(/^\+?976/, "") ?? null,
+      avatar_url: meta.avatar_url ?? meta.picture ?? null,
+    },
+    { onConflict: "id" },
+  );
+}
+
+type ProductRow = { id: string; name: string; is_active: boolean; stock_quantity: number };
+type VariantRow = {
+  id: string;
+  product_id: string;
+  name: string | null;
+  stock_quantity: number;
+  status: string;
+};
+
+function checkStock(name: string, available: number, requested: number): string | null {
+  if (available <= 0) return `"${name}" дууссан байна`;
+  if (available < requested) {
+    return `"${name}" ${available} ширхэг үлдсэн (${requested} ширхэг захиалсан)`;
+  }
+  return null;
+}
+
+function validateSingleItem(
+  item: OrderItemPayload,
+  productMap: Map<string, ProductRow>,
+  variantMap: Map<string, VariantRow>,
+  productsWithVariants: Set<string>,
+): string | null {
+  const product = productMap.get(item.productId);
+  if (!product || !product.is_active) {
+    return `"${item.name}" бүтээгдэхүүн олдсонгүй эсвэл идэвхгүй байна`;
+  }
+  if (productsWithVariants.has(item.productId) && !item.variantId) {
+    return `"${item.name}" бүтээгдэхүүний хувилбар сонгогдоогүй байна`;
+  }
+  if (item.variantId) {
+    const variant = variantMap.get(item.variantId);
+    if (!variant || variant.status !== "active") {
+      return `"${item.name}" бүтээгдэхүүний сонгосон хувилбар олдсонгүй`;
+    }
+    return checkStock(item.name, variant.stock_quantity, item.quantity);
+  }
+  return checkStock(item.name, product.stock_quantity, item.quantity);
+}
+
+export async function validateOrderItems(
+  admin: AdminClient,
+  items: OrderItemPayload[],
+): Promise<{ valid: true } | { valid: false; error: string }> {
+  const productIds = [...new Set(items.map((i) => i.productId))];
+  const variantIds = items.map((i) => i.variantId).filter((id): id is string => id != null);
+  const uniqueVariantIds = [...new Set(variantIds)];
+
+  const [productsResult, variantsResult, activeVariantsResult] = await Promise.all([
+    admin.from("products").select("id, name, is_active, stock_quantity").in("id", productIds),
+    uniqueVariantIds.length > 0
+      ? admin
+          .from("product_variants")
+          .select("id, product_id, name, stock_quantity, status")
+          .in("id", uniqueVariantIds)
+      : Promise.resolve({ data: [] as VariantRow[] }),
+    admin
+      .from("product_variants")
+      .select("product_id")
+      .in("product_id", productIds)
+      .eq("status", "active"),
+  ]);
+
+  const productMap = new Map((productsResult.data ?? []).map((p) => [p.id, p]));
+  const variantMap = new Map((variantsResult.data ?? []).map((v) => [v.id, v]));
+  const productsWithVariants = new Set((activeVariantsResult.data ?? []).map((v) => v.product_id));
+
+  const errors: string[] = [];
+  for (const item of items) {
+    const err = validateSingleItem(item, productMap, variantMap, productsWithVariants);
+    if (err) errors.push(err);
+  }
+
+  if (errors.length > 0) {
+    return { valid: false, error: errors.join(". ") };
+  }
+  return { valid: true };
+}
+
+export async function calculateDeliveryFee(
+  admin: AdminClient,
+  city: string,
+  itemsTotal: number,
+): Promise<number> {
+  const { data: zones } = await admin.from("delivery_zones").select("*").eq("is_active", true);
+
+  if (!zones || zones.length === 0) return 0;
+
+  const activeZone =
+    city === DELIVERY_ZONES_CONFIG.capital
+      ? zones.find((z) => z.name === DELIVERY_ZONES_CONFIG.capital)
+      : zones.find((z) => z.name === DELIVERY_ZONES_CONFIG.rural);
+
+  if (!activeZone) return 0;
+
+  if (
+    activeZone.is_free_delivery_enabled &&
+    activeZone.free_delivery_threshold != null &&
+    itemsTotal >= activeZone.free_delivery_threshold
+  ) {
+    return 0;
+  }
+
+  return activeZone.delivery_fee;
+}
+
+export async function recordCouponUsage(
+  admin: AdminClient,
+  userId: string,
+  orderId: string,
+  couponId: string,
+  discountAmount: number,
+) {
+  try {
+    const { data: coupon } = await admin
+      .from("coupons")
+      .select("usage_count, usage_limit, usage_limit_per_user")
+      .eq("id", couponId)
+      .single();
+
+    if (coupon) {
+      if (coupon.usage_limit && (coupon.usage_count ?? 0) >= coupon.usage_limit) {
+        log.warn("coupon_usage_global_limit_reached", { couponId });
+        return;
+      }
+
+      const perUserLimit = coupon.usage_limit_per_user ?? 1;
+      const { count } = await admin
+        .from("coupon_usages")
+        .select("id", { count: "exact", head: true })
+        .eq("coupon_id", couponId)
+        .eq("user_id", userId);
+
+      if ((count ?? 0) >= perUserLimit) {
+        log.warn("coupon_usage_per_user_limit_reached", { couponId, userId });
+        return;
+      }
+    }
+
+    await admin.from("coupon_usages").insert({
+      coupon_id: couponId,
+      user_id: userId,
+      order_id: orderId,
+      discount_amount: discountAmount,
+    });
+
+    if (coupon) {
+      await admin
+        .from("coupons")
+        .update({ usage_count: (coupon.usage_count ?? 0) + 1 })
+        .eq("id", couponId);
+    }
+  } catch (err) {
+    log.error("coupon_usage_record_failed", err);
+  }
+}
+
+export async function recordPointUsage(
+  admin: AdminClient,
+  userId: string,
+  orderId: string,
+  orderNumber: string,
+  pointsUsed: number,
+) {
+  try {
+    const { data: existing } = await admin
+      .from("point_transactions")
+      .select("id")
+      .eq("order_id", orderId)
+      .eq("type", "used")
+      .maybeSingle();
+
+    if (existing) return;
+
+    const { data } = await admin.from("point_transactions").select("amount").eq("user_id", userId);
+
+    const balance = (data ?? []).reduce((sum, t) => sum + t.amount, 0);
+
+    if (balance < pointsUsed) {
+      log.warn("point_usage_insufficient_balance", {
+        userId,
+        balance,
+        pointsUsed,
+      });
+      return;
+    }
+
+    await admin.from("point_transactions").insert({
+      user_id: userId,
+      order_id: orderId,
+      type: "used",
+      amount: -pointsUsed,
+      description: `Захиалга #${orderNumber}`,
+    });
+  } catch (err) {
+    log.error("point_usage_record_failed", err);
+  }
+}
+
+export async function awardPointsForOrder(
+  admin: AdminClient,
+  userId: string,
+  orderId: string,
+  orderNumber: string,
+  orderTotal: number,
+) {
+  try {
+    const pointsEarned = Math.floor(orderTotal * 0.02);
+    if (pointsEarned <= 0) return;
+
+    const { data: existing } = await admin
+      .from("point_transactions")
+      .select("id")
+      .eq("order_id", orderId)
+      .eq("type", "earned")
+      .maybeSingle();
+
+    if (existing) return;
+
+    await admin.from("point_transactions").insert({
+      user_id: userId,
+      order_id: orderId,
+      type: "earned",
+      amount: pointsEarned,
+      description: `Захиалга #${orderNumber}`,
+    });
+  } catch (err) {
+    log.error("award_points_failed", err);
+  }
+}

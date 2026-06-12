@@ -1,0 +1,75 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env*", ".prettierrc", ".prettierignore"],
+  "globalEnv": [
+    "NODE_ENV",
+    "VERCEL_ENV",
+    "NEXT_PUBLIC_BRAND_NAME",
+    "NEXT_PUBLIC_BRAND_SHORT_NAME",
+    "NEXT_PUBLIC_SITE_URL",
+    "NEXT_PUBLIC_ADMIN_URL",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_GOOGLE_VERIFICATION",
+    "NEXT_PUBLIC_QUICKPAY_ACCOUNT_NUMBER",
+    "NEXT_PUBLIC_QUICKPAY_ACCOUNT_NAME",
+    "NEXT_PUBLIC_QUICKPAY_BANK_NAME",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "QUICKPAY_API_URL",
+    "QUICKPAY_API_KEY",
+    "QUICKPAY_MERCHANT_ID",
+    "QUICKPAY_MCC_CODE",
+    "QUICKPAY_BANK_CODE",
+    "QUICKPAY_ACCOUNT_NUMBER",
+    "LENDMN_API_URL",
+    "LENDMN_CLIENT_ID",
+    "LENDMN_CLIENT_SECRET",
+    "LENDMN_WALLET_ID",
+    "STOREPAY_API_URL",
+    "STOREPAY_USERNAME",
+    "STOREPAY_PASSWORD",
+    "STOREPAY_STORE_ID",
+    "UPSTASH_REDIS_REST_URL",
+    "UPSTASH_REDIS_REST_TOKEN",
+    "SKYTEL_API_KEY",
+    "CALLPRO_API_KEY",
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_USER",
+    "SMTP_PASSWORD"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "inputs": [
+        "src/**",
+        "public/**",
+        "next.config.*",
+        "tsconfig.json",
+        "package.json",
+        "tailwind.config.*",
+        "postcss.config.*"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "outputs": [],
+      "dependsOn": ["^build"]
+    },
+    "type-check": {
+      "outputs": [],
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "outputs": [],
+      "inputs": ["src/**", "vitest.config.*", "package.json"]
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}
