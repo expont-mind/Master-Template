@@ -12,6 +12,12 @@ This skill owns the **canonical per-route redesign procedure** (Step 3).
 `/rebrand` Step 4.5 runs the same procedure for the core routes — keep the
 two in sync by editing it HERE only.
 
+**Required companion skill:** invoke the `ui-ux-pro-max` skill (Skill tool)
+at the start of every /redesign run. It supplies the style/palette/font
+intelligence used in Steps 1 and 3 below. If it is not installed
+(`.claude/skills/ui-ux-pro-max/`), warn the user (`npx uipro-cli init --ai
+claude`) and proceed with reduced design intelligence.
+
 Communicate progress in **Mongolian**; keep code comments in English.
 
 Arguments: `--force` redoes routes already marked `"redesigned"`; any other
@@ -39,9 +45,15 @@ this step regenerates it.)
 
 If it does not exist, distill it now:
 
-For each `design.references[].url`: WebFetch the page. From the fetched
-structure plus that reference's `take`, the `aesthetic`, `density`, and
-`componentVibe`, write a **layout-language spec** covering:
+1. **Consult `ui-ux-pro-max` first:** from `design.aesthetic`, pick the
+   closest of its 67 styles and note that style's layout patterns, spacing
+   philosophy, and component vibe; pick a font pairing consistent with
+   `design.typography`. Do NOT take colors from its palettes — brand colors
+   are already fixed in `packages/theme/src/brand.css` and must win.
+2. For each `design.references[].url`: WebFetch the page. From the fetched
+   structure plus that reference's `take`, the `aesthetic`, `density`, and
+   `componentVibe` — cross-checked against the ui-ux-pro-max style notes —
+   write a **layout-language spec** covering:
 
 - hero treatment (full-bleed / split / framed; image-to-text ratio)
 - section order and rhythm (what follows what; spacing cadence)
@@ -99,6 +111,9 @@ For each selected route, in order:
    - auth gates, loading / empty / error states
    - every Mongolian string, verbatim
 3. **Rewrite the JSX from the design-spec section for this route**:
+   - apply `ui-ux-pro-max` guidance for the chosen style: layout patterns,
+     element composition (navbar/card/form/modal), spacing, hover/shadow
+     treatment — within the spec, not instead of it
    - compose existing primitives (`@/components/ui/Button`, `Card`, `Modal`,
      typography components) — they already carry the design tokens
    - introduce new layout primitives (e.g. `_HeroSplitLayout.tsx`) rather
@@ -109,8 +124,11 @@ For each selected route, in order:
      Manrope-only typography, the rose-accent layout language)
 4. **Re-attach the pinned contract verbatim** — same hooks, same handlers,
    same strings, same gates.
-5. **Verify**: `pnpm -F @monpang/frontend type-check` passes.
-6. **Update the manifest immediately** (this is what makes the run
+5. **Review with `ui-ux-pro-max`** — run its review checklist on the
+   rewritten page (accessibility, spacing rhythm, responsive behavior,
+   visual hierarchy) and fix what it flags.
+6. **Verify**: `pnpm -F @monpang/frontend type-check` passes.
+7. **Update the manifest immediately** (this is what makes the run
    resumable): set this route's entry to `"status": "redesigned"`. Write the
    file after EVERY route, not at the end.
 

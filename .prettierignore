@@ -21,3 +21,6 @@ package-lock.json
 # IDE
 .idea/
 .vscode/
+
+# Vendored AI skills (managed by uipro-cli, not hand-edited)
+.claude/skills/**
